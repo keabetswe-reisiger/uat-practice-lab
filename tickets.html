@@ -106,4 +106,5 @@ document.addEventListener('change',e=>{const d=e.target.dataset||{};if(d.crit!==
 document.addEventListener('input',e=>{const d=e.target.dataset||{};if(d.f){st(open)[d.f]=e.target.value;save()}else if(['q','ft','fp'].includes(e.target.id))board()});
 $('ft').onchange=$('fp').onchange=board;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){open=null;drawer()}});
 board();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script></body></html>
+</script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>
