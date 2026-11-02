@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Testing Types Lab</title>
+<meta name="theme-color" content="#5b3a29"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f6f3ee;--card:#fff;--ink:#1f2430;--mute:#6b7280;--line:#e3ddd3;--brand:#5b3a29;--pass:#1b7f4b;--fail:#c0392b}
+@media(prefers-color-scheme:dark){:root{--bg:#16181d;--card:#20242c;--ink:#eceff4;--mute:#9aa3b2;--line:#323844;--brand:#d9b38c}}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:760px;margin:auto;padding:16px 16px 48px}h1{color:var(--brand);margin:6px 0 2px}.s{color:var(--mute);margin:0 0 14px}
+nav{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+button,a.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:8px;text-decoration:none;display:inline-block}
+button.on,button.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+@media(prefers-color-scheme:dark){button.on,button.primary{color:#16181d}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.card h3{margin:0 0 2px;color:var(--brand)}.tag{font-size:12px;background:var(--line);padding:1px 8px;border-radius:99px}
+.k{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 2px}
+.tip{background:#b08d5722;border-left:3px solid #b08d57;padding:8px 10px;font-size:14px;border-radius:4px;margin-top:8px}
+label.t{display:flex;gap:8px;align-items:flex-start;margin:4px 0}
+.q .opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.good{background:#1b7f4b22;color:var(--pass);padding:6px 10px;border-radius:6px;margin-top:8px}.bad{background:#c0392b22;color:var(--fail);padding:6px 10px;border-radius:6px;margin-top:8px}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--brand)}
+.src{font-size:12px;color:var(--mute);margin-top:18px}
+</style></head><body><main>
+<h1>🧪 Testing Types Lab</h1>
+<p class="s">UAT is only one kind of testing. Learn the others, try each one on the Clinic app, then check yourself with the quiz.</p>
+<p><a class="btn" href="index.html">← Home</a></p>
+<nav id="nav"></nav><div id="view"></div>
+<p class="src">Definitions follow the ISTQB Foundation Level terms (functional vs non-functional testing, regression, smoke, exploratory). “Try it” tasks, examples and coffee analogies are this app’s own teaching aids, not quotes from the syllabus.</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TYPES=[
+{id:'smoke',n:'Smoke testing',g:'Quick check',what:'A very fast pass over the main features to decide whether the build is stable enough to test further. If smoke fails, you stop and send it back.',when:'Every time a new build lands on Staging, before anything else.',try:['Open the Clinic app on Staging.','Click every tab once (Dashboard, Patients, Book appointment, Diary, Walk-in add).','Write down anything that shows an error or blank screen.'],tip:'Coffee: before tasting a whole batch, smell it and take one sip. Smells burnt? Stop there.'},
+{id:'func',n:'Functional testing',g:'Does it do the job',what:'Checks each feature against what the requirement says it must do (the Given / When / Then style used in the workbook).',when:'Throughout the cycle; it is the bulk of UAT.',try:['In the Clinic app log in as Sipho and book an appointment for Zodwa Mokoena.','Compare what happened with the brief: is it Pending Review / Unconfirmed?','Run TC-14 in the workbook.'],tip:'Coffee: the menu says “flat white = double shot + steamed milk”. Does the cup match?'},
+{id:'regress',n:'Regression testing',g:'Did we break old things',what:'After a change or fix, re-run earlier tests to make sure what used to work still works.',when:'After every bug fix and every new version (v1 to v2).',try:['Run TC-06 (search) and TC-08 (filter) on v1, then switch to v2 and run them again.','Do the results match? If not, v2 broke something old.'],tip:'Coffee: you change the grinder setting for espresso; re-taste the filter coffee too.'},
+{id:'explor',n:'Exploratory testing',g:'Unscripted detective work',what:'You learn the system, design tests and run them at the same time, guided by a short mission (charter) and a time limit rather than step lists.',when:'When scripts are missing, or to find what scripts never thought of.',try:['Set a 10-minute timer.','Charter: “Explore Book appointment with odd dates and repeated bookings to find ways to break it.”','Note every surprise, even small.'],tip:'Coffee: ignore the recipe card and just play with water temperature to see what happens.'},
+{id:'usab',n:'Usability testing',g:'Is it easy to use',what:'Checks how easily real users can learn and use the system: clear labels, sensible order, helpful error messages.',when:'Early (prototypes) and again before go-live.',try:['Imagine you are a first-day receptionist.','Book a patient without reading the brief.','Note every moment you hesitated or guessed.'],tip:'Coffee: can a new barista find the milk jug without being told?'},
+{id:'access',n:'Accessibility testing',g:'Usable by everyone',what:'Checks people with disabilities can use the system: keyboard only, screen readers, enough colour contrast, text that scales.',when:'Any public or staff-wide system.',try:['Use only Tab, Shift+Tab, Enter and Space on the Clinic app. Can you reach and press every button?','Zoom the browser to 200%. Does anything become unusable?'],tip:'Coffee: a ramp as well as steps at the shop door.'},
+{id:'compat',n:'Compatibility testing',g:'Different devices',what:'Checks it works across browsers, devices, screen sizes and operating systems.',when:'Before release, and whenever users report “works on my laptop”.',try:['Open the Clinic app on your phone and on a laptop (or narrow the browser window).','Are all buttons reachable? Is text cut off?'],tip:'Coffee: does the same recipe work on every machine in every branch?'},
+{id:'perf',n:'Performance testing',g:'Fast enough, even when busy',what:'Checks speed, responsiveness and stability under expected or heavy load. Needs numbers (e.g. “search returns in under 2 s with 10,000 patients”).',when:'Before launch and before busy periods.',try:['In Patients, type quickly in the search box. Does the screen keep up?','Write the performance requirement you would ask for (how fast, how many users).'],tip:'Coffee: ten customers at once on Friday at 7am. Does the queue still move?'},
+{id:'sec',n:'Security & access testing',g:'Only the right people',what:'Checks people can only see and do what their role allows, and that data is protected. Role checks are the easiest security tests for a tester.',when:'Every release that touches roles, logins or personal data.',try:['Log in as Thabo (Doctor) and open Patients and Dashboard.','Should a doctor see other doctors’ patients or the manager KPIs? Compare with the brief (TC-03, TC-09).'],tip:'Coffee: only staff go behind the counter or into the stockroom.'},
+{id:'conf',n:'Confirmation vs. build checks',g:'Know the levels',what:'Test levels: component (one piece), integration (pieces together), system (whole product by testers), acceptance/UAT (the users decide it fits their need). The same app is tested at all four levels.',when:'Developers do the first two; you, as UAT tester, do the last.',try:['In your own words, say which level you are at when you run the workbook and why.'],tip:'Coffee: testing the milk, then milk+machine, then the whole cup, then the customer says “yes, that is what I asked for”.'}
+];
+const Q=[
+['Before testing a new build you quickly click through every main screen to check nothing is broken.','smoke'],
+['A bug was fixed in Search, so you re-run the old Patients tests.','regress'],
+['You test with only the keyboard, no mouse.','access'],
+['You spend 15 minutes freely probing the Walk-in screen with strange inputs, no script.','explor'],
+['You check the Booking screen against the written rule that new bookings must be Pending Review.','func'],
+['You open the app on a phone, a tablet and an old laptop.','compat'],
+['A doctor logs in and you check that other doctors’ patients are hidden.','sec'],
+['You time how long the dashboard takes to load with 50 users at once.','perf'],
+['You watch a new receptionist try the app and note where they get confused.','usab'],
+['The Operations Owner runs the workbook and decides if the system fits their clinics.','conf']];
+const KEY='testing-types-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.done=S.done||{};S.ans=S.ans||{};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};let tab='learn';
+function view(){
+ $('nav').innerHTML=[['learn','1 Learn the types'],['try','2 Try them'],['quiz','3 Quiz']].map(([k,l])=>`<button data-tab="${k}" class="${tab===k?'on':''}">${l}</button>`).join('');
+ const v=$('view');
+ if(tab==='learn')v.innerHTML=`<div class="tip">UAT asks “does it do what the real user needs?”. These types ask other questions about the same app.</div>`+TYPES.map(t=>`<div class="card"><h3>${t.n} <span class="tag">${t.g}</span></h3><p>${t.what}</p><div class="k">When</div>${t.when}<div class="tip">${t.tip}</div></div>`).join('');
+ if(tab==='try'){const n=TYPES.filter(t=>S.done[t.id]).length;v.innerHTML=`<p>Open the <a href="clinic-practice.html">Clinic booking app</a> in another tab and do each task. Tick when done (saved on this device).</p><div class="bar"><i style="width:${n/TYPES.length*100}%"></i></div><p class="s">${n} of ${TYPES.length} done</p>`+TYPES.map(t=>`<div class="card"><label class="t"><input type="checkbox" data-done="${t.id}" ${S.done[t.id]?'checked':''}><b>${t.n}</b></label><ol>${t.try.map(x=>`<li>${x}</li>`).join('')}</ol></div>`).join('')}
+ if(tab==='quiz'){const a=Object.keys(S.ans).length,c=Q.filter((q,i)=>S.ans[i]===q[1]).length;v.innerHTML=`<p>Which type of testing is each scenario? <b>${c}/${Q.length}</b> correct${a===Q.length?' · finished':''}. <button data-reset="1">Restart</button></p>`+Q.map((q,i)=>{const r=S.ans[i];return `<div class="card q"><b>${i+1}.</b> ${esc(q[0])}<div class="opts">${TYPES.map(t=>`<button data-q="${i}|${t.id}" ${r?'disabled':''}>${t.n.replace(' testing','').replace(' & access','').replace('Confirmation vs. build checks','Test levels')}</button>`).join('')}</div>${r?(r===q[1]?'<div class="good">✓ Correct</div>':`<div class="bad">✗ It was <b>${TYPES.find(t=>t.id===q[1]).n}</b>. You chose ${TYPES.find(t=>t.id===r).n}.</div>`):''}</div>`}).join('')}
+}
+document.addEventListener('click',e=>{const d=e.target.dataset||{};
+ if(d.tab)tab=d.tab;else if(d.q){const[i,id]=d.q.split('|');S.ans[i]=id;save()}else if(d.reset){S.ans={};save()}else return;view()});
+document.addEventListener('change',e=>{const d=e.target.dataset||{};if(d.done){S.done[d.done]=e.target.checked;save();view()}});
+view();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
