@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>UAT Ticket Board</title>
+<meta name="theme-color" content="#11203b"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f;--grey:#667085;--shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08)}
+@media(prefers-color-scheme:dark){:root{--bg:#0f131a;--card:#1a2029;--ink:#eaeef5;--mute:#98a2b3;--line:#2b3340;--brand:#0b1220;--accent:#d9b38c;--blue:#6ea0ff;--green:#4cc88a;--red:#ff7b6b;--amber:#f0b45a;--shadow:none}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.01em}header h1 span{color:var(--accent)}
+header .sp{flex:1}header a,header button{color:#fff;border:1px solid #ffffff44;background:transparent;border-radius:8px;padding:5px 11px;font:inherit;font-size:13px;text-decoration:none;cursor:pointer}
+main{max-width:1280px;margin:auto;padding:16px}
+.meta{color:var(--mute);font-size:13px;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;box-shadow:var(--shadow)}.stat b{display:block;font-size:24px;line-height:1.1}.stat small{color:var(--mute)}
+.prog{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 0 14px;display:flex}.prog i{display:block;height:100%}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+input,select,textarea{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 10px}
+.bar input{flex:1;min-width:180px}textarea{width:100%}
+.cols{display:grid;grid-template-columns:repeat(5,minmax(210px,1fr));gap:12px;overflow-x:auto;padding-bottom:8px}
+.col{background:#00000008;border-radius:12px;padding:8px;min-height:120px}
+.col h3{margin:2px 4px 8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);display:flex;justify-content:space-between}
+.tk{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--grey);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow)}
+.tk:hover{border-color:var(--blue)}.tk .k{font-size:12px;color:var(--mute);font-weight:600}.tk .t{font-weight:600;margin:2px 0 6px}
+.p-Critical{border-left-color:var(--red)}.p-High{border-left-color:var(--amber)}.p-Medium{border-left-color:var(--blue)}.p-Low{border-left-color:var(--grey)}
+.chip{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;background:var(--line);color:var(--ink);margin-right:4px;font-weight:600}
+.c-Critical{background:#c0392b22;color:var(--red)}.c-High{background:#b7791f22;color:var(--amber)}.c-Medium{background:#2563eb22;color:var(--blue)}.c-Low{background:#66708522;color:var(--grey)}
+.s-Passed{background:#16794a22;color:var(--green)}.s-Failed{background:#c0392b22;color:var(--red)}.s-Blocked{background:#b7791f22;color:var(--amber)}.s-In{background:#2563eb22;color:var(--blue)}
+.foot{display:flex;justify-content:space-between;color:var(--mute);font-size:12px;margin-top:6px}
+.overlay{position:fixed;inset:0;background:#0008;display:none;justify-content:flex-end;z-index:10}.overlay.on{display:flex}
+.drawer{background:var(--bg);width:min(720px,100%);height:100%;overflow:auto;padding:0 0 40px}
+.dh{background:var(--card);border-bottom:1px solid var(--line);padding:14px 18px;position:sticky;top:0;z-index:2}
+.dh .k{color:var(--mute);font-weight:600;font-size:13px}.dh h2{margin:2px 0 8px;font-size:19px}.x{float:right;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:3px 10px;cursor:pointer}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:12px 18px 0;padding:12px 14px}
+.sec h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:14px}.grid span{color:var(--mute)}
+.teach{border-left:3px solid var(--accent);background:#b08d5714}
+ol{margin:0;padding-left:20px}li{margin:3px 0}label.cb{display:flex;gap:8px;align-items:flex-start;margin:4px 0}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+button.act{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600}
+button.go{background:var(--blue);border-color:var(--blue);color:#fff}button.ok{background:var(--green);border-color:var(--green);color:#fff}button.no{background:var(--red);border-color:var(--red);color:#fff}button.hold{background:var(--amber);border-color:var(--amber);color:#fff}
+a.open{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;border-radius:8px;padding:7px 12px;font-weight:600}
+.log{font-size:12.5px;color:var(--mute)}.note{border-top:1px solid var(--line);padding:6px 0;font-size:14px}
+details summary{cursor:pointer;color:var(--blue);font-weight:600}
+.empty{color:var(--mute);font-size:13px;text-align:center;padding:14px}
+@media(max-width:700px){.cols{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
+@media print{header,.bar,.overlay,#export{display:none}body{background:#fff}}
+</style></head><body>
+<header><h1>🎫 <span>UAT</span> Ticket Board</h1><div class="sp"></div><a href="start-here.html">Start here</a><a href="index.html">Home</a><button id="csv">Export report</button><button id="print">Print</button></header>
+<main>
+<div class="meta" id="meta"></div>
+<div class="stats" id="stats"></div><div class="prog" id="prog"></div>
+<div class="bar"><input id="q" type="search" placeholder="Search tickets…"><select id="ft"><option value="">All types</option></select><select id="fp"><option value="">All priorities</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+<div class="cols" id="cols"></div>
+</main>
+<div class="overlay" id="ov"><div class="drawer" id="dr"></div></div>
+<script src="tickets.js"></script>
+<script>
+const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const COLS=[['Open','To do'],['In progress','In progress'],['Blocked','Blocked'],['Passed','Passed'],['Failed','Failed']];
+const KEY='uat-tickets-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const st=k=>S[k]||(S[k]={status:'Open',actual:'',sev:'Major',notes:[],crit:{},log:[],time:''});
+const now=()=>new Date().toLocaleString('en-ZA',{dateStyle:'medium',timeStyle:'short'});
+const T=window.TICKETS,M=window.TICKETS_META;let open=null;
+const cls=s=>s==='Passed'?'s-Passed':s==='Failed'?'s-Failed':s==='Blocked'?'s-Blocked':s==='In progress'?'s-In':'';
+[...new Set(T.map(t=>t.type))].forEach(x=>$('ft').insertAdjacentHTML('beforeend',`<option>${x}</option>`));
+$('meta').textContent=`${M.project} · ${M.sprint} · Reporter: ${M.reporter} · Assignee: ${M.assignee}`;
+function board(){
+ const q=$('q').value.toLowerCase(),ty=$('ft').value,pr=$('fp').value;
+ const list=T.filter(t=>(!ty||t.type===ty)&&(!pr||t.priority===pr)&&(!q||(t.key+t.title+t.type+t.appName).toLowerCase().includes(q)));
+ const all=T.map(t=>st(t.key).status),c=s=>all.filter(x=>x===s).length,n=T.length,done=c('Passed')+c('Failed');
+ $('stats').innerHTML=[['Tickets',n],['To do',c('Open')],['In progress',c('In progress')+c('Blocked')],['Passed',c('Passed')],['Failed',c('Failed')],['Complete',Math.round(done/n*100)+'%']].map(([l,v])=>`<div class="stat"><b>${v}</b><small>${l}</small></div>`).join('');
+ $('prog').innerHTML=`<i style="width:${c('Passed')/n*100}%;background:var(--green)"></i><i style="width:${c('Failed')/n*100}%;background:var(--red)"></i><i style="width:${(c('In progress')+c('Blocked'))/n*100}%;background:var(--blue)"></i>`;
+ $('cols').innerHTML=COLS.map(([s,l])=>{const items=list.filter(t=>st(t.key).status===s);
+  return `<div class="col"><h3><span>${l}</span><span>${items.length}</span></h3>${items.map(t=>`<div class="tk p-${t.priority}" data-open="${t.key}"><div class="k">${t.key} · ${esc(t.appName)}</div><div class="t">${esc(t.title)}</div><span class="chip c-${t.priority}">${t.priority}</span><span class="chip">${esc(t.type)}</span><div class="foot"><span>Due ${t.due}</span><span>${t.est}</span></div></div>`).join('')||'<div class="empty">Nothing here</div>'}</div>`}).join('')}
+function setStatus(k,s,msg){const x=st(k);x.status=s;x.log.unshift(now()+' · '+(msg||'Status changed to '+s));save();drawer();board()}
+function drawer(){
+ if(!open){$('ov').classList.remove('on');return}
+ const t=T.find(x=>x.key===open),x=st(open);$('ov').classList.add('on');
+ const done=t.criteria.filter((_,i)=>x.crit[i]).length;
+ $('dr').innerHTML=`<div class="dh"><button class="x" data-close="1">Close ✕</button><div class="k">${t.key} · ${esc(t.appName)}</div><h2>${esc(t.title)}</h2>
+  <span class="chip c-${t.priority}">${t.priority}</span><span class="chip">${esc(t.type)}</span><span class="chip ${cls(x.status)}">${x.status}</span></div>
+  <div class="sec"><h4>Details</h4><p style="margin-top:0">${esc(t.summary)}</p><div class="grid"><div><span>Reporter</span><br>${esc(M.reporter)}</div><div><span>Assignee</span><br>${esc(M.assignee)}</div><div><span>Environment</span><br>${esc(t.env)}</div><div><span>Due / estimate</span><br>${t.due} · ${t.est}</div></div>
+  <div class="btns"><a class="open" href="${t.app}" target="_blank" rel="noopener">Open ${esc(t.appName)} ↗</a>${x.status==='Open'?`<button class="act go" data-st="In progress">Start testing</button>`:''}</div></div>
+  <div class="sec teach"><h4>New to this? Read first</h4><b>What is a ${esc(t.type.toLowerCase())} test?</b> ${esc(t.why)}<br><b>☕ Coffee version:</b> ${esc(t.coffee)}</div>
+  <div class="sec"><h4>Steps to perform</h4><ol>${t.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div>
+  <div class="sec"><h4>Expected result</h4>${esc(t.expected)}</div>
+  <div class="sec"><h4>Acceptance criteria (${done}/${t.criteria.length})</h4>${t.criteria.map((c,i)=>`<label class="cb"><input type="checkbox" data-crit="${i}" ${x.crit[i]?'checked':''}> ${esc(c)}</label>`).join('')}<details style="margin-top:8px"><summary>Stuck? Show a hint</summary><p>${esc(t.hint)}</p></details></div>
+  <div class="sec"><h4>Your result</h4><label>Actual result (what exactly did you see?)</label><textarea rows="3" data-f="actual">${esc(x.actual)}</textarea>
+  <div class="grid" style="margin-top:8px"><div><label>Severity if it fails</label><br><select data-f="sev">${['Critical','Major','Minor'].map(s=>`<option ${x.sev===s?'selected':''}>${s}</option>`).join('')}</select></div><div><label>Time spent</label><br><input data-f="time" value="${esc(x.time)}" placeholder="e.g. 12 min" style="width:100%"></div></div>
+  <div class="btns"><button class="act ok" data-st="Passed">✓ Pass</button><button class="act no" data-st="Failed">✗ Fail</button><button class="act hold" data-st="Blocked">⊘ Blocked</button><button class="act" data-st="Open">Reset</button>${x.status==='Failed'?'<button class="act" data-copy="1">Copy defect report</button>':''}</div></div>
+  <div class="sec"><h4>Notes</h4><textarea rows="2" id="nt" placeholder="Add an observation, question or evidence…"></textarea><div class="btns"><button class="act" data-note="1">Add note</button></div>${x.notes.map(n=>`<div class="note"><div class="log">${n.ts}</div>${esc(n.t)}</div>`).join('')}</div>
+  <div class="sec"><h4>Activity</h4><div class="log">${x.log.length?x.log.map(esc).join('<br>'):'No activity yet.'}</div></div>`}
+function defectText(t,x){return `DEFECT REPORT\nTicket: ${t.key}\nTitle: ${t.title}\nEnvironment: ${t.env}\nSeverity: ${x.sev}\nSteps:\n${t.steps.map((s,i)=>(i+1)+'. '+s).join('\n')}\nExpected: ${t.expected}\nActual: ${x.actual||'(not written yet)'}\nReported by: ${M.assignee}  ·  ${now()}`}
+document.addEventListener('click',e=>{const d=e.target.dataset||{};const card=e.target.closest('[data-open]');
+ if(card){open=card.dataset.open;drawer()}else if(d.close||e.target.id==='ov'){open=null;drawer()}
+ else if(d.st){const x=st(open);if(d.st==='Failed'&&!x.actual.trim()){alert('Write the actual result first (what exactly did you see?).');return}setStatus(open,d.st)}
+ else if(d.note){const v=$('nt').value.trim();if(!v)return;st(open).notes.unshift({ts:now(),t:v});save();drawer()}
+ else if(d.copy){const t=T.find(x=>x.key===open);navigator.clipboard&&navigator.clipboard.writeText(defectText(t,st(open))).then(()=>alert('Defect report copied. Paste it wherever you report defects.'))}
+ else if(e.target.id==='print')window.print();
+ else if(e.target.id==='csv'){const q=s=>'"'+String(s??'').replace(/"/g,'""')+'"';const r=[['Key','Title','Type','Priority','App','Status','Severity','Time','Actual result','Criteria met','Notes']];
+  T.forEach(t=>{const x=st(t.key);r.push([t.key,t.title,t.type,t.priority,t.appName,x.status,x.status==='Failed'?x.sev:'',x.time,x.actual,t.criteria.filter((_,i)=>x.crit[i]).length+'/'+t.criteria.length,x.notes.map(n=>n.t).join(' | ')])});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+r.map(y=>y.map(q).join(',')).join('\n')],{type:'text/csv'}));a.download='uat-ticket-report.csv';a.click()}});
+document.addEventListener('change',e=>{const d=e.target.dataset||{};if(d.crit!==undefined){st(open).crit[d.crit]=e.target.checked;save();drawer()}else if(d.f){st(open)[d.f]=e.target.value;save()}});
+document.addEventListener('input',e=>{const d=e.target.dataset||{};if(d.f){st(open)[d.f]=e.target.value;save()}else if(['q','ft','fp'].includes(e.target.id))board()});
+$('ft').onchange=$('fp').onchange=board;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){open=null;drawer()}});
+board();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
