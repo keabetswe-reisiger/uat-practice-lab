@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Test Arcade</title>
+<meta name="theme-color" content="#11203b"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+@media(prefers-color-scheme:dark){:root{--bg:#0f131a;--card:#1a2029;--ink:#eaeef5;--mute:#98a2b3;--line:#2b3340;--brand:#0b1220;--accent:#d9b38c;--blue:#6ea0ff;--green:#4cc88a;--red:#ff7b6b;--amber:#f0b45a}}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:820px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 3px #1018281a}
+h2{margin:0 0 4px;font-size:19px}h3{margin:0 0 2px;font-size:16px;color:var(--brand)}@media(prefers-color-scheme:dark){h3{color:var(--accent)}}
+.mute{color:var(--mute);font-size:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;font-weight:600}
+button.pri{background:var(--blue);border-color:var(--blue);color:#fff}@media(prefers-color-scheme:dark){button.pri{color:#0f131a}}
+button:disabled{opacity:.5;cursor:default}
+.hero{background:linear-gradient(135deg,var(--brand),#26406e);color:#fff;border:0}.hero .mute{color:#cfd8e6}
+.bar{height:10px;background:#ffffff33;border-radius:99px;overflow:hidden;margin:8px 0 4px}.bar i{display:block;height:100%;background:var(--accent)}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.bd{font-size:12.5px;border-radius:99px;padding:2px 10px;background:#ffffff22}.bd.off{opacity:.45}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.g{display:flex;flex-direction:column;gap:6px}.g .ic{font-size:26px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:6px 0;cursor:pointer;background:var(--card)}
+.opt:hover{border-color:var(--blue)}.opt input{margin-top:5px}
+.screen{background:#fff;color:#16202f;border:2px solid #cbd2dc;border-radius:10px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:14px;margin:8px 0}
+.spec{border-left:4px solid var(--accent);padding:6px 12px;background:#b08d5714;border-radius:6px}
+.res{border-radius:10px;padding:10px 12px;margin-top:10px}.res.ok{background:#16794a1f}.res.no{background:#c0392b1f}.res.part{background:#b7791f1f}
+.cof{border-left:3px solid var(--accent);padding:4px 10px;margin-top:8px;background:#b08d5714;border-radius:4px;font-size:14.5px}
+input[type=text],textarea,select{font:inherit;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 10px}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--mute);margin:10px 0 3px}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.rk{display:flex;gap:8px;align-items:center;margin:6px 0}.rk b{width:24px;height:24px;border-radius:99px;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:13px;flex:none}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pill{display:inline-block;font-size:12px;border-radius:99px;padding:1px 9px;background:var(--line);margin-left:6px}
+</style></head><body>
+<header><h1>🎮 <span>Test</span> Arcade</h1><div class="sp"></div><a href="start-here.html">Start here</a><a href="tickets.html">Tickets</a><a href="index.html">Home</a></header>
+<main id="m"></main>
+<script>
+const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function rng(seed){let a=seed>>>0;return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const pick=(r,a)=>a[Math.floor(r()*a.length)];const shuffle=(r,a)=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
+const KEY='arcade-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}
+S.xp=S.xp||0;S.streak=S.streak||0;S.last=S.last||'';S.played=S.played||{};S.best=S.best||{};S.badges=S.badges||{};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const RANKS=[[0,'Trainee'],[100,'Tester'],[300,'Senior Tester'],[600,'Test Lead'],[1000,'QA Master']];
+const rank=()=>{let i=0;RANKS.forEach((r,k)=>{if(S.xp>=r[0])i=k});return i};
+const today=()=>new Date().toISOString().slice(0,10);
+const BADGES={first:['🌱','First round'],daily:['📅','Daily 5 done'],all:['🧭','All-rounder (tried all 5 games)'],perfect:['💯','Perfect round'],streak3:['🔥','3-day streak']};
+const COFF=t=>`<div class="cof">☕ ${t}</div>`;
+
+/* ======================= GAME 1: BOUNDARY BLITZ (random numbers every time) ======================= */
+function gBoundary(r){
+ const kind=pick(r,['range','min','max']);let rule,correct,other,why;
+ if(kind==='range'){const a=10+Math.floor(r()*12),b=a+30+Math.floor(r()*30);rule=`Applicants must be between <b>${a}</b> and <b>${b}</b> years old (inclusive).`;correct=[a-1,a,a+1,b-1,b,b+1];other=[Math.round((a+b)/2),0,b+30];why='Each edge has three tests: just below, on, just above.'}
+ if(kind==='min'){const n=(3+Math.floor(r()*8))*50;rule=`Free delivery applies to orders of <b>R${n}</b> or more.`;correct=[n-1,n,n+1];other=[n*2,Math.round(n/2),0];why='“or more” means R'+n+' itself qualifies; the classic bug is using > instead of ≥.'}
+ if(kind==='max'){const n=(2+Math.floor(r()*9))*5;rule=`Maximum <b>${n}</b> items per order.`;correct=[n-1,n,n+1];other=[Math.round(n/2),n*3,n+20];why='The limit itself is allowed; one more must be refused.'}
+ const cand=shuffle(r,[...correct,...other]);
+ return{title:'Boundary Blitz',intro:'Tick only the values that test the <b>edges</b> of this rule. Fewer, sharper tests win.',
+  html:`<div class="spec">${rule}</div>`+cand.map(v=>`<label class="opt"><input type="checkbox" value="${v}"> ${v}</label>`).join(''),
+  submit(st){const ch=[...st.querySelectorAll('input:checked')].map(x=>+x.value);if(!ch.length)return null;const hit=ch.filter(v=>correct.includes(v)).length,bad=ch.length-hit;
+   const pts=Math.max(0,hit*10-bad*5),max=correct.length*10;const miss=correct.filter(v=>!ch.includes(v));
+   return{pts,max,html:`<b>Edge values: ${[...correct].sort((a,b)=>a-b).join(', ')}.</b> You found ${hit}/${correct.length}${bad?`, with ${bad} value(s) that are not edges (they cost a test slot but don’t probe the boundary)`:''}${miss.length?`. Missed: ${miss.join(', ')}`:''}.<br>${why}`+COFF('If a cup holds 250 ml, you test 249, 250 and 251, not 100 and 400. Bugs live at the lip of the cup.')}}}}
+
+/* ======================= GAME 2: BUG SPOTTER (spec vs screen) ======================= */
+const SPOT=[
+ {spec:'Orders over R500 get a 10% discount.',screen:'Cart total: R600.00<br>Discount: R6.00<br>You pay: R594.00',o:['Discount is 1%, not 10%','Total is wrong','Currency symbol is wrong','No bug'],a:0,w:'10% of R600 is R60, but R6 was given (that’s 1%). Always do the maths yourself first.'},
+ {spec:'Passwords must be at least 8 characters.',screen:'Password: abc1234 (7 characters)<br>✓ Password accepted',o:['7 characters accepted','Label is wrong','Button is missing','No bug'],a:0,w:'7 is one below the limit and must be refused. That is a boundary bug.'},
+ {spec:'A doctor sees only their own patients.',screen:'Logged in: Dr Thabo<br>Patients: Zanele (Dr Thabo), Baby Lwazi (Dr Naledi), Gogo Martha (Dr Thabo)',o:['Another doctor’s patient is visible','Patient names are wrong','Doctor name is wrong','No bug'],a:0,w:'Seeing another person’s data is a permission bug, and usually a Critical one.'},
+ {spec:'Total = items + 15% VAT.',screen:'Item 1: R100<br>Item 2: R200<br>VAT 15%: R45<br>Total: R335',o:['Total should be R345','VAT should be R30','Item prices are wrong','No bug'],a:0,w:'100 + 200 + 45 = 345. Rows were right; the total was wrong. Check the arithmetic, not just the layout.'},
+ {spec:'Dates are shown as DD/MM/YYYY.',screen:'Appointment date: 03/25/2026',o:['Date is in MM/DD format','Year is wrong','Time is missing','No bug'],a:0,w:'Month 25 doesn’t exist, so it must be MM/DD. Formats are a classic criteria bug.'},
+ {spec:'Cancelling an order removes it and lowers the order counter.',screen:'Orders list: (empty)<br>Orders: 3',o:['Counter was not updated','List is wrong','Cancel button is missing','No bug'],a:0,w:'The list changed but the counter did not. A state bug: you only see it on a different screen.'},
+ {spec:'Error messages must tell the user what to fix.',screen:'⚠ Error 500',o:['Message doesn’t say what to fix','Icon is wrong','Colour is wrong','No bug'],a:0,w:'“Error 500” helps nobody. Clear messages are part of the requirement.'},
+ {spec:'Search is not case-sensitive.',screen:'Search “Mokoena” → 2 results<br>Search “mokoena” → No results',o:['Lowercase search finds nothing','Search box is too small','Result count is wrong','No bug'],a:0,w:'Same word, different capital letters, different results: a partition bug.'},
+ {spec:'The PRODUCTION banner must be red.',screen:'<span style="background:#1b7f4b;color:#fff;padding:2px 8px">● PRODUCTION</span> live data',o:['Banner is green, not red','Text is too long','Banner is missing','No bug'],a:0,w:'Wrong colour on the environment banner can make a tester think they are on safe Staging.'},
+ {spec:'Required fields are saved only when filled.',screen:'Name*: Sam<br>Phone*: (empty)<br>[Save] → “Saved successfully”',o:['Saved with an empty required field','Name is wrong','Save button is wrong','No bug'],a:0,w:'Required means required. This is the “blank input accepted” bug family.'},
+ {spec:'Everything works as written.',screen:'Order total: R150.00<br>Delivery: Free (orders ≥ R150)<br>You pay: R150.00',o:['Delivery should not be free','Total is wrong','Label is wrong','No bug'],a:3,w:'Careful: this is correct. R150 meets “R150 or more”. A good tester doesn’t invent bugs (false alarms waste developer time).'}
+];
+function gSpot(r){const q=pick(r,SPOT);const idx=shuffle(r,q.o.map((_,i)=>i));
+ return{title:'Bug Spotter',intro:'Compare the <b>spec</b> with the <b>screen</b>. What is wrong, if anything?',
+  html:`<div class="spec"><b>Spec:</b> ${q.spec}</div><div class="screen">${q.screen}</div>`+idx.map(i=>`<label class="opt"><input type="radio" name="o" value="${i}"> ${q.o[i]}</label>`).join(''),
+  submit(st){const c=st.querySelector('input:checked');if(!c)return null;const ok=+c.value===q.a;return{pts:ok?20:0,max:20,ok,html:(ok?'<b>Correct.</b> ':'<b>Not quite.</b> The answer was: '+q.o[q.a]+'. ')+q.w+COFF('You order a flat white, so you check the cup: shot count, milk, and the till total. Spec first, screen second.')}}}}
+
+/* ======================= GAME 3: DEFECT REPORT WORKSHOP (scored rubric) ======================= */
+const DEF=[
+ {saw:'You are on Staging v2 as Dr Thabo (Doctor). You open Patients and see 6 patients, including Baby Lwazi Nkosi who belongs to Dr Naledi. The brief says doctors see only their own patients.',sev:'Critical',model:'Title: Doctor sees other doctors’ patients\nEnv: Staging v2\nSteps: 1) Log in as Thabo (Doctor) 2) Open Patients\nExpected: Only 3 own patients\nActual: All 6 patients shown\nSeverity: Critical (private data exposed)'},
+ {saw:'On Staging v2 as Sipho (Manager) you open Dashboard, choose Weekly, and see Monthly numbers (268 completed instead of 64).',sev:'Major',model:'Title: Weekly filter shows monthly figures\nEnv: Staging v2\nSteps: 1) Log in as Sipho 2) Dashboard 3) Frequency = Weekly\nExpected: 64 completed\nActual: 268 completed\nSeverity: Major (wrong management figures)'},
+ {saw:'On Staging v2 as Dr Thabo you search for “mokoena” in lowercase on Patients and get no results, but “Mokoena” returns 2.',sev:'Minor',model:'Title: Patient search is case-sensitive\nEnv: Staging v2\nSteps: 1) Log in as Thabo or Sipho 2) Patients 3) Search “mokoena”\nExpected: 2 patients found\nActual: No results\nSeverity: Minor (workaround: type capitals)'}];
+function gDefect(r){const q=pick(r,DEF);
+ return{title:'Defect Report Workshop',intro:'Turn what you saw into a report a developer can act on without calling you. You are scored on completeness.',
+  html:`<div class="spec">${q.saw}</div><label class="f">Title (what is wrong, in one line)</label><input type="text" id="d1"><label class="f">Environment and version</label><input type="text" id="d2" placeholder="e.g. Staging v2">
+  <label class="f">Steps to reproduce</label><textarea rows="3" id="d3" placeholder="1) … 2) …"></textarea><label class="f">Expected result</label><input type="text" id="d4"><label class="f">Actual result</label><input type="text" id="d5">
+  <label class="f">Severity</label><select id="d6"><option value="">Choose…</option><option>Critical</option><option>Major</option><option>Minor</option></select>`,
+  submit(st){const v=i=>st.querySelector('#d'+i).value.trim();if(!v(1)&&!v(3)&&!v(4)&&!v(5))return null;let p=0;const n=[];
+   const vague=/^(broken|not working|bug|error|problem|issue)\W*$/i.test(v(1));
+   if(v(1).length>=15&&!vague){p+=15}else n.push('Title should say what is wrong (15+ characters, not just “broken”).');
+   if(/(staging|prod|dev|v1|v2)/i.test(v(2))){p+=10}else n.push('Say where you tested: environment and version.');
+   if(v(3).length>=20&&(/\d[\).:]/.test(v(3))||v(3).split('\n').length>=2)){p+=20}else n.push('Give numbered steps someone can repeat.');
+   if(v(4).length>=8){p+=15}else n.push('Write the expected result.');
+   if(v(5).length>=8&&v(5).toLowerCase()!==v(4).toLowerCase()){p+=15}else n.push('Write the actual result (different from expected).');
+   if(v(6)===q.sev){p+=25}else if(v(6)){p+=8;n.push('Severity: the best call here is '+q.sev+'.')}else n.push('Choose a severity.');
+   return{pts:p,max:100,ok:p>=80,html:(n.length?'<b>To improve:</b><br>• '+n.join('<br>• ')+'<br><br>':'<b>Excellent, a developer can act on this.</b><br><br>')+'<b>Model report:</b><br><span style="white-space:pre-wrap">'+esc(q.model)+'</span>'+COFF('“Table 4 got tea instead of a flat white at 10:05” gets fixed. “Coffee is bad” gets ignored.')}}}}
+
+/* ======================= GAME 4: RISK RANKER (what do I test first?) ======================= */
+const RISK=[
+ {ctx:'A clinic booking system, 2 hours before go-live. Rank what to test first.',f:[['Doctors only see their own patients',5,4,'Private patient data'],['Report logo colour',1,2,'Cosmetic'],['Booking cannot be double-booked',4,4,'Patients turn up for nothing'],['Search finds patients by name',3,3,'Daily convenience'],['Date format in the diary',2,3,'Annoying, not harmful']]},
+ {ctx:'A coffee shop ordering app launching Friday morning rush. What first?',f:[['Payment total is calculated correctly',5,4,'Money wrong for every order'],['Menu photos load quickly',2,3,'Nice to have'],['Order reaches the barista screen',5,3,'No coffee made at all'],['Loyalty points show on receipt',2,2,'Small perk'],['Opening hours text',1,2,'Cosmetic']]},
+ {ctx:'A stock app used by a warehouse. Limited time: rank by risk.',f:[['Stock count updates after receiving goods',5,4,'Wrong stock levels drive wrong orders'],['Expiry alerts fire on time',4,3,'Spoiled goods and waste'],['Export to Excel formatting',2,3,'Fixable by hand'],['Only managers can delete stock',4,3,'Fraud risk'],['Dark mode looks right',1,2,'Cosmetic']]}];
+function gRisk(r){const q=pick(r,RISK);const items=shuffle(r,q.f.map((x,i)=>({i,t:x[0]})));const order=[];
+ return{title:'Risk Ranker',intro:'You can’t test everything. Tap the features in the order you would test them: <b>highest risk first</b> (risk = how bad it would be × how likely it is to break).',
+  html:`<div class="spec">${q.ctx}</div><div id="rkPick">${items.map(x=>`<button type="button" class="opt" style="width:100%;text-align:left" data-r="${x.i}">${esc(x.t)}</button>`).join('')}</div><div class="mute" style="margin-top:8px">Your order:</div><div id="rkOrder"></div><button type="button" id="rkReset" style="margin-top:6px">Start over</button>`,
+  bind(st){const upd=()=>{st.querySelector('#rkOrder').innerHTML=order.map((i,k)=>`<div class="rk"><b>${k+1}</b>${esc(q.f[i][0])}</div>`).join('');st.querySelectorAll('[data-r]').forEach(b=>b.disabled=order.includes(+b.dataset.r))};
+   st.addEventListener('click',e=>{if(e.target.dataset.r!==undefined){order.push(+e.target.dataset.r);upd()}if(e.target.id==='rkReset'){order.length=0;upd()}});upd()},
+  submit(){if(order.length<q.f.length)return null;const truth=q.f.map((x,i)=>[i,x[1]*x[2]]).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+   let p=0;order.forEach((i,k)=>{const d=Math.abs(truth.indexOf(i)-k);p+=d===0?20:d===1?10:0});
+   return{pts:p,max:100,ok:p>=70,html:'<b>Risk order (impact × likelihood):</b><br>'+truth.map((i,k)=>`${k+1}. ${esc(q.f[i][0])} <span class="mute">(${q.f[i][1]}×${q.f[i][2]}=${q.f[i][1]*q.f[i][2]} · ${q.f[i][3]})</span>`).join('<br>')+COFF('With 10 minutes before the rush, you check the till and the milk fridge first, not the colour of the menu.')}}}}
+
+/* ======================= GAME 5: SEVERITY CALL ======================= */
+const SEV=[
+ ['A doctor can see every patient’s private records.','Critical','Private data exposed.'],['The “Save” button works but the page shows “Saved sucessfully” (typo).','Minor','Cosmetic, nothing breaks.'],
+ ['Totals on invoices are R10 too low for every order.','Critical','Money is wrong on every transaction.'],['Weekly dashboard shows monthly numbers.','Major','Wrong decisions, but no data lost.'],
+ ['The app crashes every time an appointment is cancelled.','Critical','A core flow is unusable.'],['A date picker opens one pixel to the left.','Minor','Visual only.'],
+ ['Search ignores results with accents (é), but a workaround exists.','Minor','Small, has a workaround.'],['Export to Excel drops the last row.','Major','Silent data loss, but main system works.'],
+ ['New staff accounts can’t log in on Fridays only.','Major','Important feature fails sometimes.'],['The Cancel button label says “Canel”.','Minor','Typo.'],
+ ['Passwords are shown in plain text in the URL.','Critical','Security breach.'],['The loading spinner is slow on first open (4 seconds).','Minor','Annoying; clarify a requirement first.']];
+function gSev(r){const q=pick(r,SEV);return{title:'Severity Call',intro:'How serious is this defect? <b>Critical</b> = blocks go-live or exposes data/money · <b>Major</b> = important feature wrong · <b>Minor</b> = small or cosmetic.',
+ html:`<div class="spec">${q[0]}</div>`+['Critical','Major','Minor'].map(s=>`<label class="opt"><input type="radio" name="o" value="${s}"> ${s}</label>`).join(''),
+ submit(st){const c=st.querySelector('input:checked');if(!c)return null;const ok=c.value===q[1];return{pts:ok?20:c.value!=='Minor'&&q[1]!=='Minor'?8:0,max:20,ok,html:`<b>${ok?'Correct':'The best call is '+q[1]}.</b> ${q[2]}`+COFF('Burnt coffee is Critical; a crooked lid is Minor. Severity = how much it hurts the customer, not how annoying it was for you.')}}}}
+
+const GAMES={boundary:{f:gBoundary,i:'📏',n:'Boundary Blitz',d:'Pick the sharpest test values. Random numbers every round.'},spot:{f:gSpot,i:'🔍',n:'Bug Spotter',d:'Spec vs screen: find the defect, or spot the false alarm.'},defect:{f:gDefect,i:'📝',n:'Defect Workshop',d:'Write a report and get scored on how useful it is.'},risk:{f:gRisk,i:'⚖️',n:'Risk Ranker',d:'Limited time: decide what to test first.'},sev:{f:gSev,i:'🚦',n:'Severity Call',d:'Critical, Major or Minor? Learn to judge impact.'}};
+
+/* ======================= SESSION ENGINE ======================= */
+let run=null;
+function award(pts){const before=rank();S.xp+=pts;return rank()>before}
+function badge(k){if(!S.badges[k]){S.badges[k]=1;return true}return false}
+function home(){run=null;const rk=rank(),nx=RANKS[rk+1],cur=RANKS[rk];const pct=nx?Math.round((S.xp-cur[0])/(nx[0]-cur[0])*100):100;
+ const doneToday=S.last===today();const played=Object.keys(S.played).length;
+ const next=!doneToday?'Start with today’s <b>Daily 5</b> (one question from every game, takes ~5 min).':(()=>{const least=Object.keys(GAMES).sort((a,b)=>(S.played[a]||0)-(S.played[b]||0))[0];return`Next best step: play <b>${GAMES[least].n}</b>, your least-played game.`})();
+ $('m').innerHTML=`<div class="card hero"><div class="top"><h2>${RANKS[rk][1]}</h2><span>${S.xp} XP${S.streak?` · 🔥 ${S.streak}-day streak`:''}</span></div>
+  <div class="bar"><i style="width:${pct}%"></i></div><div class="mute">${nx?`${nx[0]-S.xp} XP to ${nx[1]}`:'Top rank reached. Keep sharp!'}</div>
+  <div class="badges">${Object.entries(BADGES).map(([k,[e,l]])=>`<span class="bd ${S.badges[k]?'':'off'}" title="${l}">${e} ${l}</span>`).join('')}</div></div>
+ <div class="card"><h3>${doneToday?'✅ Daily 5 complete. Come back tomorrow!':'📅 Daily 5'}</h3><p class="mute" style="margin:2px 0 8px">${next}</p><button class="pri" data-daily="1">${doneToday?'Replay Daily 5 (no streak bonus)':'Play Daily 5'}</button></div>
+ <h3 style="margin:14px 0 6px">Free play <span class="mute">· 3 rounds each, always new</span></h3><div class="grid">${Object.entries(GAMES).map(([k,g])=>`<div class="card g"><div class="ic">${g.i}</div><h3>${g.n}</h3><div class="mute">${g.d}</div><div class="mute">Played ${S.played[k]||0}× · best ${S.best[k]??'–'}%</div><button data-play="${k}">Play</button></div>`).join('')}</div>
+ <div class="card"><b>New to testing?</b> <span class="mute">Each answer explains why, with a coffee analogy. Start with <a href="start-here.html">Start Here</a>, then come back to practise. Your rank is stored on this device.</span></div>`}
+function start(queue,daily){run={q:queue,i:0,pts:0,max:0,daily,res:[]};next()}
+function next(){
+ if(run.i>=run.q.length)return finish();
+ const it=run.q[run.i];const q=GAMES[it.g].f(rng(it.seed));run.cur=q;run.it=it;
+ $('m').innerHTML=`<div class="top"><button data-home="1">← Quit</button><span class="mute">${run.daily?'Daily 5':'Free play'} · Question ${run.i+1} of ${run.q.length}</span></div>
+  <div class="card"><h2>${GAMES[it.g].i} ${q.title}</h2><p class="mute" style="margin-top:0">${q.intro}</p><div id="st">${q.html}</div><div id="out"></div><div class="btns"><button class="pri" id="chk">Check answer</button></div></div>`;
+ q.bind&&q.bind($('st'))}
+function check(){const q=run.cur,r=q.submit($('st'));if(!r){$('out').innerHTML='<div class="res part">Choose or complete your answer first.</div>';return}
+ run.pts+=r.pts;run.max+=r.max;run.res.push(r.pts===r.max);const cls=r.pts>=r.max*.8?'ok':r.pts>0?'part':'no';
+ $('out').innerHTML=`<div class="res ${cls}"><b>+${r.pts} / ${r.max}</b><br>${r.html}</div>`;
+ $('st').querySelectorAll('input,textarea,select,button').forEach(x=>x.disabled=true);
+ $('chk').outerHTML=`<button class="pri" id="nxt">${run.i+1>=run.q.length?'See results':'Next →'}</button>`}
+function finish(){const g=run.q.map(x=>x.g);[...new Set(g)].forEach(k=>S.played[k]=(S.played[k]||0)+1);
+ const pct=Math.round(run.pts/run.max*100);const newBadges=[];
+ if(!run.daily){const k=g[0];S.best[k]=Math.max(S.best[k]||0,pct)}
+ let bonus=0;if(run.daily&&S.last!==today()){const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=today();bonus=25;if(badge('daily'))newBadges.push('daily');if(S.streak>=3&&badge('streak3'))newBadges.push('streak3')}
+ if(badge('first'))newBadges.push('first');if(Object.keys(S.played).length>=5&&badge('all'))newBadges.push('all');if(pct===100&&badge('perfect'))newBadges.push('perfect');
+ const up=award(run.pts+bonus);save();
+ $('m').innerHTML=`<div class="card hero"><h2>${pct>=80?'Great work!':pct>=50?'Good effort':'Keep practising'}</h2><p style="margin:4px 0">Score <b>${run.pts}/${run.max}</b> (${pct}%) · +${run.pts+bonus} XP${bonus?` (includes +${bonus} daily bonus)`:''}</p>
+ ${up?`<p>🎉 <b>Rank up: ${RANKS[rank()][1]}!</b></p>`:''}${newBadges.map(k=>`<p>${BADGES[k][0]} New badge: <b>${BADGES[k][1]}</b></p>`).join('')}
+ <div class="mute">${pct<80?'Tip: re-read the explanation under any answer you missed; the same idea comes back in the real tests.':'You are ready to try the real thing on the Ticket Board.'}</div></div>
+ <div class="btns"><button class="pri" data-home="1">Back to Arcade</button><a href="tickets.html"><button>Go to Ticket Board</button></a></div>`}
+document.addEventListener('click',e=>{const d=e.target.dataset||{};
+ if(d.play){const base=Date.now();start([0,1,2].map(i=>({g:d.play,seed:base+i*7919})),false)}
+ else if(d.daily){const day=today();start(Object.keys(GAMES).map(g=>({g,seed:hash(day+g)})),true)}
+ else if(d.home)home();else if(e.target.id==='chk')check();else if(e.target.id==='nxt'){run.i++;next()}});
+home();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
