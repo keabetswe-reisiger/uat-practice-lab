@@ -1,9 +1,9 @@
 /* Cloud sync via a private GitHub Gist. Adds a "☁ Sync" button to every page.
    - Syncs everything this site stores in localStorage (tickets, Arcade rank, workbooks, guides).
    - Newest change per item wins. Needs a GitHub token with ONLY the "gist" permission, pasted once per device.
-   - Never syncs keys starting with "isamic" (kept off the cloud on purpose). */
+   - Some keys are deliberately kept off the cloud (see SKIP). */
 (function(){
- const CFG='uatsync-cfg',META='uatsync-meta',FILE='uat-lab-progress.json',SKIP=/^(uatsync-|isamic)/;
+ const CFG='uatsync-cfg',META='uatsync-meta',FILE='uat-lab-progress.json',SKIP=/^(uatsync-)/;
  const ls=window.localStorage;const orig=Storage.prototype.setItem;
  const rd=k=>{try{return ls.getItem(k)}catch{return null}};
  let meta={};try{meta=JSON.parse(rd(META)||'{}')}catch{}
