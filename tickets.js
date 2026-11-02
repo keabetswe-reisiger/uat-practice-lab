@@ -101,4 +101,12 @@ window.TICKETS=[
  expected:'At least one spot-the-differences round scored 75% or higher.',
  criteria:['3 rounds played','Look-around drill completed','Your most-missed kind of error noted'],
  hint:'Read each row left to right, one row at a time, like checking a delivery note.'}
+
+,{key:'UAT-115',title:'Data check: solve all 5 Data Detective cases and write the bug reports',type:'Data',priority:'High',app:'sql-lab.html',appName:'SQL data detective',env:'Practice coffee-shop database',due:'2026-11-14',est:'60 min',
+ summary:'Use SQL to find 5 planted data bugs, then turn each into a clear defect report.',
+ why:'Data testing checks that what is stored matches the rules: totals add up, no duplicates, no impossible values. Testers use simple SQL queries for this in real software companies.',coffee:'The till says 12 flat whites sold; you open the ledger and check the slips agree.',
+ steps:['Open the SQL data detective and finish lessons 1 to 8.','Open the Data Detective cases tab.','Solve each of the 5 cases using the hints only if you need them.','For each solved case copy the generated bug report and improve it with your own words.','Note which case was hardest and why.'],
+ expected:'All 5 cases solved and 5 bug reports saved in your notes.',
+ criteria:['Lessons 1-8 finished','5 cases solved','5 reports copied and tidied','Severity reasoning written for each'],
+ hint:'If a query returns nothing, check quotes around text, and whether you used > instead of >=.'}
 ];
