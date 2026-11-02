@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Start Here: Testing for Beginners</title>
+<meta name="theme-color" content="#5b3a29"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f6f3ee;--card:#fff;--ink:#1f2430;--mute:#6b7280;--line:#e3ddd3;--brand:#5b3a29;--pass:#1b7f4b;--fail:#c0392b}
+@media(prefers-color-scheme:dark){:root{--bg:#16181d;--card:#20242c;--ink:#eceff4;--mute:#9aa3b2;--line:#323844;--brand:#d9b38c}}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:760px;margin:auto;padding:16px 16px 48px}h1{color:var(--brand);margin:6px 0 2px}h2{color:var(--brand);margin:0 0 6px}.s{color:var(--mute);margin:0 0 12px}
+button,a.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:8px;text-decoration:none;display:inline-block}
+button.primary,button.on{background:var(--brand);color:#fff;border-color:var(--brand)}@media(prefers-color-scheme:dark){button.primary,button.on{color:#16181d}}
+input[type=search]{font:inherit;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);margin:10px 0 2px}
+.plain{border-left:3px solid var(--brand);padding-left:10px}.cof{background:#b08d5722;border-left:3px solid #b08d57;padding:8px 10px;border-radius:4px;margin-top:8px}
+.ex{background:var(--bg);border:1px dashed var(--line);padding:8px 10px;border-radius:8px;margin-top:8px}
+.bad{background:#c0392b22;padding:8px 10px;border-radius:6px;margin:4px 0}.good{background:#1b7f4b22;padding:8px 10px;border-radius:6px;margin:4px 0}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--brand)}
+dt{font-weight:700;color:var(--brand);margin-top:10px}dd{margin:0 0 0 0}
+.nav{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
+</style></head><body><main>
+<h1>👋 Start Here: Testing for Beginners</h1>
+<p class="s">No experience needed. Each idea comes three ways: <b>plain words</b>, a <b>coffee analogy</b>, and a <b>worked example</b>. Go in order; it takes about 30 minutes.</p>
+<p><a class="btn" href="index.html">← Home</a></p>
+<div class="bar"><i id="pb"></i></div><div class="steps" id="steps"></div><div id="view"></div>
+<script>
+const $=id=>document.getElementById(id);
+const C=(plain,cof,ex)=>`<div class="lbl">In plain words</div><div class="plain">${plain}</div><div class="lbl">Coffee analogy</div><div class="cof">☕ ${cof}</div>${ex?`<div class="lbl">Worked example</div><div class="ex">${ex}</div>`:''}`;
+const GLOSS=[
+['Acceptance criteria','The written rules a feature must meet to be accepted.','Like “a flat white has a double shot and steamed milk”.'],
+['A × B pair','A test written as the input you give (A) and the result you expect (B).','Order (A): flat white. Expect (B): a flat white in the cup.'],
+['Blocked','A test you cannot run because something else is stopping you, for example the page will not load.','The machine is off, so you cannot test the coffee.'],
+['Bug / defect','The system does something different from what was expected.','You ordered a flat white and got tea.'],
+['Build','One packaged version of the software handed to testers.','One batch of roasted beans.'],
+['Environment','The place the software runs: Dev (building), Staging (safe testing), Production (live, real users).','Dev = kitchen experiments, Staging = the practice counter, Production = the real shop with customers.'],
+['Exploratory testing','Unscripted testing where you learn and test at the same time.','Playing with the machine settings to see what happens.'],
+['Pass / Fail','Pass: actual result matches expected. Fail: it does not.','The cup is what the customer ordered, or it is not.'],
+['Regression testing','Re-running old tests after a change to check nothing else broke.','You adjust the grinder, then re-taste the other drinks too.'],
+['Role','The type of user logged in (Manager, Doctor, Cashier). What they may see or do differs.','Owner may open the till; a customer may not.'],
+['Severity','How serious a defect is: Critical (blocks release), Major (important), Minor (small).','Burnt coffee is critical; a slightly crooked lid is minor.'],
+['Sign-off','The formal “yes, this is acceptable” from the person responsible.','The owner tastes it and says “serve it”.'],
+['Smoke test','A very quick check that the build basically works before deeper testing.','One sip of the new batch before tasting everything.'],
+['Staging','A safe copy of the system used for testing, close to the live one.','The practice counter with practice orders.'],
+['Test case','One planned check: steps, expected result, and where you record Pass/Fail.','One line on a taste-test card.'],
+['UAT','User Acceptance Testing: real users check the system does what they need before go-live.','The customers confirm the coffee is what they wanted.'],
+['Version','A numbered release of the software (v1, v2).','Recipe version 1 and the new recipe version 2.']];
+const SEC=[
+{t:'1 · What is testing?',h:()=>`<h2>What is testing?</h2>`+C('Testing means using software on purpose to find out whether it works the way it is supposed to, and writing down what you find.','Tasting the coffee before the customer gets it, and noting what is off.','You are told “the Search box finds patients by name”. You type “Mokoena”, see two matching patients, and note: <b>Pass</b>. You type “mokoena” in small letters, see none, and note: <b>Fail</b>.')+`<div class="card" style="margin-top:12px"><b>Remember:</b> a tester is not trying to prove the software is good. A tester is trying to find out the truth about it.</div>`},
+{t:'2 · What is UAT?',h:()=>`<h2>What is UAT, and where do you fit?</h2>`+C('UAT (User Acceptance Testing) is the last check before a system goes live. The people who will actually use it test whether it does what <i>they</i> need. Developers already checked that it runs; you check it fits real work.','The barista built the drink. Now the regular customer tastes it and says “yes, that is what I order every morning”.','Question you keep asking: <b>“Does this do what the real user needs it to do?”</b>')+`<div class="lbl">The four places software lives</div><div class="ex"><b>Dev</b> (being built) → <b>Test</b> (testers) → <b>Staging</b> (safe copy, you test here) → <b>Production</b> (live). Never run UAT on Production: you could change real data.</div>`},
+{t:'3 · Words you will hear',h:()=>`<h2>Words you will hear</h2><p class="s">Tap a word or search. Each has a coffee version.</p><input type="search" id="gs" placeholder="Search words, e.g. regression">`+`<dl id="gl"></dl>`,after(){const draw=()=>{const q=$('gs').value.toLowerCase();$('gl').innerHTML=GLOSS.filter(g=>g.join(' ').toLowerCase().includes(q)).map(g=>`<dt>${g[0]}</dt><dd>${g[1]}<div class="cof">☕ ${g[2]}</div></dd>`).join('')};$('gs').oninput=draw;draw()}},
+{t:'4 · Your first test',h:()=>`<h2>Your first test, step by step</h2><p class="s">Do this now in the <a href="clinic-practice.html" target="_blank">Clinic booking app</a>. It takes 5 minutes.</p>`+`<div class="card"><ol>
+<li><b>Check where you are.</b> Banner on the left must say <b>STAGING</b> and <b>v2</b>. (This is the pre-flight check.)</li>
+<li><b>Read the test.</b> Open the Workbook → <b>3 Tests</b> → <b>TC-09</b>. Part <b>A</b> is what you do; part <b>B</b> is what should happen.</li>
+<li><b>Do part A.</b> On the left, log in as <b>Thabo (Doctor)</b> and open <b>Patients</b>.</li>
+<li><b>Compare with part B.</b> Expected: only 3 patients. How many do you see?</li>
+<li><b>Write what you saw</b> in “Actual result”. Be exact: “I saw 6 patients including Baby Lwazi Nkosi”.</li>
+<li><b>Mark it.</b> Not what expected → press <b>✗ Fail</b>. A defect is drafted for you.</li>
+</ol></div>`+C('A test is just: set up, do something, compare, write down the truth.','Order a flat white, look in the cup, and write “got tea”.','Here the doctor sees patients that belong to other doctors. That is a <b>Critical</b> bug: private data is visible to the wrong person.')},
+{t:'5 · Reporting a defect',h:()=>`<h2>Reporting a defect well</h2>`+C('A good defect report lets a developer see the same problem without asking you anything. It has: a clear title, steps, what you expected, what actually happened, where (environment and version), and how serious it is.','“Customer table 4 got tea” is useful. “Coffee is bad” is not.','<div class="bad"><b>Weak:</b> “Patients screen broken.”</div><div class="good"><b>Strong:</b> “Doctor sees other doctors’ patients.<br>Env: Staging v2. Steps: 1) Log in as Thabo (Doctor). 2) Open Patients.<br>Expected: 3 own patients. Actual: all 6.<br>Severity: Critical (private data exposed).”</div>')+`<div class="lbl">Severity guide</div><div class="ex"><b>Critical</b>: data exposed, money wrong, or blocks go-live.<br><b>Major</b>: important feature wrong, workaround exists.<br><b>Minor</b>: cosmetic or small annoyance.</div>`},
+{t:'6 · Other kinds of testing',h:()=>`<h2>UAT is one kind of testing of many</h2>`+C('Different tests ask different questions: Does it run (smoke)? Does it do the job (functional)? Did the fix break old things (regression)? Is it easy (usability)? Fast (performance)? Safe (security)? Works on every device (compatibility)?','One coffee, many checks: smell, taste, temperature, how fast it was served, whether the cup leaks.',`Learn each one and practise it in the <a href="testing-types.html">Testing Types Lab</a>.`)},
+{t:'7 · Your learning path',h:()=>`<h2>Your learning path</h2>`+C('Go from easy to hard. Each app adds one new skill.','Learn on a simple espresso machine first, then the full café.','')+`<div class="card"><ol>
+<li><b>Coffee ordering</b> (start here): 5 hidden bugs. Learn the workbook and A × B tests.</li>
+<li><b>Clinic booking</b>: roles, Staging vs Production, versions, 9 bugs. Learn permissions and state.</li>
+<li><b>StockWatch</b>: boundaries, rounding, multi-step bugs. Learn harder techniques.</li>
+<li><b>Testing Types Lab</b>: learn smoke, regression, usability, accessibility and more, then take the quiz.</li>
+</ol><b>Tip:</b> after each app, press “Reveal answer key” in Sign-off to see which bugs you missed, then ask yourself <i>why</i> you missed them.<br><b>Tip:</b> tap the ⓘ buttons for the exam-book explanation of each technique.</div>`}
+];
+const KEY='start-here-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.done=S.done||{};let cur=S.cur||0;
+const save=()=>{S.cur=cur;try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+function draw(){
+ const n=SEC.filter((_,i)=>S.done[i]).length;$('pb').style.width=n/SEC.length*100+'%';
+ $('steps').innerHTML=SEC.map((s,i)=>`<button data-go="${i}" class="${i===cur?'on':''}">${S.done[i]?'✓ ':''}${s.t}</button>`).join('');
+ $('view').innerHTML=`<div class="card">${SEC[cur].h()}</div><div class="nav"><button data-go="${Math.max(0,cur-1)}" ${cur===0?'disabled':''}>← Back</button><button class="primary" data-got="1">${cur===SEC.length-1?'✓ Finish':'Got it, next →'}</button></div>`;
+ SEC[cur].after&&SEC[cur].after();scrollTo(0,0)}
+document.addEventListener('click',e=>{const d=e.target.dataset||{};if(d.go!==undefined){cur=+d.go}else if(d.got){S.done[cur]=true;if(cur<SEC.length-1)cur++}else return;save();draw()});
+draw();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></main></body></html>
