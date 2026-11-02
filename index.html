@@ -6,19 +6,26 @@
 :root{--bg:#f6f3ee;--card:#fff;--ink:#1f2430;--mute:#6b7280;--line:#e3ddd3;--brand:#5b3a29}
 @media(prefers-color-scheme:dark){:root{--bg:#16181d;--card:#20242c;--ink:#eceff4;--mute:#9aa3b2;--line:#323844;--brand:#d9b38c}}
 *{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--ink)}
-main{max-width:640px;margin:auto;padding:20px 16px 40px}h1{color:var(--brand);margin:8px 0 2px}p.s{color:var(--mute);margin:0 0 16px}
-a.c{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
-a.c b{color:var(--brand);font-size:17px}a.c small{display:block;color:var(--mute)}.tag{font-size:12px;background:var(--line);padding:1px 8px;border-radius:99px;margin-left:6px}
-.t{background:#b08d5722;border-left:3px solid #b08d57;padding:8px 10px;font-size:14px;border-radius:4px;margin-top:16px}
+main{max-width:700px;margin:auto;padding:20px 16px 90px}h1{color:var(--brand);margin:8px 0 2px}p.s{color:var(--mute);margin:0 0 16px}
+h2{font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);margin:22px 0 8px}
+a.c{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin-bottom:9px}a.c:hover{border-color:var(--brand)}
+a.c b{color:var(--brand);font-size:17px}a.c small{display:block;color:var(--mute);margin-top:2px}.tag{font-size:12px;background:var(--line);padding:1px 8px;border-radius:99px;margin-left:6px;white-space:nowrap}
+.hero{background:var(--brand);color:#fff;border-radius:14px;padding:16px 18px;margin:10px 0 4px}.hero b{font-size:18px}.hero a{display:inline-block;margin-top:10px;background:#fff;color:#5b3a29;text-decoration:none;font-weight:700;border-radius:9px;padding:8px 14px}
+@media(prefers-color-scheme:dark){.hero{background:#2b2218}.hero a{background:#d9b38c;color:#16181d}}
+.path{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;font-size:14.5px}.t{background:#b08d5722;border-left:3px solid #b08d57;padding:8px 10px;font-size:14px;border-radius:4px;margin-top:18px}
 </style></head><body><main>
-<h1>✓ UAT Practice Lab</h1><p class="s">Practise user acceptance testing. Everything works offline once opened.</p>
-<a class="c" href="arcade.html"><b>🎮 Test Arcade</b><span class="tag">new</span><small>Five mini-games that never repeat: boundaries, bug spotting, defect reports, risk, severity. Daily 5, ranks and badges.</small></a>
-<a class="c" href="tickets.html"><b>🎫 Ticket board</b><span class="tag">your tasks</span><small>Test assignments from Claude, like a real project: open a ticket, run the test, record Pass / Fail.</small></a>
-<a class="c" href="start-here.html"><b>0 · Start here</b><span class="tag">begin</span><small>Never tested before? A 30-minute guide: plain words, coffee analogies, a first test, and a glossary.</small></a>
-<a class="c" href="coffee.html"><b>1 · Coffee ordering</b><span class="tag">start here</span><small>Small app, 5 hidden bugs. Learn the workbook.</small></a>
-<a class="c" href="stockwatch-practice.html"><b>3 · StockWatch stock app</b><span class="tag">harder</span><small>Boundaries, rounding, permissions, multi-step bugs.</small></a>
-<a class="c" href="clinic-practice.html"><b>2 · Clinic booking</b><span class="tag">medium</span><small>Same skills in a new setting: roles, Staging vs Production, versions, 9 bugs.</small></a>
-<a class="c" href="testing-types.html"><b>4 · Testing types lab</b><span class="tag">new</span><small>Smoke, regression, exploratory, usability, accessibility, performance, security and more. Learn, try on the Clinic app, then quiz.</small></a>
-<div class="t"><b>Tips on your phone:</b> use the <b>App</b> / <b>Workbook</b> switch at the top of each practice app. Tap <b>ⓘ</b> buttons for explanations from the ISTQB books. Your results save on this device; use Download CSV in Sign-off to keep a copy.</div>
-</main><script>if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{})</script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+<h1>✓ UAT Practice Lab</h1><p class="s">Learn how to test software, using ideas from the coffee business. Works on your phone and laptop.</p>
+<div class="hero"><b>New here? Start with the 30-minute guide.</b><br><span style="opacity:.85">It explains testing in plain words: like checking every cup before it reaches the customer.</span><br><a href="start-here.html">Open the guide →</a></div>
+<h2>Suggested path</h2><div class="path">1 · Start here guide → 2 · Coffee ordering app → 3 · Your first ticket → 4 · Test arcade, a little each day → 5 · Clinic and StockWatch apps → 6 · API lab</div>
+<h2>Your work</h2><a class="c" href="tickets.html"><b>🎫 My tickets</b><span class="tag">your tasks</span><small>Test jobs from Claude, like orders from your manager: open one, do it, tick Pass or Fail.</small></a>
+<h2>Practise on apps (each has hidden bugs)</h2><a class="c" href="coffee.html"><b>☕ Coffee ordering app</b><span class="tag">easy · start here</span><small>A small coffee-shop ordering app with 5 hidden bugs. You already know this business, so you can focus on learning how to test.</small></a>
+<a class="c" href="clinic-practice.html"><b>🩺 Clinic booking app</b><span class="tag">medium</span><small>Doctors, managers, test vs live system, old vs new version, 9 hidden bugs. Like a coffee chain with head office and branches.</small></a>
+<a class="c" href="stockwatch-practice.html"><b>📦 StockWatch stock app</b><span class="tag">harder</span><small>Counting stock, expiry dates and rounding. Very close to running a coffee storeroom.</small></a>
+<h2>Build your skills</h2><a class="c" href="arcade.html"><b>🎮 Test arcade</b><span class="tag">5 min a day</span><small>Short games that never repeat: pick the right test values, spot the bug, rate how serious it is. Earn ranks and badges.</small></a>
+<a class="c" href="testing-types.html"><b>🧪 Kinds of testing</b><span class="tag">learn</span><small>What a company means by smoke, regression, API, usability and more, with a coffee example for each.</small></a>
+<a class="c" href="careful.html"><b>🔎 Careful tester toolkit</b><span class="tag">habits</span><small>How to notice small details: checklists, note-taking, a session timer and eye-training games.</small></a>
+<a class="c" href="api-lab.html"><b>🔌 API testing lab</b><span class="tag">skill companies ask for</span><small>Test the “waiter” between the screen and the system. A safe pretend server with 8 hidden bugs.</small></a>
+<div class="t"><b>Your progress follows you.</b> Tap the <b>☁ Sync</b> button (bottom right) once on each device to connect. <b>On a phone:</b> use the App / Workbook switch at the top of each practice app, and tap <b>ⓘ</b> for plain explanations.</div>
+</main><script>if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{})</script>
+<!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

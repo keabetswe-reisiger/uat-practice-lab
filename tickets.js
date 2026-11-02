@@ -79,4 +79,26 @@ window.TICKETS=[
  expected:'A recommendation with a justification that mentions Critical defects first.',
  criteria:['Recommendation chosen','Critical defects mentioned','Ticket keys cited'],
  hint:'Any Critical defect normally means “Do not approve” until it is fixed.'}
+
+,{key:'UAT-112',title:'API test: find the 8 hidden bugs in the pretend Clinic API',type:'API',priority:'High',app:'api-lab.html',appName:'API testing lab',env:'Pretend server in the browser',due:'2026-11-12',est:'30 min',
+ summary:'Send requests to the pretend server and check status codes, data and who is allowed to do what.',
+ why:'API testing checks the “waiter” between screens and the system. Many software companies expect testers to do this because a bug here hurts every screen that uses it.',coffee:'You test whether the right order reaches the kitchen and the right dish comes back, without looking at the menu board.',
+ steps:['Open the API lab and read the intro.','Log in as Manager (POST /login) and use the token.','Work through the checklist: happy path, missing field, bad value, not found, no token, wrong role, page limits.','After every change (POST, PUT, DELETE), do a GET to check it really changed.','Tick each bug only when you have a request and response as evidence.'],
+ expected:'Every request returns the right status code and data. Anything else is a bug to log.',
+ criteria:['At least 8 different requests sent','Checklist at least 8/10 covered','Evidence noted for each bug you claim'],
+ hint:'Ask for something that does not exist. Send a request with no token. Repeat a request as the Doctor.'}
+,{key:'UAT-113',title:'Exploratory session: run one full 30-minute session and write the debrief',type:'Exploratory',priority:'Medium',app:'careful.html',appName:'Careful tester toolkit',env:'Staging · v2 (Clinic app)',due:'2026-11-12',est:'35 min',
+ summary:'Run a proper time-boxed session with a charter, timestamped notes and a debrief.',
+ why:'Professional teams run exploratory testing in time-boxed sessions with a written mission (a charter) and notes that make sense months later.',coffee:'A cupping session: set a goal, taste for a fixed time, write notes, then discuss what you found and what you skipped.',
+ steps:['Open Careful toolkit → 4 Session studio.','Choose an example charter and a 30-minute session.','Open the Clinic app and test while the timer runs.','Log notes with the buttons: Note, Bug, Question, Idea, Obstacle.','When time is up, fill in the debrief and save the session.'],
+ expected:'One saved session with a charter, at least 6 timestamped notes and a debrief.',
+ criteria:['Charter written','6+ notes logged','Debrief saved','Areas not covered listed'],
+ hint:'If you get stuck, switch role and try the same action again. Log a Question instead of guessing.'}
+,{key:'UAT-114',title:'Attention drill: score 75% or more on the spot-the-differences game',type:'Usability',priority:'Low',app:'careful.html',appName:'Careful tester toolkit',env:'Browser',due:'2026-11-13',est:'10 min',
+ summary:'Train your eye for small differences, then compare your habits with the checklist.',
+ why:'Missing small details is normal (it is called inattentional blindness). The cure is slower, more systematic reading and checklists.',coffee:'Reading every line of the order slip instead of only the drink name.',
+ steps:['Open Careful toolkit → 5 Eagle-eye training.','Play “Spot the differences” three times.','Play “The look-around drill” once.','Note which kinds of mistakes you missed most.'],
+ expected:'At least one spot-the-differences round scored 75% or higher.',
+ criteria:['3 rounds played','Look-around drill completed','Your most-missed kind of error noted'],
+ hint:'Read each row left to right, one row at a time, like checking a delivery note.'}
 ];

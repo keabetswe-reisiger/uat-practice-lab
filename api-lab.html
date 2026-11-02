@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>API Testing Lab</title>
+<meta name="theme-color" content="#11203b"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+@media(prefers-color-scheme:dark){:root{--bg:#0f131a;--card:#1a2029;--ink:#eaeef5;--mute:#98a2b3;--line:#2b3340;--brand:#0b1220;--accent:#d9b38c;--blue:#6ea0ff;--green:#4cc88a;--red:#ff7b6b;--amber:#f0b45a}}
+*{box-sizing:border-box}body{margin:0;font:15.5px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1100px;margin:auto;padding:14px 16px 90px;display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:860px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 3px #1018281a;min-width:0}.full{grid-column:1/-1}
+h2{margin:0 0 6px;font-size:18px}h3{margin:0 0 4px;font-size:15px;color:var(--brand)}@media(prefers-color-scheme:dark){h3{color:var(--accent)}}
+.mute{color:var(--mute);font-size:13.5px}.cof{border-left:3px solid var(--accent);padding:4px 10px;margin-top:8px;background:#b08d5714;border-radius:4px;font-size:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:9px;font-weight:600}button.pri{background:var(--blue);border-color:var(--blue);color:#fff}@media(prefers-color-scheme:dark){button.pri{color:#0f131a}}
+input,select,textarea{font:inherit;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 9px}textarea{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.row{display:grid;grid-template-columns:110px 1fr;gap:8px;margin-bottom:8px}label.f{font-size:12.5px;font-weight:600;color:var(--mute);display:block;margin:8px 0 3px}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;margin:6px 0 0;overflow:auto;font-size:13px;max-height:320px}
+.st{display:inline-block;padding:2px 10px;border-radius:99px;font-weight:700;font-size:13px}.s2{background:#16794a22;color:var(--green)}.s4{background:#b7791f22;color:var(--amber)}.s5{background:#c0392b22;color:var(--red)}
+.ch button{font-weight:400;font-size:13px;margin:3px 3px 0 0}label.cb{display:flex;gap:8px;align-items:flex-start;padding:4px 0}label.cb input{margin-top:5px;width:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}td,th{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+</style></head><body>
+<header><h1>🔌 <span>API</span> Testing Lab</h1><div class="sp"></div><a href="careful.html">Careful toolkit</a><a href="tickets.html">Tickets</a><a href="index.html">Home</a></header>
+<main>
+<div class="card full"><h2>What is an API, and why do testers need it?</h2>
+<p style="margin:0 0 4px"><b>In plain words:</b> an API is how screens and systems talk to the server: the app sends a <i>request</i> (“give me patient 1”) and gets back a <i>response</i> (a status code plus data). Many companies expect testers to check this layer, because bugs here affect every app that uses it, and you can test it before any screen exists.</p>
+<div class="cof">☕ The waiter between the dining room and the kitchen. You test whether the right order reaches the kitchen and the right dish comes back, without needing to look at the menu board (the screen).</div>
+<p class="mute" style="margin:8px 0 0">This is a safe, pretend server that lives in your browser (nothing is sent anywhere). It has <b>8 hidden bugs</b>. Log in first to get a token: <code>POST /login</code> with <code>{"user":"Sipho","password":"clinic123"}</code> (Manager) or user <code>Thabo</code> (Doctor).</p></div>
+
+<div><div class="card"><h3>1 · Build a request</h3>
+<div class="row"><select id="m"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select><input id="p" value="/patients" spellcheck="false"></div>
+<label class="f">Authorization header (paste “Bearer …” token)</label><input id="au" placeholder="Bearer tok-sipho" spellcheck="false">
+<label class="f">Body (JSON), for POST / PUT</label><textarea id="b" rows="4" spellcheck="false"></textarea>
+<div class="btns" style="margin-top:8px"><button class="pri" id="send">Send ▶</button><button id="rs">Reset server data</button></div>
+<div class="ch mute" style="margin-top:8px">Quick starts:<br>
+<button data-q="POST|/login|{&quot;user&quot;:&quot;Sipho&quot;,&quot;password&quot;:&quot;clinic123&quot;}|">Log in as Manager</button><button data-q="POST|/login|{&quot;user&quot;:&quot;Thabo&quot;,&quot;password&quot;:&quot;clinic123&quot;}|">Log in as Doctor</button><button data-q="GET|/patients||tok-sipho">List patients</button><button data-q="GET|/patients/1||tok-sipho">Get patient 1</button><button data-q="POST|/patients|{&quot;name&quot;:&quot;Sam Dube&quot;,&quot;type&quot;:&quot;Adult&quot;}|tok-sipho">Create patient</button></div></div>
+<div class="card"><h3>History</h3><div id="hist" class="mute">No requests yet.</div></div></div>
+
+<div><div class="card"><h3>2 · Response</h3><div id="rsp" class="mute">Send a request to see the response.</div></div>
+<div class="card"><h3>Status codes in one minute</h3><table><tr><td><b>200</b></td><td>OK (it worked)</td></tr><tr><td><b>201</b></td><td>Created (a new item was made)</td></tr><tr><td><b>204</b></td><td>No content (worked, nothing to return)</td></tr><tr><td><b>400</b></td><td>Bad request (your input is wrong)</td></tr><tr><td><b>401</b></td><td>Not logged in / bad token</td></tr><tr><td><b>403</b></td><td>Logged in but not allowed</td></tr><tr><td><b>404</b></td><td>Not found</td></tr><tr><td><b>500</b></td><td>Server broke (always a bug)</td></tr></table></div></div>
+
+<div class="card full"><h3>3 · The API tester’s checklist (tick as you go)</h3><div id="chk"></div></div>
+<div class="card full"><h3>4 · Which bugs did you find?</h3><p class="mute" style="margin-top:0">Tick a bug when you have <b>evidence</b> (a request and response that prove it). Then reveal the key to compare.</p><div id="keyarea"></div></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TYPES=['Adult','Child','Senior','Antenatal'];
+const seed=()=>[{id:1,name:'Zanele Mokoena',type:'Adult',doctor:'Thabo',internalNote:'Allergic to penicillin (CONFIDENTIAL)'},{id:2,name:'Baby Lwazi Nkosi',type:'Child',doctor:'Naledi'},{id:3,name:'Gogo Martha Sithole',type:'Senior',doctor:'Thabo'},{id:4,name:'Palesa Molefe',type:'Antenatal',doctor:'Naledi'},{id:5,name:'Johan van Wyk',type:'Adult',doctor:'Naledi'}];
+let DB=seed(),nextId=6;
+const TOK={'tok-sipho':{u:'Sipho',role:'Manager'},'tok-thabo':{u:'Thabo',role:'Doctor'}};
+/* ======= PRETEND SERVER (deliberate bugs marked B1..B8, answer key at the bottom) ======= */
+function serve(method,url,auth,body){
+ const u=new URL(url,'http://x');const path=u.pathname;const q=u.searchParams;const tk=TOK[(auth||'').replace(/^Bearer\s+/i,'').trim()];
+ let json;if(body&&body.trim()){try{json=JSON.parse(body)}catch{return[400,{error:'Body is not valid JSON'}]}}
+ if(method==='POST'&&path==='/login'){if(json&&json.password==='clinic123'&&(json.user==='Sipho'||json.user==='Thabo'))return[200,{token:'tok-'+json.user.toLowerCase(),role:json.user==='Sipho'?'Manager':'Doctor'}];return[401,{error:'Invalid credentials'}]}
+ if(!path.startsWith('/patients'))return[404,{error:'Unknown endpoint'}];
+ if(!tk&&!(method==='GET'&&path==='/patients'))return[401,{error:'Missing or invalid token'}];   // B3: GET /patients needs no token
+ const m=path.match(/^\/patients\/(\d+)$/);
+ if(method==='GET'&&path==='/patients'){let l=DB.map(x=>({id:x.id,name:x.name,type:x.type,doctor:x.doctor}));   // B8: doctors get all patients, not only their own
+  if(q.get('type'))l=l.filter(x=>x.type===q.get('type'));const size=Math.min(+q.get('size')||10,50);const page=+q.get('page')||1;
+  const items=l.slice(0,size);                                                                   // B4: page is ignored, always page 1
+  return[200,{page,size,total:l.length,items}]}
+ if(m&&method==='GET'){const p=DB.find(x=>x.id===+m[1]);if(!p)return[200,null];                    // B1: unknown id returns 200 null instead of 404
+  return[200,p]}                                                                                 // B7: leaks internalNote to everyone
+ if(method==='POST'&&path==='/patients'){if(tk.role!=='Manager')return[403,{error:'Managers only'}];
+  if(!json)return[400,{error:'Body required'}];
+  if(json.type!==undefined&&!TYPES.includes(json.type))return[400,{error:'type must be one of '+TYPES.join(', ')}];
+  const p={id:nextId++,name:json.name,type:json.type||'Adult',doctor:'Unassigned'};DB.push(p);return[201,p]}   // B2: missing name is accepted
+ if(m&&method==='PUT'){if(tk.role!=='Manager')return[403,{error:'Managers only'}];const p=DB.find(x=>x.id===+m[1]);if(!p)return[404,{error:'Not found'}];
+  Object.assign(p,json||{});return[200,p]}                                                       // B5: no validation, type 'Alien' accepted
+ if(m&&method==='DELETE'){if(tk.role!=='Manager')return[403,{error:'Managers only'}];const p=DB.find(x=>x.id===+m[1]);if(!p)return[404,{error:'Not found'}];
+  return[200,{deleted:true}]}                                                                    // B6: says deleted, but the patient is still there
+ return[405,{error:'Method not allowed'}]}
+const KEYS=[['B1','GET /patients/999 returns 200 with null','Should be 404 Not Found','Negative test: ask for something that does not exist.'],['B2','POST /patients with no name returns 201','Should be 400: name is required','Negative test: leave out a required field.'],['B3','GET /patients works without a token','Should be 401 Unauthorized','Security: send the request with no Authorization header.'],['B4','GET /patients?page=2 returns page 1 again','Should return the next set of items','Pagination: try page=2&size=2 and compare with page=1.'],['B5','PUT /patients/1 accepts type “Alien”','Should be 400: invalid type','Validation: send a value that is not in the allowed list.'],['B6','DELETE /patients/2 says deleted but the patient remains','Should actually delete (and ideally return 204)','State: after any change, GET the item again to check it really changed.'],['B7','GET /patients/1 exposes internalNote (confidential)','Private fields must not be returned','Read the whole response body, not just the status code.'],['B8','Doctor token can list ALL patients','Doctor should only see their own','Role test: repeat the same request with Manager and Doctor tokens.']];
+const CHECK=['Status code is the one the rule says (not just “some 200”)','Response body has the right fields and types, nothing extra or private','Happy path works (valid request)','Negative: missing required field','Negative: wrong type or value not in the allowed list','Negative: item that does not exist (expect 404)','Auth: no token, bad token, wrong role (401 / 403)','Boundary: page size 0, 1, max, max+1','State: GET again after POST / PUT / DELETE to confirm it really changed','I read the response body word by word (look-around!)'];
+const KEY='apilab-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.chk=S.chk||{};S.found=S.found||{};S.reveal=!!S.reveal;S.sent=S.sent||0;const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+let H=[];
+function drawChk(){$('chk').innerHTML=CHECK.map((c,i)=>`<label class="cb"><input type="checkbox" data-c="${i}" ${S.chk[i]?'checked':''}> ${c}</label>`).join('')+`<div class="mute">${CHECK.filter((_,i)=>S.chk[i]).length}/${CHECK.length} covered</div>`}
+function drawKey(){const f=KEYS.filter(k=>S.found[k[0]]).length;$('keyarea').innerHTML=`<div class="mute">Found: ${f}/8 · requests sent: ${S.sent}</div>`+KEYS.map(k=>`<label class="cb"><input type="checkbox" data-f="${k[0]}" ${S.found[k[0]]?'checked':''}> I found a bug with evidence (${k[0]})</label>`).join('')+`<div class="btns" style="margin-top:6px"><button id="rv">${S.reveal?'Hide':'Reveal'} the answer key</button></div>`+(S.reveal?`<table><tr><th>Bug</th><th>What is wrong</th><th>Expected</th><th>How to find it</th><th>You</th></tr>${KEYS.map(k=>`<tr><td>${k[0]}</td><td>${esc(k[1])}</td><td>${esc(k[2])}</td><td>${esc(k[3])}</td><td>${S.found[k[0]]?'✅':'❌'}</td></tr>`).join('')}</table>`:'')}
+function drawHist(){$('hist').innerHTML=H.length?H.map((h,i)=>`<div><button data-h="${i}" style="font-weight:400;font-size:12.5px;padding:3px 8px">${h.m} ${esc(h.p)}</button> <span class="st s${String(h.s)[0]}">${h.s}</span></div>`).join(''):'No requests yet.'}
+function show(r){const cls='s'+String(r.s)[0];$('rsp').innerHTML=`<span class="st ${cls}">${r.s} ${({200:'OK',201:'Created',204:'No Content',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',405:'Method Not Allowed',500:'Server Error'})[r.s]||''}</span> <span class="mute">${r.ms} ms · ${r.m} ${esc(r.p)}</span><pre>${esc(JSON.stringify(r.b,null,2))}</pre>`}
+document.addEventListener('click',e=>{const d=e.target.dataset||{};
+ if(e.target.id==='send'){const m=$('m').value,p=$('p').value.trim()||'/',a=$('au').value.trim(),b=$('b').value;const t=performance.now();
+  const [s,body]=serve(m,p,a,b);const ms=Math.round(20+Math.random()*60+(performance.now()-t));const r={m,p,s,b:body,ms};H.unshift(r);H=H.slice(0,15);S.sent++;save();show(r);drawHist();drawKey()}
+ else if(e.target.id==='rs'){DB=seed();nextId=6;$('rsp').innerHTML='<span class="mute">Server data reset to its starting state.</span>'}
+ else if(e.target.id==='rv'){S.reveal=!S.reveal;save();drawKey()}
+ else if(d.q){const[m,p,b,tk]=d.q.split('|');$('m').value=m;$('p').value=p;$('b').value=b;$('au').value=tk?'Bearer '+tk:''}
+ else if(d.h!==undefined){show(H[+d.h])}});
+document.addEventListener('change',e=>{const d=e.target.dataset||{};if(d.c!==undefined){S.chk[d.c]=e.target.checked;save();drawChk()}else if(d.f){S.found[d.f]=e.target.checked;save();drawKey()}});
+drawChk();drawKey();drawHist();
+</script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

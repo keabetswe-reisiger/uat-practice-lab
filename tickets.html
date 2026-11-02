@@ -84,6 +84,7 @@ function drawer(){
   <div class="sec"><h4>Details</h4><p style="margin-top:0">${esc(t.summary)}</p><div class="grid"><div><span>Reporter</span><br>${esc(M.reporter)}</div><div><span>Assignee</span><br>${esc(M.assignee)}</div><div><span>Environment</span><br>${esc(t.env)}</div><div><span>Due / estimate</span><br>${t.due} · ${t.est}</div></div>
   <div class="btns"><a class="open" href="${t.app}" target="_blank" rel="noopener">Open ${esc(t.appName)} ↗</a>${x.status==='Open'?`<button class="act go" data-st="In progress">Start testing</button>`:''}</div></div>
   <div class="sec teach"><h4>New to this? Read first</h4><b>What is a ${esc(t.type.toLowerCase())} test?</b> ${esc(t.why)}<br><b>☕ Coffee version:</b> ${esc(t.coffee)}</div>
+  <div class="sec"><h4>Careful-tester reminder</h4>Read the expected result twice before you start. Write what you <b>see</b>, not what you think. After each check, take a 10-second look-around. <a href="careful.html" target="_blank">Open the toolkit ↗</a></div>
   <div class="sec"><h4>Steps to perform</h4><ol>${t.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div>
   <div class="sec"><h4>Expected result</h4>${esc(t.expected)}</div>
   <div class="sec"><h4>Acceptance criteria (${done}/${t.criteria.length})</h4>${t.criteria.map((c,i)=>`<label class="cb"><input type="checkbox" data-crit="${i}" ${x.crit[i]?'checked':''}> ${esc(c)}</label>`).join('')}<details style="margin-top:8px"><summary>Stuck? Show a hint</summary><p>${esc(t.hint)}</p></details></div>
