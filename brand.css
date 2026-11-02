@@ -1,0 +1,75 @@
+/* Reisiger look: dark-first, near-black + gold, Manrope + Geist Mono.
+   Tokens taken from reisiger.io's compiled CSS (2 Nov 2026). Loaded LAST on every page so it wins. */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
+:root{
+ --r-bg:#0d0c0a;--r-card:#141210;--r-muted:#1e1c1a;--r-line:#272421;--r-ink:#fbfaf9;--r-mute:#aba59c;--r-gold:#c9a66e;--r-gold-deep:#a98850;--r-on-gold:#11100d;
+ --bg:#0d0c0a!important;--card:#141210!important;--ink:#fbfaf9!important;--mute:#aba59c!important;--line:#272421!important;
+ --brand:#c9a66e!important;--accent:#c9a66e!important;--blue:#c9a66e!important;
+ --green:#7fc29b!important;--red:#e8907f!important;--amber:#d9b373!important;--pass:#7fc29b!important;--fail:#e8907f!important;--block:#d9b373!important;--pend:#7a746b!important;
+ color-scheme:dark}
+html{background:#0d0c0a}
+body{background:var(--r-bg)!important;color:var(--r-ink)!important;font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif!important;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+h1,h2,h3,h4{font-family:"Manrope",system-ui,sans-serif!important;letter-spacing:-.02em}h1,h2{font-weight:800}h3,h4{font-weight:700}
+h1{color:var(--r-ink)!important}h2{color:var(--r-ink)}h3{color:var(--r-gold)!important}
+code,pre,.timer,.built,.log,textarea.sql,textarea,table.r,.rc,.screen{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important}
+textarea{font-size:13.5px}
+a{color:var(--r-gold)}
+/* top bars */
+header{background:var(--r-bg)!important;border-bottom:1px solid var(--r-line);color:var(--r-ink)!important}
+header h1{font-weight:700;font-size:16px;letter-spacing:.01em}header h1 span{color:var(--r-gold)!important}
+header a{color:var(--r-mute)!important;border:0!important;padding:5px 9px!important;font-weight:500}header a:hover{color:var(--r-gold)!important}
+/* surfaces */
+.card,.sec,.stat,.tk,.col,.drawer,#us-p,details.card{background:var(--r-card)!important;border:1px solid var(--r-line)!important;box-shadow:none!important;border-radius:14px}
+.col{background:#0000001f!important}.tk{border-radius:10px}.tk:hover,a.c:hover{border-color:var(--r-gold)!important}
+.dh{background:var(--r-card)!important;border-bottom:1px solid var(--r-line)!important}.drawer{background:var(--r-bg)!important}
+a.c{background:var(--r-card)!important;border:1px solid var(--r-line)!important;border-radius:14px!important;transition:border-color .15s}
+a.c b{color:var(--r-ink)!important;font-weight:700}a.c small{color:var(--r-mute)!important}
+.tag,.chip,.pill{background:var(--r-muted)!important;color:var(--r-mute)!important;border:1px solid var(--r-line);font-family:"Geist Mono",monospace;font-size:11px!important;letter-spacing:.02em}
+.c-Critical,.s-Failed{background:#e8907f22!important;color:#e8907f!important}.c-High,.s-Blocked{background:#d9b37322!important;color:#d9b373!important}.c-Medium,.s-In{background:#c9a66e22!important;color:#c9a66e!important}.s-Passed{background:#7fc29b22!important;color:#7fc29b!important}
+/* controls */
+button,a.btn,a.open{border-radius:8px!important;border:1px solid var(--r-line)!important;background:transparent!important;color:var(--r-ink)!important;font-weight:600;transition:border-color .15s,color .15s}
+button:hover:not(:disabled){border-color:var(--r-gold)!important;color:var(--r-gold)!important}
+button.on,button.pri,button.primary,button.go,.tabs button.on,a.open{background:var(--r-gold)!important;border-color:var(--r-gold)!important;color:var(--r-on-gold)!important}
+button.on:hover,button.pri:hover,button.primary:hover,button.go:hover,a.open:hover{background:var(--r-gold-deep)!important;color:var(--r-on-gold)!important}
+button.ok{background:#7fc29b!important;border-color:#7fc29b!important;color:#0d0c0a!important}button.no{background:#e8907f!important;border-color:#e8907f!important;color:#0d0c0a!important}button.hold{background:#d9b373!important;border-color:#d9b373!important;color:#0d0c0a!important}
+input,select,textarea{background:var(--r-muted)!important;color:var(--r-ink)!important;border:1px solid var(--r-line)!important;border-radius:8px!important}
+input:focus,select:focus,textarea:focus{outline:2px solid #c9a66e66;outline-offset:1px;border-color:var(--r-gold)!important}
+::placeholder{color:#7a746b!important}
+input[type=checkbox],input[type=radio]{accent-color:var(--r-gold)}
+/* notes, tips, analogies */
+.cof,.tip,main>.t,.teach,.spec,.stage{background:#c9a66e12!important;border-left:3px solid var(--r-gold)!important;color:var(--r-ink)}
+.plain{border-left-color:var(--r-gold)!important}.key{background:var(--r-gold)!important;color:var(--r-on-gold)!important}
+.res.ok,.good{background:#7fc29b1c!important}.res.no,.bad{background:#e8907f1c!important}.res.part,.res.info,.msg.ok{background:#c9a66e16!important}.msg.err{background:#e8907f1c!important}
+.ok{color:inherit}.err{color:#e8907f}
+/* hero panels */
+.hero{background:linear-gradient(135deg,#1e1c1a,#141210)!important;border:1px solid var(--r-line)!important;color:var(--r-ink)!important}.hero .mute{color:var(--r-mute)!important}
+.hero a{background:var(--r-gold)!important;color:var(--r-on-gold)!important;border-radius:8px!important;font-weight:700}
+.bar i,.prog i{background:var(--r-gold)}.bar{background:var(--r-muted)!important}.prog{background:var(--r-muted)}
+.rk b{background:var(--r-gold)!important;color:var(--r-on-gold)!important}
+table,th,td{border-color:var(--r-line)!important}th{background:var(--r-muted)!important;color:var(--r-mute)}
+pre,.log,.built,pre.rep,pre.r{background:var(--r-muted)!important;border:1px solid var(--r-line)!important;color:var(--r-ink)}
+code{background:var(--r-muted)!important;border:1px solid var(--r-line)!important;color:var(--r-gold)}
+.mute,.sub,small,.foot,.ev,.log,label.f,.k{color:var(--r-mute)}.k{color:var(--r-gold)}
+/* section labels become Reisiger-style mono eyebrows */
+main>h2,.eyebrow{font-family:"Geist Mono",ui-monospace,monospace!important;font-size:12px!important;font-weight:500!important;letter-spacing:.16em!important;text-transform:uppercase;color:var(--r-mute)!important;margin:30px 0 10px!important}
+main>h2 em{font-style:normal;color:var(--r-gold)}
+.eyebrow{margin:0 0 6px!important;color:var(--r-gold)!important}
+/* mock "screens" stay light on purpose so they read like real app screens */
+.screen,.rc{background:#fbfaf9!important;color:#16202f!important;border-color:#3a3631!important}.rc *{color:#16202f}.rc .sel{color:#16202f}
+.screen *{color:inherit}
+/* sync button + panel */
+#us-b{background:var(--r-card)!important;color:var(--r-ink)!important;border:1px solid var(--r-line)!important;box-shadow:0 4px 18px #0008!important;font-family:"Manrope",sans-serif!important}#us-b:hover{border-color:var(--r-gold)!important}
+#us-p{color:var(--r-ink)!important}#us-p input{background:var(--r-muted)!important;color:var(--r-ink)!important;border-color:var(--r-line)!important}#us-p .pri{background:var(--r-gold)!important;border-color:var(--r-gold)!important;color:var(--r-on-gold)!important}#us-p a.us-a{color:var(--r-gold)!important}
+/* scrollbars + selection */
+::selection{background:#c9a66e55}*{scrollbar-color:#3a3631 #0d0c0a}
+/* leftover blues -> gold, pop-ups in brand font */
+.xl{background:#c9a66e12!important;border:1px solid #c9a66e44!important}
+table.intro td.hl,table.intro th.hl{background:#c9a66e33!important;outline:2px solid #c9a66e!important}
+.rc .t:hover{background:#c9a66e33!important}.rc .sel{background:#c9a66e55!important;outline:2px solid #c9a66e!important}
+.lrn-card{font-family:"Manrope",system-ui,sans-serif!important;background:var(--r-card)!important;border:1px solid var(--r-line)!important}
+.lrn-card .box{background:var(--r-muted)!important}.lrn-card blockquote{background:#c9a66e12!important;border-left-color:#c9a66e!important}
+.lrn-dock button,.lrn-i{background:var(--r-card)!important;border:1px solid var(--r-line)!important;box-shadow:0 4px 18px #0008!important}
+button.act.go{background:var(--r-gold)!important;border-color:var(--r-gold)!important;color:var(--r-on-gold)!important}
+body{padding-bottom:80px!important}
+.badge.b-Pass,.badge.b-Fail,.badge.b-Blocked{color:#0d0c0a!important}.badge{font-weight:700}
+#us-p .m{color:#aba59c!important}

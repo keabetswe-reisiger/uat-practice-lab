@@ -36,9 +36,9 @@
    if(ch){const last=+(sessionStorage.getItem('uatsync-rl')||0);if(!manual&&Date.now()-last>15000){sessionStorage.setItem('uatsync-rl',Date.now());location.reload();return}changedRemote=true;render()}}
   catch(e){setStatus(e.message||'Sync failed. Check your connection.','err')}finally{busy=false}}
  /* ---------- UI ---------- */
- const css=document.createElement('style');css.textContent=`#us-b{position:fixed;right:14px;bottom:14px;z-index:9999;font:600 13px system-ui,sans-serif;background:#11203b;color:#fff;border:1px solid #ffffff55;border-radius:99px;padding:8px 14px;cursor:pointer;box-shadow:0 2px 8px #0005}
+ const css=document.createElement('style');css.textContent=`#us-b{position:fixed;left:14px;bottom:14px;z-index:9999;font:600 13px system-ui,sans-serif;background:#11203b;color:#fff;border:1px solid #ffffff55;border-radius:99px;padding:8px 14px;cursor:pointer;box-shadow:0 2px 8px #0005}
 #us-b i{display:inline-block;width:8px;height:8px;border-radius:99px;background:#98a2b3;margin-right:6px}#us-b.ok i{background:#4cc88a}#us-b.err i{background:#ff7b6b}
-#us-p{position:fixed;right:14px;bottom:56px;z-index:9999;width:min(340px,calc(100vw - 28px));background:#fff;color:#16202f;border:1px solid #cbd2dc;border-radius:14px;padding:14px;font:14px/1.45 system-ui,sans-serif;box-shadow:0 8px 30px #0006;display:none}
+#us-p{position:fixed;left:14px;bottom:56px;z-index:9999;width:min(340px,calc(100vw - 28px));background:#fff;color:#16202f;border:1px solid #cbd2dc;border-radius:14px;padding:14px;font:14px/1.45 system-ui,sans-serif;box-shadow:0 8px 30px #0006;display:none}
 @media(prefers-color-scheme:dark){#us-p{background:#1a2029;color:#eaeef5;border-color:#2b3340}}
 #us-p h4{margin:0 0 6px;font-size:15px}#us-p input{width:100%;font:inherit;padding:7px 9px;border:1px solid #cbd2dc;border-radius:8px;background:transparent;color:inherit;margin:6px 0}
 #us-p button,#us-p a.us-a{font:600 13px system-ui;border:1px solid #cbd2dc;background:transparent;color:inherit;border-radius:8px;padding:6px 11px;cursor:pointer;text-decoration:none;display:inline-block;margin:4px 4px 0 0}

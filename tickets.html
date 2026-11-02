@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>UAT Ticket Board</title>
-<meta name="theme-color" content="#11203b"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f;--grey:#667085;--shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08)}
 @media(prefers-color-scheme:dark){:root{--bg:#0f131a;--card:#1a2029;--ink:#eaeef5;--mute:#98a2b3;--line:#2b3340;--brand:#0b1220;--accent:#d9b38c;--blue:#6ea0ff;--green:#4cc88a;--red:#ff7b6b;--amber:#f0b45a;--shadow:none}}
@@ -45,7 +45,8 @@ details summary{cursor:pointer;color:var(--blue);font-weight:600}
 .empty{color:var(--mute);font-size:13px;text-align:center;padding:14px}
 @media(max-width:700px){.cols{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
 @media print{header,.bar,.overlay,#export{display:none}body{background:#fff}}
-</style></head><body>
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
 <header><h1>🎫 <span>UAT</span> Ticket Board</h1><div class="sp"></div><a href="start-here.html">Start here</a><a href="index.html">Home</a><button id="csv">Export report</button><button id="print">Print</button></header>
 <main>
 <div class="meta" id="meta"></div>
