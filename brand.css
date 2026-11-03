@@ -114,15 +114,11 @@ body{background-color:#0d0c0a!important;background-image:
  background-attachment:fixed!important;background-repeat:no-repeat!important}
 .card,.sec,.stat,.col,details.card,a.c{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 header{background:rgba(13,12,10,.72)!important;backdrop-filter:blur(8px)}
-/* page background from the wallpaper palette: shadow #0B2E3F, ice teal #1FA3C4, light #7FD8E8, rust #C2552E. Kept dark so text stays readable. */
+/* page background: the ice-beach wallpaper, softened and darkened so text stays readable. Colours fall back to the wallpaper palette if the photo is missing. */
 html{min-height:100%;background-color:#0B2E3F!important;background-image:
- radial-gradient(1000px 520px at 50% -8%,rgba(127,216,232,.20),transparent 68%),
- radial-gradient(1100px 760px at 92% 8%,rgba(31,163,196,.44),transparent 66%),
- radial-gradient(1000px 700px at 4% 38%,rgba(31,163,196,.26),transparent 66%),
- radial-gradient(1100px 760px at 100% 100%,rgba(194,85,46,.46),transparent 66%),
- radial-gradient(900px 600px at 0% 104%,rgba(194,85,46,.26),transparent 66%),
- linear-gradient(160deg,#0B2E3F 0%,#0c3a4f 48%,#0B2E3F 100%)!important;
- background-attachment:fixed!important;background-repeat:no-repeat!important}
+ linear-gradient(rgba(6,16,22,.58),rgba(6,16,22,.70)),
+ url(bg.jpg)!important;
+ background-size:cover!important;background-position:center!important;background-attachment:fixed!important;background-repeat:no-repeat!important}
 body{background:transparent!important}
 
 /* labels that sit directly on the coloured background get lighter ink */
