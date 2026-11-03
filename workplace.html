@@ -55,5 +55,5 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
  if(d.next){const s=sec();if(S.les<s.lessons.length-1)S.les++;sel=[];save();render();window.scrollTo(0,0);return}
  if(d.copy){const l=sec().lessons[S.les];navigator.clipboard&&navigator.clipboard.writeText(l.code).then(()=>{t.textContent='Copied ✓'});return}});
 render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

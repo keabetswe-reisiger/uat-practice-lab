@@ -155,6 +155,8 @@ document.addEventListener('input',e=>{if(e.target.id==='tq'){S.tq=e.target.value
 document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;const k=e.key;if(S.tab==='practice'&&P&&P.i<P.refs.length){if('1234'.includes(k)&&!P.done){P.sel=+k-1;render()}else if(k==='Enter'){const b=document.querySelector('[data-pcheck]:not(:disabled),[data-pnext]');b&&b.click()}}else if(S.tab==='mock'&&S.cur){if('1234'.includes(k)){S.cur.ans[S.cur.i]=+k-1;save();render()}}});
 setInterval(()=>{if(S.tab==='mock'&&S.cur){const lf=left();const t=$('tmr');if(t){t.textContent=fmt(lf);t.classList.toggle('low',lf<300)}if(lf<=0)finishMock()}},1000);
 if(S.cur&&left()<=0){finishMock()}else render();
+function hashGo(){const h=location.hash.slice(1);if(h==='due'){startPractice({mode:'due',n:20})}else if(h==='mock'){S.tab='mock';save();render()}else if(/^learn-\d$/.test(h)){S.lch=+h.slice(6);S.tab='learn';save();render()}}
+window.addEventListener('hashchange',hashGo);hashGo();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

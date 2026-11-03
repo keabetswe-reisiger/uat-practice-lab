@@ -98,5 +98,5 @@ document.addEventListener('change',e=>{const id=e.target.id,v=e.target.value;
  else if(id==='ca'){S.ca=+v}else if(id==='cb'){S.cb=+v}
  else if(['ea','em','eb','ed'].includes(id)){S[id]=+v}else return;save();render()});
 render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

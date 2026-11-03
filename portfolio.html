@@ -60,5 +60,5 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
  if(d.copy){mark();navigator.clipboard&&navigator.clipboard.writeText(build().md).then(()=>{t.textContent='Copied ✓'})}
  if(d.dl){mark();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([build().md],{type:'text/markdown'}));a.download='test-portfolio.md';a.click()}});
 render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="ticketpanel.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

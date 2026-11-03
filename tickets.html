@@ -100,6 +100,7 @@ function drawer(){
   <div class="sec"><h4>Activity</h4><div class="log">${x.log.length?x.log.map(esc).join('<br>'):'No activity yet.'}</div></div>`}
 function defectText(t,x){return `DEFECT REPORT\nTicket: ${t.key}\nTitle: ${t.title}\nEnvironment: ${t.env}\nSeverity: ${x.sev}\nSteps:\n${t.steps.map((s,i)=>(i+1)+'. '+s).join('\n')}\nExpected: ${t.expected}\nActual: ${x.actual||'(not written yet)'}\nReported by: ${M.assignee}  ·  ${now()}`}
 document.addEventListener('click',e=>{const d=e.target.dataset||{};const card=e.target.closest('[data-open]');
+ if(e.target.closest('a.open')&&open){const t=T.find(x=>x.key===open);try{const P=JSON.parse(localStorage.getItem('ticketpanel-v1'))||{};P.force={page:t.app,key:t.key};localStorage.setItem('ticketpanel-v1',JSON.stringify(P))}catch{}}
  if(card){open=card.dataset.open;drawer()}else if(d.close||e.target.id==='ov'){open=null;drawer()}
  else if(d.st){const x=st(open);if(d.st==='Failed'&&!x.actual.trim()){alert('Write the actual result first (what exactly did you see?).');return}setStatus(open,d.st)}
  else if(d.note){const v=$('nt').value.trim();if(!v)return;st(open).notes.unshift({ts:now(),t:v});save();drawer()}
@@ -110,7 +111,8 @@ document.addEventListener('click',e=>{const d=e.target.dataset||{};const card=e.
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+r.map(y=>y.map(q).join(',')).join('\n')],{type:'text/csv'}));a.download='uat-ticket-report.csv';a.click()}});
 document.addEventListener('change',e=>{const d=e.target.dataset||{};if(d.crit!==undefined){st(open).crit[d.crit]=e.target.checked;save();drawer()}else if(d.f){st(open)[d.f]=e.target.value;save()}});
 document.addEventListener('input',e=>{const d=e.target.dataset||{};if(d.f){st(open)[d.f]=e.target.value;save()}else if(['q','ft','fp'].includes(e.target.id))board()});
+const openHash=()=>{const k=(location.hash||'').slice(1);if(T.some(x=>x.key===k)){open=k;drawer()}};window.addEventListener('hashchange',openHash);
 $('ft').onchange=$('fp').onchange=board;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){open=null;drawer()}});
-board();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+board();openHash();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>
