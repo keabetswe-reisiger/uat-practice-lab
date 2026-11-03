@@ -26,22 +26,22 @@
     <li><a href="tickets.html">${I.dash}To do</a></li><li><a href="tickets.html">${I.alert}In progress<em>${counts.prog}</em></a></li><li><a href="tickets.html">${I.ok}Passed<em>${counts.done}</em></a></li><li><a href="tickets.html">${I.x}Failed<em>${counts.fail}</em></a></li></ul></div></li>
   <li class="mm-i"><a class="mm-t mm-link" href="index.html">Home</a></li></ul></div>`;
  const css=document.createElement('style');css.textContent=`
- #mm{position:relative;z-index:60;border-bottom:1px solid #ffffff22;background:rgba(6,16,22,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-family:Manrope,system-ui,sans-serif}
+ #mm{position:relative;z-index:60;border-bottom:1px solid #d5dae2;background:#ffffff;font-family:Manrope,system-ui,sans-serif}
  #mm .mm-in{display:flex;align-items:center;gap:18px;padding:6px clamp(16px,3vw,64px);flex-wrap:wrap}
- #mm .mm-brand{color:#fbfaf9;text-decoration:none;font-weight:500;font-size:14px;margin-right:6px}#mm .mm-brand b{color:#f3e2bd}
+ #mm .mm-brand{color:#16202f;text-decoration:none;font-weight:500;font-size:14px;margin-right:6px}#mm .mm-brand b{color:#7a5a1e}
  #mm ul{list-style:none;margin:0;padding:0}#mm .mm-list{display:flex;gap:2px;flex-wrap:wrap}
  #mm .mm-i{position:relative}
- #mm .mm-t{background:transparent;border:0;color:#fbfaf9;font:600 14px Manrope,system-ui,sans-serif;padding:9px 13px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+ #mm .mm-t{background:transparent!important;border:0!important;color:#16202f!important;font:600 14px Manrope,system-ui,sans-serif;padding:9px 13px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
  #mm button.mm-t::after{content:"";width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);opacity:.7;transition:transform .15s}
- #mm .mm-t:hover,#mm .mm-t[aria-expanded=true]{background:#ffffff1a;color:#f3e2bd}#mm button.mm-t[aria-expanded=true]::after{transform:rotate(225deg)}
- #mm .mm-t:focus-visible,#mm a:focus-visible{outline:2px solid #f3e2bd;outline-offset:2px}
- #mm .mm-p{display:none;position:absolute;top:calc(100% + 8px);left:0;background:#0a1c27;border:1px solid #ffffff26;border-radius:12px;padding:8px;box-shadow:0 14px 40px #000a}
+ #mm .mm-t:hover,#mm .mm-t[aria-expanded=true]{background:#f1f3f6!important;color:#7a5a1e!important}#mm button.mm-t[aria-expanded=true]::after{transform:rotate(225deg)}
+ #mm .mm-t:focus-visible,#mm a:focus-visible{outline:2px solid #7a5a1e;outline-offset:2px}
+ #mm .mm-p{display:none;position:absolute;top:calc(100% + 8px);left:0;background:#fff;border:1px solid #d5dae2;border-radius:12px;padding:8px;box-shadow:0 14px 40px #1018282e}
  #mm .mm-p.on{display:block}
- #mm .mm-col1{width:min(380px,86vw)}#mm .mm-grid{display:grid;grid-template-columns:1fr 1fr;width:min(640px,92vw);gap:2px}#mm .mm-ico{width:210px}
- #mm .mm-p a{display:flex;flex-direction:column;gap:3px;padding:10px 12px;border-radius:8px;color:#fbfaf9;text-decoration:none}
- #mm .mm-p a b{font-size:14px;font-weight:600}#mm .mm-p a span{font-size:12.5px;line-height:1.35;color:#d8d3c9}
- #mm .mm-p a:hover,#mm .mm-p a[aria-current]{background:#ffffff1a}
- #mm .mm-ico a{flex-direction:row;align-items:center;gap:10px;font-size:14px}#mm .mm-ico em{margin-left:auto;font-style:normal;font:600 12px 'Geist Mono',monospace;background:#ffffff22;border-radius:99px;padding:1px 8px}
+ #mm .mm-col1{width:min(380px,86vw)}#mm .mm-grid{display:grid;grid-template-columns:1fr 1fr;width:min(660px,92vw);gap:2px}#mm .mm-ico{width:210px}
+ #mm .mm-p a{display:flex;flex-direction:column;gap:3px;padding:10px 12px;border-radius:8px;color:#16202f;text-decoration:none}
+ #mm .mm-p a b{font-size:14px;font-weight:600}#mm .mm-p a span{font-size:12.5px;line-height:1.35;color:#4a5568}
+ #mm .mm-p a:hover,#mm .mm-p a[aria-current]{background:#f1f3f6}
+ #mm .mm-ico a{flex-direction:row;align-items:center;gap:10px;font-size:14px}#mm .mm-ico em{margin-left:auto;font-style:normal;font:600 12px 'Geist Mono',monospace;background:#eef1f5;border-radius:99px;padding:1px 8px;color:#3b4658}
  @media(max-width:700px){#mm .mm-in{gap:4px}#mm .mm-brand{width:100%}#mm .mm-i{position:static}#mm .mm-p{left:12px;right:12px;top:auto;margin-top:6px}#mm .mm-grid{grid-template-columns:1fr;width:auto}#mm .mm-col1,#mm .mm-ico{width:auto}#mm .mm-t{padding:9px 10px}}
  @media print{#mm{display:none}}`;
  document.head.appendChild(css);

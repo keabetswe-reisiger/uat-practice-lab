@@ -50,7 +50,7 @@ th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line);vertical-a
 </head>
 <body>
 <header>
-  <h1>☕ UAT Training Lab</h1>
+  <h1>UAT Training Lab</h1>
   <div><button id="reset">Reset everything</button></div>
 </header>
 <main>
@@ -199,7 +199,7 @@ function view(){
       <ol>${t.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
       <div><b>Expected:</b> ${esc(t.exp)}</div>
       <label>Actual result (what you saw)</label><textarea rows="2" data-actual="${t.id}">${esc(r.actual)}</textarea>
-      <div class="btns"><button data-set="${t.id}|Pass">✓ Pass</button><button data-set="${t.id}|Fail">✗ Fail</button><button data-set="${t.id}|Blocked">⊘ Blocked</button></div></div>`}).join('');
+      <div class="btns"><button data-set="${t.id}|Pass">✓ Pass</button><button data-set="${t.id}|Fail">✗ Fail</button><button data-set="${t.id}|Blocked">Blocked</button></div></div>`}).join('');
   if(S.tab==='defects')v.innerHTML=(S.defects.length?S.defects.map((d,i)=>`<div class="tc"><h3><span>${d.id} · from ${d.tc}</span><button data-deldef="${i}">Delete</button></h3>
       <label>Title</label><input data-df="${i}|title" value="${esc(d.title)}">
       <label>Severity</label><select data-df="${i}|sev">${['Critical','Major','Minor'].map(s=>`<option ${d.sev===s?'selected':''}>${s}</option>`).join('')}</select>
@@ -215,7 +215,7 @@ function view(){
      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
      <p><b>Check your skills</b></p>
      <button id="togKey">${S.key?'Hide':'Reveal'} answer key</button>
-     ${S.key?`<table style="margin-top:8px"><tr><th>Bug</th><th>Description</th><th>Test case</th><th>You found it?</th></tr>${Object.entries(BUGS).map(([b,d])=>{const tc=TCS.find(t=>t.bug===b);return `<tr><td>${b}</td><td>${esc(d)}</td><td>${tc.id}</td><td>${found.has(b)?'✅':'❌ missed'}</td></tr>`}).join('')}</table>
+     ${S.key?`<table style="margin-top:8px"><tr><th>Bug</th><th>Description</th><th>Test case</th><th>You found it?</th></tr>${Object.entries(BUGS).map(([b,d])=>{const tc=TCS.find(t=>t.bug===b);return `<tr><td>${b}</td><td>${esc(d)}</td><td>${tc.id}</td><td>${found.has(b)?'':'missed'}</td></tr>`}).join('')}</table>
      <p class="sub">False alarms (Fail on a test that should pass): ${falseAlarms().join(', ')||'none'}. Real testers avoid both misses and false alarms.</p>`:''}`;
   }
 }
@@ -419,12 +419,12 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 const dock=document.createElement('div');dock.className='lrn-dock';
-dock.innerHTML='<button data-lrnstep="1">ⓘ About this step</button><button data-lrn="resources">📚 Sources</button>';document.body.appendChild(dock);
+dock.innerHTML='<button data-lrnstep="1">About this step</button><button data-lrn="resources">Sources</button>';document.body.appendChild(dock);
 dock.querySelector('[data-lrnstep]').addEventListener('click',e=>{e.stopPropagation();const tab=(CFG.getTab&&CFG.getTab())||'';open(TABMAP[tab]||'uat')});
 if(CFG.tests){
   const decorate=()=>{document.querySelectorAll('.tc h3').forEach(h=>{
     if(h.querySelector('[data-lrntc]'))return;const m=h.textContent.trim().match(/^(TC-\d+)/);
-    if(m&&CFG.tests[m[1]]){const b=document.createElement('button');b.type='button';b.className='lrn-i';b.dataset.lrntc=m[1];b.title='How this test works';b.textContent='ⓘ technique';h.appendChild(b)}})};
+    if(m&&CFG.tests[m[1]]){const b=document.createElement('button');b.type='button';b.className='lrn-i';b.dataset.lrntc=m[1];b.title='How this test works';b.textContent='technique';h.appendChild(b)}})};
   new MutationObserver(decorate).observe(document.body,{childList:true,subtree:true});decorate();
 }
 })();
@@ -460,6 +460,6 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.
 
 </script>
 <!--/LEARN-->
-<script src="labkit.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+<script src="coach.js"></script><script src="labkit.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body>
 </html>

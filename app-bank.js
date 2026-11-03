@@ -4,7 +4,7 @@
  const OTP='481516',LIMIT=5000,OTPFROM=2000,MINSAV=100;
  const amtOf=v=>{const x=parseFloat(String(v==null?'':v).replace(/[R,\s]/g,''));return(isFinite(x)&&x>0)?r2(x):null};
  const hist=(s,B,d,amt,before,after)=>s.hist.push({d,amt,bal:B.has('b8')?before:after});
- const MOD={id:'bank',title:'Sunrise Money',icon:'🏦',kind:'Banking / FinTech',level:'medium',activeCount:5,
+ const MOD={id:'bank',title:'Sunrise Money',icon:'',kind:'Banking / FinTech',level:'medium',activeCount:5,
   blurb:'A mobile banking app: transfers, payments with a daily limit, a one-time PIN, history and a loan pre-check.',
   bugs:{
    b1:{area:'Payments',type:'Calculation',sev:'Critical',desc:'A payment takes only the amount off the Cheque balance. The fee is never deducted, so the balance is too high.',hint:'Work out amount plus fee yourself and compare it with how far the balance dropped.',idea:'Recalculate the balance after a transaction by hand, including every fee.'},
@@ -71,7 +71,7 @@
     <div style="margin:6px 0"><input id="lm" placeholder="Months" value="${e(s.lm)}"> <button data-act="lm" data-in="lm">Save</button></div>
     <button class="go" data-act="check">Check</button>
     <div class="tot" style="margin-top:8px">Interest <span data-k="loanInterest">${money(R.loanInterest)}</span><br>Monthly repayment <span data-k="loanRepay">${money(R.loanRepay)}</span><br><b><span data-k="loanVerdict">${R.loanVerdict}</span></b></div>`}
-   return `<div class="hd"><b>🏦 Sunrise Money</b><span>Hi, Thandi</span></div><div class="tb">${tabs.map(([k,l])=>`<button class="${s.view===k?'on':''}" data-act="view" data-arg="${k}">${l}</button>`).join('')}</div><div class="bd">${body}</div>`},
+   return `<div class="hd"><b>Sunrise Money</b><span>Hi, Thandi</span></div><div class="tb">${tabs.map(([k,l])=>`<button class="${s.view===k?'on':''}" data-act="view" data-arg="${k}">${l}</button>`).join('')}</div><div class="bd">${body}</div>`},
   tests:[
    {id:'T1',title:'A normal transfer to Savings',bug:null,why:'A control test: the plainest everyday action. Both balances must change by exactly the amount.',steps:['Open the Accounts tab.','Type 500 in the amount box and press "Cheque to Savings".','Read the Cheque and Savings balances.'],scenario:[['xfer','cs|500']],observe:[{id:'o1',label:'What is the Cheque balance?',type:'number',key:'cheque',expected:7500,unit:'R'},{id:'o2',label:'What is the Savings balance?',type:'number',key:'savings',expected:2500,unit:'R'}]},
    {id:'T2',title:'History records each transfer',bug:null,why:'A control test: every movement of money must appear once in the history, like every sale in the till slip.',steps:['On the Accounts tab transfer 500 from Cheque to Savings.','Transfer 300 from Cheque to Savings.','Read how many entries the Cheque history shows.'],scenario:[['xfer','cs|500'],['xfer','cs|300']],observe:[{id:'o1',label:'How many history entries are shown?',type:'number',key:'histCount',expected:2}]},

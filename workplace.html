@@ -25,7 +25,7 @@ pre{background:#0e1620;color:#e7edf6;padding:12px;border-radius:10px;overflow:au
 .tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
 </style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
 </head><body>
-<header><h1>🛠 Work <span>Skills</span></h1><span class="sp"></span><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<header><h1>Work <span>Skills</span></h1><span class="sp"></span><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
 <main><nav id="nav"></nav><div id="v"></div></main>
 <script src="workplace-a.js"></script><script src="workplace-b.js"></script>
 <script>
@@ -43,8 +43,8 @@ function render(){const s=sec();if(!s){$('v').innerHTML='<div class="card">No le
  const best=S.done[key];
  $('v').innerHTML=`<div class="card"><h2>${esc(s.title)}</h2><div class="mute">${esc(s.intro||'')}</div><div class="mute" style="margin-top:6px">Passed lessons overall: <b>${pass}/${total}</b> (a lesson counts when you get 2 of 3 quiz questions right). The readiness gate is ${Math.ceil(total*.75)} of ${total}.</div><div class="bar" style="margin-top:6px"><i style="width:${pass/total*100}%"></i></div></div>
  <div class="shell"><div class="card"><div class="list">${s.lessons.map((x,i)=>`<button data-les="${i}" class="${i===S.les?'on':''}"><span class="n">${(S.done[s.id+':'+i]||0)>=2?'✓':i+1}</span><span>${esc(x.t)}</span></button>`).join('')}</div></div>
- <div><div class="card"><div class="tag">Lesson ${S.les+1} of ${s.lessons.length}</div><h2 style="margin-top:6px">${esc(l.t)}</h2><p>${esc(l.plain)}</p>${l.coffee?`<div class="cof">☕ ${esc(l.coffee)}</div>`:''}${l.steps&&l.steps.length?`<ol>${l.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:''}${l.code?`<pre>${esc(l.code)}</pre><button data-copy="1">Copy</button>`:''}${l.tryit?`<div class="try"><b>Try it:</b> ${esc(l.tryit)}</div>`:''}</div>
- <div class="card"><h3>Quick check ${best!==undefined?`<span class="tag">best ${best}/3</span>`:''}</h3>${l.quiz.map((q,qi)=>`<div style="margin:10px 0"><b>${qi+1}.</b> ${esc(q.q)}${q.o.map((o,i)=>`<button class="opt ${checked?(i===q.a?'right':sel[qi]===i?'wrong':''):sel[qi]===i?'sel':''}" data-q="${qi}|${i}" ${checked?'disabled':''}><b>${'ABCD'[i]}</b><span>${esc(o)}</span></button>`).join('')}${checked?`<div class="res ${sel[qi]===q.a?'ok':'no'}">${sel[qi]===q.a?'✅ ':'❌ '}${esc(q.why)}</div>`:''}</div>`).join('')}
+ <div><div class="card"><div class="tag">Lesson ${S.les+1} of ${s.lessons.length}</div><h2 style="margin-top:6px">${esc(l.t)}</h2><p>${esc(l.plain)}</p>${l.coffee?`<div class="cof">${esc(l.coffee)}</div>`:''}${l.steps&&l.steps.length?`<ol>${l.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:''}${l.code?`<pre>${esc(l.code)}</pre><button data-copy="1">Copy</button>`:''}${l.tryit?`<div class="try"><b>Try it:</b> ${esc(l.tryit)}</div>`:''}</div>
+ <div class="card"><h3>Quick check ${best!==undefined?`<span class="tag">best ${best}/3</span>`:''}</h3>${l.quiz.map((q,qi)=>`<div style="margin:10px 0"><b>${qi+1}.</b> ${esc(q.q)}${q.o.map((o,i)=>`<button class="opt ${checked?(i===q.a?'right':sel[qi]===i?'wrong':''):sel[qi]===i?'sel':''}" data-q="${qi}|${i}" ${checked?'disabled':''}><b>${'ABCD'[i]}</b><span>${esc(o)}</span></button>`).join('')}${checked?`<div class="res ${sel[qi]===q.a?'ok':'no'}">${sel[qi]===q.a?'':''}${esc(q.why)}</div>`:''}</div>`).join('')}
  <div style="display:flex;gap:8px;flex-wrap:wrap">${checked?`<button class="pri" data-next="1">${S.les<s.lessons.length-1?'Next lesson →':'Finish section'}</button><button data-retry="1">Try the quiz again</button>`:`<button class="pri" data-check="1" ${sel.some(x=>x===null)?'disabled':''}>Check answers</button>`}</div></div></div></div>`}
 document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
  if(d.sec){S.sec=d.sec;S.les=0;sel=[];save();render();return}

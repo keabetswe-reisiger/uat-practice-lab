@@ -1,9 +1,9 @@
-/* Cloud sync via a private GitHub Gist. Adds a "☁ Sync" button to every page.
+/* Cloud sync via a private GitHub Gist. Adds a "Sync" button to every page.
    - Syncs everything this site stores in localStorage (tickets, Arcade rank, workbooks, guides).
    - Newest change per item wins. Needs a GitHub token with ONLY the "gist" permission, pasted once per device.
    - Only this app's own progress keys are synced (see ONLY). Anything else on the same web address, like other apps, is never uploaded or overwritten. */
 (function(){
- const CFG='uatsync-cfg',META='uatsync-meta',FILE='uat-lab-progress.json',ONLY=/^(uat-tickets-v1|uat-lab-v1|testing-types-v1|stockwatch-practice-v1|start-here-v1|sqllab-v1|clinic-practice-v1|careful-v1|arcade-v1|apilab-v1|exam-v1|tech-v1|capstone-v1|interview-v1|workplace-v1|portfolio-v1|labmarks-v1|labapps-v1)$/,SKIP={test:k=>!ONLY.test(k)};
+ const CFG='uatsync-cfg',META='uatsync-meta',FILE='uat-lab-progress.json',ONLY=/^(uat-tickets-v1|uat-lab-v1|testing-types-v1|stockwatch-practice-v1|start-here-v1|sqllab-v1|clinic-practice-v1|careful-v1|arcade-v1|apilab-v1|exam-v1|tech-v1|capstone-v1|interview-v1|workplace-v1|portfolio-v1|labmarks-v1|labapps-v1|coach-v1)$/,SKIP={test:k=>!ONLY.test(k)};
  const ls=window.localStorage;const orig=Storage.prototype.setItem;
  const rd=k=>{try{return ls.getItem(k)}catch{return null}};
  let meta={};try{meta=JSON.parse(rd(META)||'{}')}catch{}
@@ -49,9 +49,9 @@
  function setStatus(t,c){stText=t;stCls=c||'';render()}
  function render(){const c=cfg();btn.className=c?stCls:'';btn.innerHTML=`<i></i>${c?'Synced':'Sync'}`;btn.title=c?stText:'Sync progress across devices';
   const last=rd('uatsync-last');
-  pan.innerHTML=c?`<h4>☁ Cloud sync is on</h4><div class="m">${stText||(last?'Last synced at '+last:'Ready')}</div>${changedRemote?'<div class="e" style="color:#2563eb">New progress came from another device. <button id="us-rl">Reload to see it</button></div>':''}
+  pan.innerHTML=c?`<h4>Cloud sync is on</h4><div class="m">${stText||(last?'Last synced at '+last:'Ready')}</div>${changedRemote?'<div class="e" style="color:#2563eb">New progress came from another device. <button id="us-rl">Reload to see it</button></div>':''}
    <div><button class="pri" id="us-now">Sync now</button><button id="us-off">Disconnect this device</button></div><div class="m" style="margin-top:8px">Your progress is stored in a private gist in your GitHub account. “Disconnect” only removes the token from this device.</div>${stCls==='err'?`<div class="e">${stText}</div>`:''}`
-  :`<h4>☁ Keep your progress everywhere</h4><div class="m">Connect once per device. Your tickets, Arcade rank and workbooks then follow you.</div>
+  :`<h4>Keep your progress everywhere</h4><div class="m">Connect once per device. Your tickets, Arcade rank and workbooks then follow you.</div>
    <ol style="padding-left:18px;margin:8px 0"><li><a class="us-a" style="margin:0" target="_blank" rel="noopener" href="https://github.com/settings/tokens/new?scopes=gist&description=UAT%20Lab%20sync">Create a token</a> (only “gist” is ticked; set expiry as you like)</li><li>Copy it and paste below</li></ol>
    <input id="us-t" type="password" placeholder="ghp_… token" autocomplete="off"><button class="pri" id="us-go">Connect</button>${stCls==='err'?`<div class="e">${stText}</div>`:''}<div class="m" style="margin-top:6px">The token is kept only on this device.</div>`;
   btn.style.display='';pan.style.display=openP?'block':'none'}

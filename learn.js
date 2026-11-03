@@ -149,12 +149,12 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 const dock=document.createElement('div');dock.className='lrn-dock';
-dock.innerHTML='<button data-lrnstep="1">ⓘ About this step</button><button data-lrn="resources">📚 Sources</button>';document.body.appendChild(dock);
+dock.innerHTML='<button data-lrnstep="1">About this step</button><button data-lrn="resources">Sources</button>';document.body.appendChild(dock);
 dock.querySelector('[data-lrnstep]').addEventListener('click',e=>{e.stopPropagation();const tab=(CFG.getTab&&CFG.getTab())||'';open(TABMAP[tab]||'uat')});
 if(CFG.tests){
   const decorate=()=>{document.querySelectorAll('.tc h3').forEach(h=>{
     if(h.querySelector('[data-lrntc]'))return;const m=h.textContent.trim().match(/^(TC-\d+)/);
-    if(m&&CFG.tests[m[1]]){const b=document.createElement('button');b.type='button';b.className='lrn-i';b.dataset.lrntc=m[1];b.title='How this test works';b.textContent='ⓘ technique';h.appendChild(b)}})};
+    if(m&&CFG.tests[m[1]]){const b=document.createElement('button');b.type='button';b.className='lrn-i';b.dataset.lrntc=m[1];b.title='How this test works';b.textContent='technique';h.appendChild(b)}})};
   new MutationObserver(decorate).observe(document.body,{childList:true,subtree:true});decorate();
 }
 })();

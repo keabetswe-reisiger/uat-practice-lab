@@ -47,7 +47,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;p
 <!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
 </head>
 <body>
-<header><h1>📦 StockWatch UAT Practice <small style="color:var(--mute);font-weight:400">· round 2 · harder bugs</small></h1><button id="reset">Reset workbook</button></header>
+<header><h1>StockWatch UAT Practice <small style="color:var(--mute);font-weight:400">· round 2 · harder bugs</small></h1><button id="reset">Reset workbook</button></header>
 <main>
 
 <section class="panel">
@@ -100,7 +100,7 @@ function deduct(i,n){for(const b of i.batches.slice().sort((a,c)=>(a.exp||'9').l
 
 function renderEnv(){
   const e=$('env').value;
-  $('banner').innerHTML=`<div class="banner ${e==='Staging'?'stg':'prod'}">${e==='Staging'?'● STAGING · safe to test':e==='Production'?'● PRODUCTION · live stock data. Do NOT run UAT here':'● DEV · unstable, not for UAT'} · ${$('ver').value}</div>`;
+  $('banner').innerHTML=`<div class="banner ${e==='Staging'?'stg':'prod'}">${e==='Staging'?'STAGING · safe to test':e==='Production'?'PRODUCTION · live stock data. Do NOT run UAT here':'DEV · unstable, not for UAT'} · ${$('ver').value}</div>`;
   $('app').classList.toggle('lock',e==='Production');
 }
 function renderNav(){
@@ -229,7 +229,7 @@ function wview(){
   if(W.tab==='tests')v.innerHTML=(PRE.every((_,i)=>W.pre[i])?'':'<div class="msg err" style="margin-bottom:8px">Complete the pre-flight checklist first.</div>')+`<p class="sub">Tip: refresh the left side between tests so earlier tests don’t change your starting data.</p>`+TCS.map(t=>{const r=W.res[t.id]||{};return `<div class="tc"><h3><span>${t.id} · ${esc(t.title)} <small style="color:var(--mute)">(${t.req} · as ${t.role})</small></span><span class="badge b-${stat(t.id)}">${stat(t.id)}</span></h3>
     <table><tr><th style="width:50%">A · Input you give</th><th>B · Result expected</th></tr><tr><td><ol style="margin:0 0 0 16px;padding:0">${t.input.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></td><td>${esc(t.exp)}</td></tr></table>
     <label>Actual result</label><textarea rows="2" data-actual="${t.id}">${esc(r.actual)}</textarea>
-    <div class="btns"><button data-set="${t.id}|Pass">✓ Pass</button><button data-set="${t.id}|Fail">✗ Fail</button><button data-set="${t.id}|Blocked">⊘ Blocked</button></div></div>`}).join('');
+    <div class="btns"><button data-set="${t.id}|Pass">✓ Pass</button><button data-set="${t.id}|Fail">✗ Fail</button><button data-set="${t.id}|Blocked">Blocked</button></div></div>`}).join('');
   if(W.tab==='defects')v.innerHTML=`<p class="sub">Reported to: Dev Lead. Current week: ${W.week}.</p>`+(W.defects.length?W.defects.map((d,i)=>`<div class="tc"><h3><span>${d.id} · from ${d.tc} · raised Week ${d.week}</span><button data-deldef="${i}">Delete</button></h3>
     <label>Title</label><input data-df="${i}|title" value="${esc(d.title)}"><label>Severity</label><select data-df="${i}|sev">${['Critical','Major','Minor'].map(s=>`<option ${d.sev===s?'selected':''}>${s}</option>`).join('')}</select>
     <div class="msg" style="background:var(--line);color:var(--ink)">Release impact: <b>${impact(d.sev,d.week)}</b></div>
@@ -242,7 +242,7 @@ function wview(){
    <label>Tester</label><input data-so="tester" value="${esc(W.so.tester)}"><label>Recommendation to approver (Shop Owner)</label><select data-so="decision"><option value="">Choose…</option>${['Approve for go-live','Approve with known issues','Do not approve'].map(s=>`<option ${W.so.decision===s?'selected':''}>${s}</option>`).join('')}</select>
    <label>Justification (cite test IDs and defects)</label><textarea rows="4" data-so="notes">${esc(W.so.notes)}</textarea>
    <div class="btns"><button class="primary" id="csv">Download CSV</button><button id="print">Print / PDF</button><button id="togKey">${W.key?'Hide':'Reveal'} answer key</button></div>
-   ${W.key?`<table style="margin-top:10px"><tr><th>Bug</th><th>Seeded defect</th><th>Real severity</th><th>Test</th><th>Found?</th></tr>${Object.entries(BUGS).map(([b,[d,s]])=>`<tr><td>${b}</td><td>${d}</td><td>${s}</td><td>${TCS.find(t=>t.bug===b).id}</td><td>${found.has(b)?'✅':'❌'}</td></tr>`).join('')}</table>
+   ${W.key?`<table style="margin-top:10px"><tr><th>Bug</th><th>Seeded defect</th><th>Real severity</th><th>Test</th><th>Found?</th></tr>${Object.entries(BUGS).map(([b,[d,s]])=>`<tr><td>${b}</td><td>${d}</td><td>${s}</td><td>${TCS.find(t=>t.bug===b).id}</td><td>${found.has(b)?'':''}</td></tr>`).join('')}</table>
    <p class="sub">False alarms: ${TCS.filter(t=>!t.bug&&stat(t.id)==='Fail').map(t=>t.id).join(', ')||'none'}.</p>`:''}`}
 }
 document.addEventListener('click',e=>{const t=e.target,d=t.dataset||{};
@@ -427,12 +427,12 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 const dock=document.createElement('div');dock.className='lrn-dock';
-dock.innerHTML='<button data-lrnstep="1">ⓘ About this step</button><button data-lrn="resources">📚 Sources</button>';document.body.appendChild(dock);
+dock.innerHTML='<button data-lrnstep="1">About this step</button><button data-lrn="resources">Sources</button>';document.body.appendChild(dock);
 dock.querySelector('[data-lrnstep]').addEventListener('click',e=>{e.stopPropagation();const tab=(CFG.getTab&&CFG.getTab())||'';open(TABMAP[tab]||'uat')});
 if(CFG.tests){
   const decorate=()=>{document.querySelectorAll('.tc h3').forEach(h=>{
     if(h.querySelector('[data-lrntc]'))return;const m=h.textContent.trim().match(/^(TC-\d+)/);
-    if(m&&CFG.tests[m[1]]){const b=document.createElement('button');b.type='button';b.className='lrn-i';b.dataset.lrntc=m[1];b.title='How this test works';b.textContent='ⓘ technique';h.appendChild(b)}})};
+    if(m&&CFG.tests[m[1]]){const b=document.createElement('button');b.type='button';b.className='lrn-i';b.dataset.lrntc=m[1];b.title='How this test works';b.textContent='technique';h.appendChild(b)}})};
   new MutationObserver(decorate).observe(document.body,{childList:true,subtree:true});decorate();
 }
 })();
@@ -468,6 +468,6 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.
 
 </script>
 <!--/LEARN-->
-<script src="labkit.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+<script src="coach.js"></script><script src="labkit.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body>
 </html>

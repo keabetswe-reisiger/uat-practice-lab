@@ -33,9 +33,9 @@ table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--li
 .app th{background:#eef1f6!important;color:#16202f!important}.app td{color:#16202f}.app .mute{color:#5b6472!important}.app small{color:#5b6472}.app table td,.app table th{border-color:#e4e7ec}.app .tot{text-align:right}.app .badge{display:inline-block;border-radius:99px;padding:0 8px;font-size:12px;background:#e4e7ec}.app .badge.red{background:#fbe4e1}.app .badge.green{background:#dff3e8}
 </style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
 </head><body>
-<header><h1 id="title">🧪 Practice apps</h1><span class="sp"></span><button id="fin" type="button">Finish &amp; see my result</button><button type="button" data-top="extra">📚 Extra info</button><a href="lab.html">All apps</a><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<header><h1 id="title">Practice apps</h1><span class="sp"></span><button id="fin" type="button">Finish &amp; see my result</button><button type="button" data-top="extra">Extra info</button><a href="lab.html">All apps</a><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
 <main id="v"></main>
-<script src="labapp.js"></script>
+<script src="coach.js"></script><script src="labapp.js"></script>
 <!--APPS--><script src="app-shop.js"></script><script src="app-bank.js"></script><script src="app-crm.js"></script><script src="app-docs.js"></script><script src="app-ui.js"></script><!--/APPS-->
 <script>(function(){const p=new URLSearchParams(location.search).get('app');if(!p){document.getElementById('fin').style.display='none';document.querySelector('[data-top=extra]').style.display='none'}LABSTART()})();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

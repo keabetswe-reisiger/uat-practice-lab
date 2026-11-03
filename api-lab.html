@@ -21,18 +21,18 @@ pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:
 table{width:100%;border-collapse:collapse;font-size:13.5px}td,th{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
 </style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
 </head><body>
-<header><h1>🔌 <span>API</span> Testing Lab</h1><div class="sp"></div><a href="careful.html">Careful toolkit</a><a href="tickets.html">Tickets</a><a href="index.html">Home</a></header>
+<header><h1><span>API</span> Testing Lab</h1><div class="sp"></div><a href="careful.html">Careful toolkit</a><a href="tickets.html">Tickets</a><a href="index.html">Home</a></header>
 <main>
 <div class="card full"><h2>What is an API, and why do testers need it?</h2>
 <p style="margin:0 0 4px"><b>In plain words:</b> an API is how screens and systems talk to the server: the app sends a <i>request</i> (“give me patient 1”) and gets back a <i>response</i> (a status code plus data). Many companies expect testers to check this layer, because bugs here affect every app that uses it, and you can test it before any screen exists.</p>
-<div class="cof">☕ The waiter between the dining room and the kitchen. You test whether the right order reaches the kitchen and the right dish comes back, without needing to look at the menu board (the screen).</div>
+<div class="cof">The waiter between the dining room and the kitchen. You test whether the right order reaches the kitchen and the right dish comes back, without needing to look at the menu board (the screen).</div>
 <p class="mute" style="margin:8px 0 0">This is a safe, pretend server that lives in your browser (nothing is sent anywhere). It has <b>8 hidden bugs</b>. Log in first to get a token: <code>POST /login</code> with <code>{"user":"Sipho","password":"clinic123"}</code> (Manager) or user <code>Thabo</code> (Doctor).</p></div>
 
 <div><div class="card"><h3>1 · Build a request</h3>
 <div class="row"><select id="m"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select><input id="p" value="/patients" spellcheck="false"></div>
 <label class="f">Authorization header (paste “Bearer …” token)</label><input id="au" placeholder="Bearer tok-sipho" spellcheck="false">
 <label class="f">Body (JSON), for POST / PUT</label><textarea id="b" rows="4" spellcheck="false"></textarea>
-<div class="btns" style="margin-top:8px"><button class="pri" id="send">Send ▶</button><button id="rs">Reset server data</button></div>
+<div class="btns" style="margin-top:8px"><button class="pri" id="send">Send </button><button id="rs">Reset server data</button></div>
 <div class="ch mute" style="margin-top:8px">Quick starts:<br>
 <button data-q="POST|/login|{&quot;user&quot;:&quot;Sipho&quot;,&quot;password&quot;:&quot;clinic123&quot;}|">Log in as Manager</button><button data-q="POST|/login|{&quot;user&quot;:&quot;Thabo&quot;,&quot;password&quot;:&quot;clinic123&quot;}|">Log in as Doctor</button><button data-q="GET|/patients||tok-sipho">List patients</button><button data-q="GET|/patients/1||tok-sipho">Get patient 1</button><button data-q="POST|/patients|{&quot;name&quot;:&quot;Sam Dube&quot;,&quot;type&quot;:&quot;Adult&quot;}|tok-sipho">Create patient</button></div></div>
 <div class="card"><h3>History</h3><div id="hist" class="mute">No requests yet.</div></div></div>
@@ -77,7 +77,7 @@ const CHECK=['Status code is the one the rule says (not just “some 200”)','R
 const KEY='apilab-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.chk=S.chk||{};S.found=S.found||{};S.reveal=!!S.reveal;S.sent=S.sent||0;const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
 let H=[];
 function drawChk(){$('chk').innerHTML=CHECK.map((c,i)=>`<label class="cb"><input type="checkbox" data-c="${i}" ${S.chk[i]?'checked':''}> ${c}</label>`).join('')+`<div class="mute">${CHECK.filter((_,i)=>S.chk[i]).length}/${CHECK.length} covered</div>`}
-function drawKey(){const f=KEYS.filter(k=>S.found[k[0]]).length;$('keyarea').innerHTML=`<div class="mute">Found: ${f}/8 · requests sent: ${S.sent}</div>`+KEYS.map(k=>`<label class="cb"><input type="checkbox" data-f="${k[0]}" ${S.found[k[0]]?'checked':''}> I found a bug with evidence (${k[0]})</label>`).join('')+`<div class="btns" style="margin-top:6px"><button id="rv">${S.reveal?'Hide':'Reveal'} the answer key</button></div>`+(S.reveal?`<table><tr><th>Bug</th><th>What is wrong</th><th>Expected</th><th>How to find it</th><th>You</th></tr>${KEYS.map(k=>`<tr><td>${k[0]}</td><td>${esc(k[1])}</td><td>${esc(k[2])}</td><td>${esc(k[3])}</td><td>${S.found[k[0]]?'✅':'❌'}</td></tr>`).join('')}</table>`:'')}
+function drawKey(){const f=KEYS.filter(k=>S.found[k[0]]).length;$('keyarea').innerHTML=`<div class="mute">Found: ${f}/8 · requests sent: ${S.sent}</div>`+KEYS.map(k=>`<label class="cb"><input type="checkbox" data-f="${k[0]}" ${S.found[k[0]]?'checked':''}> I found a bug with evidence (${k[0]})</label>`).join('')+`<div class="btns" style="margin-top:6px"><button id="rv">${S.reveal?'Hide':'Reveal'} the answer key</button></div>`+(S.reveal?`<table><tr><th>Bug</th><th>What is wrong</th><th>Expected</th><th>How to find it</th><th>You</th></tr>${KEYS.map(k=>`<tr><td>${k[0]}</td><td>${esc(k[1])}</td><td>${esc(k[2])}</td><td>${esc(k[3])}</td><td>${S.found[k[0]]?'':''}</td></tr>`).join('')}</table>`:'')}
 function drawHist(){$('hist').innerHTML=H.length?H.map((h,i)=>`<div><button data-h="${i}" style="font-weight:400;font-size:12.5px;padding:3px 8px">${h.m} ${esc(h.p)}</button> <span class="st s${String(h.s)[0]}">${h.s}</span></div>`).join(''):'No requests yet.'}
 function show(r){const cls='s'+String(r.s)[0];$('rsp').innerHTML=`<span class="st ${cls}">${r.s} ${({200:'OK',201:'Created',204:'No Content',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',405:'Method Not Allowed',500:'Server Error'})[r.s]||''}</span> <span class="mute">${r.ms} ms · ${r.m} ${esc(r.p)}</span><pre>${esc(JSON.stringify(r.b,null,2))}</pre>`}
 document.addEventListener('click',e=>{const d=e.target.dataset||{};

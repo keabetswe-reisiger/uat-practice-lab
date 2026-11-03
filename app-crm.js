@@ -9,7 +9,7 @@
  const counted=(s,B)=>B.has('b6')?s.leads:live(s);
  const tot=(s,B,st)=>counted(s,B).filter(l=>l.stage===st).reduce((a,l)=>a+l.value,0);
  const open=(s,B)=>tot(s,B,'New')+tot(s,B,'Contacted')+tot(s,B,'Qualified')+(B.has('b4')?tot(s,B,'Lost'):0);
- const MOD={id:'crm',title:'Bean Counter CRM',icon:'🤝',kind:'Enterprise / SaaS',level:'harder',activeCount:6,
+ const MOD={id:'crm',title:'Bean Counter CRM',icon:'',kind:'Enterprise / SaaS',level:'harder',activeCount:6,
   blurb:'A sales pipeline for a coffee wholesaler: three user roles, deal stages with strict moves, an add-lead form and a pipeline report.',
   bugs:{
    b1:{area:'Permissions',type:'Permission / security',sev:'Critical',desc:'A Viewer can move a deal to another stage. Viewers must be read-only.',hint:'Switch to the Viewer role and try to change something, then check whether it really changed.',idea:'Test every role against every action, especially the role with the fewest rights.'},
@@ -70,7 +70,7 @@
     l.deleted=true;s.msg=l.name+' deleted';return true}
    return false},
   render(s,B,ui){const R=MOD.read(s,B);let body='';
-   const hdr=`<div class="hd"><b>🤝 Bean Counter CRM</b><span>Role: <span data-k="role">${R.role}</span></span></div>`;
+   const hdr=`<div class="hd"><b>Bean Counter CRM</b><span>Role: <span data-k="role">${R.role}</span></span></div>`;
    const roles=`<div style="padding:6px 10px">${ROLES.map(([k,l])=>`<button class="${s.role===k?'go':''}" data-act="role" data-arg="${k}">${l}</button>`).join(' ')}</div>`;
    const tabs=[['leads','Leads'],['add','Add lead'],['report','Report']];
    if(s.view==='leads'){body=`<div class="mute"><span data-k="leadCount">${R.leadCount}</span> lead(s)</div>`+live(s).map(l=>`<div class="it" style="display:block"><span class="n"><b>${esc(l.name)}</b> <span class="badge" data-k="stage_${l.id}">${l.stage}</span> <span data-k="value_${l.id}">${money(l.value)}</span></span><div style="margin-top:4px">${ST.filter(x=>x!==l.stage).map(x=>`<button data-act="move" data-arg="${l.id}|${x}">→ ${x}</button>`).join(' ')}</div><div style="margin-top:4px"><input id="v_${l.id}" placeholder="New value" style="width:90px"> <button data-act="edit" data-arg="${l.id}" data-in="v_${l.id}">Save value</button> <button class="dng" data-act="delete" data-arg="${l.id}">Delete</button></div></div>`).join('')+(s.msg?`<div class="msg ${/refused|Not allowed/.test(s.msg)?'e':'s'}">${esc(s.msg)}</div>`:'')+`<div class="mute" style="margin-top:6px">Edit message: <span data-k="editMsg">${esc(R.editMsg)}</span></div>`}

@@ -34,7 +34,7 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--mute);margin:10
 .pill{display:inline-block;font-size:12px;border-radius:99px;padding:1px 9px;background:var(--line);margin-left:6px}
 </style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
 </head><body>
-<header><h1>🎮 <span>Test</span> Arcade</h1><div class="sp"></div><a href="start-here.html">Start here</a><a href="tickets.html">Tickets</a><a href="index.html">Home</a></header>
+<header><h1><span>Test</span> Arcade</h1><div class="sp"></div><a href="start-here.html">Start here</a><a href="tickets.html">Tickets</a><a href="index.html">Home</a></header>
 <main id="m"></main>
 <script>
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -47,8 +47,8 @@ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
 const RANKS=[[0,'Trainee'],[100,'Tester'],[300,'Senior Tester'],[600,'Test Lead'],[1000,'QA Master']];
 const rank=()=>{let i=0;RANKS.forEach((r,k)=>{if(S.xp>=r[0])i=k});return i};
 const today=()=>new Date().toISOString().slice(0,10);
-const BADGES={first:['🌱','First round'],daily:['📅','Daily 5 done'],all:['🧭','All-rounder (tried all 5 games)'],perfect:['💯','Perfect round'],streak3:['🔥','3-day streak']};
-const COFF=t=>`<div class="cof">☕ ${t}</div>`;
+const BADGES={first:['','First round'],daily:['','Daily 5 done'],all:['','All-rounder (tried all 5 games)'],perfect:['','Perfect round'],streak3:['','3-day streak']};
+const COFF=t=>`<div class="cof">${t}</div>`;
 
 /* ======================= GAME 1: BOUNDARY BLITZ (random numbers every time) ======================= */
 function gBoundary(r){
@@ -71,9 +71,9 @@ const SPOT=[
  {spec:'Total = items + 15% VAT.',screen:'Item 1: R100<br>Item 2: R200<br>VAT 15%: R45<br>Total: R335',o:['Total should be R345','VAT should be R30','Item prices are wrong','No bug'],a:0,w:'100 + 200 + 45 = 345. Rows were right; the total was wrong. Check the arithmetic, not just the layout.'},
  {spec:'Dates are shown as DD/MM/YYYY.',screen:'Appointment date: 03/25/2026',o:['Date is in MM/DD format','Year is wrong','Time is missing','No bug'],a:0,w:'Month 25 doesn’t exist, so it must be MM/DD. Formats are a classic criteria bug.'},
  {spec:'Cancelling an order removes it and lowers the order counter.',screen:'Orders list: (empty)<br>Orders: 3',o:['Counter was not updated','List is wrong','Cancel button is missing','No bug'],a:0,w:'The list changed but the counter did not. A state bug: you only see it on a different screen.'},
- {spec:'Error messages must tell the user what to fix.',screen:'⚠ Error 500',o:['Message doesn’t say what to fix','Icon is wrong','Colour is wrong','No bug'],a:0,w:'“Error 500” helps nobody. Clear messages are part of the requirement.'},
+ {spec:'Error messages must tell the user what to fix.',screen:'Error 500',o:['Message doesn’t say what to fix','Icon is wrong','Colour is wrong','No bug'],a:0,w:'“Error 500” helps nobody. Clear messages are part of the requirement.'},
  {spec:'Search is not case-sensitive.',screen:'Search “Mokoena” → 2 results<br>Search “mokoena” → No results',o:['Lowercase search finds nothing','Search box is too small','Result count is wrong','No bug'],a:0,w:'Same word, different capital letters, different results: a partition bug.'},
- {spec:'The PRODUCTION banner must be red.',screen:'<span style="background:#1b7f4b;color:#fff;padding:2px 8px">● PRODUCTION</span> live data',o:['Banner is green, not red','Text is too long','Banner is missing','No bug'],a:0,w:'Wrong colour on the environment banner can make a tester think they are on safe Staging.'},
+ {spec:'The PRODUCTION banner must be red.',screen:'<span style="background:#1b7f4b;color:#fff;padding:2px 8px">PRODUCTION</span> live data',o:['Banner is green, not red','Text is too long','Banner is missing','No bug'],a:0,w:'Wrong colour on the environment banner can make a tester think they are on safe Staging.'},
  {spec:'Required fields are saved only when filled.',screen:'Name*: Sam<br>Phone*: (empty)<br>[Save] → “Saved successfully”',o:['Saved with an empty required field','Name is wrong','Save button is wrong','No bug'],a:0,w:'Required means required. This is the “blank input accepted” bug family.'},
  {spec:'Everything works as written.',screen:'Order total: R150.00<br>Delivery: Free (orders ≥ R150)<br>You pay: R150.00',o:['Delivery should not be free','Total is wrong','Label is wrong','No bug'],a:3,w:'Careful: this is correct. R150 meets “R150 or more”. A good tester doesn’t invent bugs (false alarms waste developer time).'}
 ];
@@ -128,7 +128,7 @@ function gSev(r){const q=pick(r,SEV);return{title:'Severity Call',intro:'How ser
  html:`<div class="spec">${q[0]}</div>`+['Critical','Major','Minor'].map(s=>`<label class="opt"><input type="radio" name="o" value="${s}"> ${s}</label>`).join(''),
  submit(st){const c=st.querySelector('input:checked');if(!c)return null;const ok=c.value===q[1];return{pts:ok?20:c.value!=='Minor'&&q[1]!=='Minor'?8:0,max:20,ok,html:`<b>${ok?'Correct':'The best call is '+q[1]}.</b> ${q[2]}`+COFF('Burnt coffee is Critical; a crooked lid is Minor. Severity = how much it hurts the customer, not how annoying it was for you.')}}}}
 
-const GAMES={boundary:{f:gBoundary,i:'📏',n:'Boundary Blitz',d:'Pick the sharpest test values. Random numbers every round.'},spot:{f:gSpot,i:'🔍',n:'Bug Spotter',d:'Spec vs screen: find the defect, or spot the false alarm.'},defect:{f:gDefect,i:'📝',n:'Defect Workshop',d:'Write a report and get scored on how useful it is.'},risk:{f:gRisk,i:'⚖️',n:'Risk Ranker',d:'Limited time: decide what to test first.'},sev:{f:gSev,i:'🚦',n:'Severity Call',d:'Critical, Major or Minor? Learn to judge impact.'}};
+const GAMES={boundary:{f:gBoundary,i:'',n:'Boundary Blitz',d:'Pick the sharpest test values. Random numbers every round.'},spot:{f:gSpot,i:'',n:'Bug Spotter',d:'Spec vs screen: find the defect, or spot the false alarm.'},defect:{f:gDefect,i:'',n:'Defect Workshop',d:'Write a report and get scored on how useful it is.'},risk:{f:gRisk,i:'',n:'Risk Ranker',d:'Limited time: decide what to test first.'},sev:{f:gSev,i:'',n:'Severity Call',d:'Critical, Major or Minor? Learn to judge impact.'}};
 
 /* ======================= SESSION ENGINE ======================= */
 let run=null;
@@ -137,10 +137,10 @@ function badge(k){if(!S.badges[k]){S.badges[k]=1;return true}return false}
 function home(){run=null;const rk=rank(),nx=RANKS[rk+1],cur=RANKS[rk];const pct=nx?Math.round((S.xp-cur[0])/(nx[0]-cur[0])*100):100;
  const doneToday=S.last===today();const played=Object.keys(S.played).length;
  const next=!doneToday?'Start with today’s <b>Daily 5</b> (one question from every game, takes ~5 min).':(()=>{const least=Object.keys(GAMES).sort((a,b)=>(S.played[a]||0)-(S.played[b]||0))[0];return`Next best step: play <b>${GAMES[least].n}</b>, your least-played game.`})();
- $('m').innerHTML=`<div class="card hero"><div class="top"><h2>${RANKS[rk][1]}</h2><span>${S.xp} XP${S.streak?` · 🔥 ${S.streak}-day streak`:''}</span></div>
+ $('m').innerHTML=`<div class="card hero"><div class="top"><h2>${RANKS[rk][1]}</h2><span>${S.xp} XP${S.streak?` · ${S.streak}-day streak`:''}</span></div>
   <div class="bar"><i style="width:${pct}%"></i></div><div class="mute">${nx?`${nx[0]-S.xp} XP to ${nx[1]}`:'Top rank reached. Keep sharp!'}</div>
   <div class="badges">${Object.entries(BADGES).map(([k,[e,l]])=>`<span class="bd ${S.badges[k]?'':'off'}" title="${l}">${e} ${l}</span>`).join('')}</div></div>
- <div class="card"><h3>${doneToday?'✅ Daily 5 complete. Come back tomorrow!':'📅 Daily 5'}</h3><p class="mute" style="margin:2px 0 8px">${next}</p><button class="pri" data-daily="1">${doneToday?'Replay Daily 5 (no streak bonus)':'Play Daily 5'}</button></div>
+ <div class="card"><h3>${doneToday?'Daily 5 complete. Come back tomorrow!':'Daily 5'}</h3><p class="mute" style="margin:2px 0 8px">${next}</p><button class="pri" data-daily="1">${doneToday?'Replay Daily 5 (no streak bonus)':'Play Daily 5'}</button></div>
  <h3 style="margin:14px 0 6px">Free play <span class="mute">· 3 rounds each, always new</span></h3><div class="grid">${Object.entries(GAMES).map(([k,g])=>`<div class="card g"><div class="ic">${g.i}</div><h3>${g.n}</h3><div class="mute">${g.d}</div><div class="mute">Played ${S.played[k]||0}× · best ${S.best[k]??'–'}%</div><button data-play="${k}">Play</button></div>`).join('')}</div>
  <div class="card"><b>New to testing?</b> <span class="mute">Each answer explains why, with a coffee analogy. Start with <a href="start-here.html">Start Here</a>, then come back to practise. Your rank is stored on this device.</span></div>`}
 function start(queue,daily){run={q:queue,i:0,pts:0,max:0,daily,res:[]};next()}
@@ -162,7 +162,7 @@ function finish(){const g=run.q.map(x=>x.g);[...new Set(g)].forEach(k=>S.played[
  if(badge('first'))newBadges.push('first');if(Object.keys(S.played).length>=5&&badge('all'))newBadges.push('all');if(pct===100&&badge('perfect'))newBadges.push('perfect');
  const up=award(run.pts+bonus);save();
  $('m').innerHTML=`<div class="card hero"><h2>${pct>=80?'Great work!':pct>=50?'Good effort':'Keep practising'}</h2><p style="margin:4px 0">Score <b>${run.pts}/${run.max}</b> (${pct}%) · +${run.pts+bonus} XP${bonus?` (includes +${bonus} daily bonus)`:''}</p>
- ${up?`<p>🎉 <b>Rank up: ${RANKS[rank()][1]}!</b></p>`:''}${newBadges.map(k=>`<p>${BADGES[k][0]} New badge: <b>${BADGES[k][1]}</b></p>`).join('')}
+ ${up?`<p><b>Rank up: ${RANKS[rank()][1]}!</b></p>`:''}${newBadges.map(k=>`<p>${BADGES[k][0]} New badge: <b>${BADGES[k][1]}</b></p>`).join('')}
  <div class="mute">${pct<80?'Tip: re-read the explanation under any answer you missed; the same idea comes back in the real tests.':'You are ready to try the real thing on the Ticket Board.'}</div></div>
  <div class="btns"><button class="pri" data-home="1">Back to Arcade</button><a href="tickets.html"><button>Go to Ticket Board</button></a></div>`}
 document.addEventListener('click',e=>{const d=e.target.dataset||{};
