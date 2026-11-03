@@ -170,5 +170,5 @@ document.addEventListener('click',e=>{const d=e.target.dataset||{};
  else if(d.daily){const day=today();start(Object.keys(GAMES).map(g=>({g,seed:hash(day+g)})),true)}
  else if(d.home)home();else if(e.target.id==='chk')check();else if(e.target.id==='nxt'){run.i++;next()}});
 home();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>
