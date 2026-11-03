@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Interview Practice</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:0 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;font-weight:600}
+button.pri{background:var(--blue);border-color:var(--blue);color:#fff}button:disabled{opacity:.5}
+nav,.row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+textarea{font:inherit;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:10px}
+.cof{border-left:3px solid var(--accent);padding:4px 10px;margin:8px 0;background:#b08d5714;border-radius:4px;font-size:15px}
+.tip{border-left:3px solid var(--blue);padding:4px 10px;margin:8px 0;background:#2563eb14;border-radius:4px;font-size:15px}
+.bar{height:9px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}.big{font-size:32px;font-weight:800;line-height:1.1}
+label.ck{display:flex;gap:10px;align-items:flex-start;padding:7px 4px;border-bottom:1px dashed var(--line);cursor:pointer}label.ck input{margin-top:5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>🎤 Interview <span>Practice</span></h1><span class="sp"></span><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main><div id="top"></div><nav id="nav"></nav><div id="v"></div></main>
+<script src="interview-data.js"></script>
+<script>
+const Q=window.INTERVIEW||[];const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KEY='interview-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.ans=S.ans||{};S.tab=S.tab||'practice';S.cat=S.cat||'all';
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const CATS=[...new Set(Q.map(q=>q.cat))];let cur=null,reveal=false,hit=[],draft='';
+const list=()=>Q.filter(q=>S.cat==='all'||q.cat===S.cat);
+function pickNext(){const l=list();const un=l.filter(q=>!S.ans[q.id]);const pool=un.length?un:l.slice().sort((a,b)=>(S.ans[a.id]?.pct??0)-(S.ans[b.id]?.pct??0)).slice(0,6);cur=pool[Math.floor(Math.random()*pool.length)]||null;reveal=false;hit=[];draft=cur&&S.ans[cur.id]?S.ans[cur.id].text:''}
+const stats=()=>{const a=Object.values(S.ans);return{n:a.length,avg:a.length?a.reduce((x,y)=>x+y.pct,0)/a.length:0}};
+function practice(){const st=stats();if(!cur)pickNext();
+ const top=`<div class="card"><h2>Practise out loud, then in writing</h2><div class="mute">Pick a category, read the question as the interviewer would ask it, <b>write your own answer first</b>, then compare it with a strong sample answer and tick the key points you covered. Honest ticks are what make this work. Never invent experience: use real examples, like running your coffee business.</div><div class="row" style="margin-top:8px"><button data-cat="all" class="${S.cat==='all'?'pri':''}">All (${Q.length})</button>${CATS.map(c=>`<button data-cat="${esc(c)}" class="${S.cat===c?'pri':''}">${esc(c)} (${Q.filter(q=>q.cat===c).length})</button>`).join('')}</div><div class="mute">Answered ${st.n} of ${Q.length} · average self-score ${Math.round(st.avg*100)}% · The readiness gate is 20 answers at 70%+.</div><div class="bar" style="margin-top:6px"><i style="width:${st.n/Q.length*100}%"></i></div></div>`;
+ if(!cur)return top+'<div class="card">No questions loaded.</div>';
+ const done=S.ans[cur.id];
+ return top+`<div class="card"><div class="row" style="margin:0"><span class="tag">${esc(cur.cat)}</span>${done?`<span class="tag">last score ${Math.round(done.pct*100)}%</span>`:''}</div><h2 style="margin-top:8px">“${esc(cur.q)}”</h2>${cur.coffee?`<div class="cof">☕ ${esc(cur.coffee)}</div>`:''}<textarea id="ans" rows="6" placeholder="Type your answer as you would say it in the interview…">${esc(draft)}</textarea><div class="row" style="margin-top:8px"><button class="pri" data-show="1" ${reveal?'disabled':''}>Show the sample answer and key points</button><button data-skip="1">Skip</button></div>
+ ${reveal?`<div class="tip"><b>Sample answer</b><br>${esc(cur.model)}</div><h3>Tick every point your own answer covered</h3>${cur.points.map((p,i)=>`<label class="ck"><input type="checkbox" data-pt="${i}" ${hit.includes(i)?'checked':''}><span>${esc(p)}</span></label>`).join('')}<div class="tip" style="margin-top:10px"><b>Coach:</b> ${esc(cur.tip)}</div><div class="row" style="margin-top:10px"><span class="big">${Math.round(hit.length/cur.points.length*100)}%</span><span class="mute" style="align-self:center">of key points covered</span><span class="sp" style="flex:1"></span><button class="pri" data-save="1">Save and next →</button></div>`:''}</div>`}
+function review(){const a=Q.filter(q=>S.ans[q.id]).sort((x,y)=>S.ans[x.id].pct-S.ans[y.id].pct);
+ return `<div class="card"><h2>Your answers</h2><div class="mute">Weakest first. Redo the low ones.</div></div>${a.length?a.map(q=>`<div class="card"><div class="row" style="margin:0"><span class="tag">${esc(q.cat)}</span><span class="tag">${Math.round(S.ans[q.id].pct*100)}%</span></div><b>${esc(q.q)}</b><div class="mute" style="white-space:pre-wrap;margin:6px 0">${esc(S.ans[q.id].text||'(no written answer)')}</div><button data-redo="${q.id}">Redo this one</button></div>`).join(''):'<div class="card mute">Nothing answered yet.</div>'}`}
+function guide(){return `<div class="card"><h2>How to answer well</h2><div class="tip"><b>1. Pause and clarify.</b> For “how would you test…” questions, ask what it is for and who uses it before listing tests. It shows you think before you act.</div><div class="tip"><b>2. Structure it.</b> Group ideas: functional, boundary values, invalid input, usability, performance, security, accessibility, compatibility. Then say which you would do first and why (risk).</div><div class="tip"><b>3. Use STAR for behavioural questions.</b> <b>S</b>ituation, <b>T</b>ask, <b>A</b>ction (what <i>you</i> did), <b>R</b>esult (what changed, what you learned). Keep it to about 90 seconds.</div><div class="tip"><b>4. Be honest.</b> If you have not used a tool, say so and say how you would learn it, and what you have practised instead (this app, the practice sites). Employers hire honest learners.</div><div class="tip"><b>5. Bring evidence.</b> Your <a href="portfolio.html">portfolio</a> (bug reports, test notes, SQL checks) is worth more than any claim.</div><div class="cof">☕ Your coffee business is real experience: you handled customers, complaints, stock counts and quality checks every day. Use it, truthfully, as your examples.</div></div>`}
+function render(){$('nav').innerHTML=[['practice','Practise'],['review','My answers'],['guide','How to answer']].map(([k,l])=>`<button data-tab="${k}" class="${S.tab===k?'pri':''}">${l}</button>`).join('');$('v').innerHTML=S.tab==='practice'?practice():S.tab==='review'?review():guide()}
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
+ if(d.tab){S.tab=d.tab;save();render();return}
+ if(d.cat){S.cat=d.cat;cur=null;save();render();return}
+ if(d.show){draft=$('ans').value;reveal=true;render();return}
+ if(d.skip){pickNext();render();return}
+ if(d.save){S.ans[cur.id]={text:$('ans')?$('ans').value:draft,hit:hit.slice(),pct:hit.length/cur.points.length,ts:Date.now()};save();pickNext();render();window.scrollTo(0,0);return}
+ if(d.redo){cur=Q.find(q=>q.id===d.redo);reveal=false;hit=[];draft=S.ans[cur.id].text;S.tab='practice';S.cat='all';render();window.scrollTo(0,0);return}});
+document.addEventListener('change',e=>{const i=e.target.dataset.pt;if(i===undefined)return;const n=+i;const k=hit.indexOf(n);if(e.target.checked&&k<0)hit.push(n);if(!e.target.checked&&k>=0)hit.splice(k,1);const a=$('ans');if(a)draft=a.value;render()});
+render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

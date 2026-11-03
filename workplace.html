@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Work Skills</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:0 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;font-weight:600}
+button.pri{background:var(--blue);border-color:var(--blue);color:#fff}button:disabled{opacity:.5}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.shell{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}@media(max-width:900px){.shell{grid-template-columns:1fr}}
+.shell>*{min-width:0}.list{display:flex;flex-direction:column;gap:5px}.list button{white-space:normal}pre{max-width:100%}.list button{text-align:left;display:flex;gap:8px;align-items:center}.list button.on{background:var(--blue);color:#fff;border-color:var(--blue)}.list .n{min-width:22px;font:600 12px ui-monospace,monospace}
+.cof{border-left:3px solid var(--accent);padding:4px 10px;margin:8px 0;background:#b08d5714;border-radius:4px;font-size:15px}
+.try{border-left:3px solid var(--green);padding:4px 10px;margin:8px 0;background:#16794a14;border-radius:4px;font-size:15px}
+pre{background:#0e1620;color:#e7edf6;padding:12px;border-radius:10px;overflow:auto;font:13.5px/1.5 ui-monospace,Menlo,monospace;white-space:pre}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:6px 0;background:var(--card);font-weight:500}.opt b{min-width:22px;color:var(--mute)}
+.opt.sel{border-color:var(--blue);box-shadow:0 0 0 2px #2563eb44}.opt.right{border-color:var(--green);background:#16794a22}.opt.wrong{border-color:var(--red);background:#c0392b22}
+.res{border-radius:10px;padding:8px 12px;margin-top:6px;font-size:15px}.res.ok{background:#16794a1f}.res.no{background:#c0392b1f}
+.bar{height:9px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>🛠 Work <span>Skills</span></h1><span class="sp"></span><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main><nav id="nav"></nav><div id="v"></div></main>
+<script src="workplace-a.js"></script><script src="workplace-b.js"></script>
+<script>
+const W=(window.WORKPLACE||[]).slice();const ORDER=['devtools','git','docs','agile','automation','delivery'];W.sort((a,b)=>ORDER.indexOf(a.id)-ORDER.indexOf(b.id));
+const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KEY='workplace-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.done=S.done||{};S.sec=S.sec||(W[0]&&W[0].id);S.les=S.les||0;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+let sel=[],checked=false;
+const sec=()=>W.find(s=>s.id===S.sec)||W[0];
+function render(){const s=sec();if(!s){$('v').innerHTML='<div class="card">No lessons loaded.</div>';return}
+ const total=W.reduce((a,x)=>a+x.lessons.length,0),pass=Object.values(S.done).filter(x=>x>=2).length;
+ $('nav').innerHTML=W.map(x=>{const n=x.lessons.filter((_,i)=>(S.done[x.id+':'+i]||0)>=2).length;return `<button data-sec="${x.id}" class="${x.id===S.sec?'pri':''}">${esc(x.title)} (${n}/${x.lessons.length})</button>`}).join('');
+ const l=s.lessons[S.les]||s.lessons[0];const key=s.id+':'+S.les;
+ if(!sel.length||sel.key!==key){sel=l.quiz.map(()=>null);sel.key=key;checked=false}
+ const best=S.done[key];
+ $('v').innerHTML=`<div class="card"><h2>${esc(s.title)}</h2><div class="mute">${esc(s.intro||'')}</div><div class="mute" style="margin-top:6px">Passed lessons overall: <b>${pass}/${total}</b> (a lesson counts when you get 2 of 3 quiz questions right). The readiness gate is ${Math.ceil(total*.75)} of ${total}.</div><div class="bar" style="margin-top:6px"><i style="width:${pass/total*100}%"></i></div></div>
+ <div class="shell"><div class="card"><div class="list">${s.lessons.map((x,i)=>`<button data-les="${i}" class="${i===S.les?'on':''}"><span class="n">${(S.done[s.id+':'+i]||0)>=2?'✓':i+1}</span><span>${esc(x.t)}</span></button>`).join('')}</div></div>
+ <div><div class="card"><div class="tag">Lesson ${S.les+1} of ${s.lessons.length}</div><h2 style="margin-top:6px">${esc(l.t)}</h2><p>${esc(l.plain)}</p>${l.coffee?`<div class="cof">☕ ${esc(l.coffee)}</div>`:''}${l.steps&&l.steps.length?`<ol>${l.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:''}${l.code?`<pre>${esc(l.code)}</pre><button data-copy="1">Copy</button>`:''}${l.tryit?`<div class="try"><b>Try it:</b> ${esc(l.tryit)}</div>`:''}</div>
+ <div class="card"><h3>Quick check ${best!==undefined?`<span class="tag">best ${best}/3</span>`:''}</h3>${l.quiz.map((q,qi)=>`<div style="margin:10px 0"><b>${qi+1}.</b> ${esc(q.q)}${q.o.map((o,i)=>`<button class="opt ${checked?(i===q.a?'right':sel[qi]===i?'wrong':''):sel[qi]===i?'sel':''}" data-q="${qi}|${i}" ${checked?'disabled':''}><b>${'ABCD'[i]}</b><span>${esc(o)}</span></button>`).join('')}${checked?`<div class="res ${sel[qi]===q.a?'ok':'no'}">${sel[qi]===q.a?'✅ ':'❌ '}${esc(q.why)}</div>`:''}</div>`).join('')}
+ <div style="display:flex;gap:8px;flex-wrap:wrap">${checked?`<button class="pri" data-next="1">${S.les<s.lessons.length-1?'Next lesson →':'Finish section'}</button><button data-retry="1">Try the quiz again</button>`:`<button class="pri" data-check="1" ${sel.some(x=>x===null)?'disabled':''}>Check answers</button>`}</div></div></div></div>`}
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
+ if(d.sec){S.sec=d.sec;S.les=0;sel=[];save();render();return}
+ if(d.les!==undefined){S.les=+d.les;sel=[];save();render();window.scrollTo(0,0);return}
+ if(d.q&&!checked){const[a,b]=d.q.split('|').map(Number);sel[a]=b;render();return}
+ if(d.check){const s=sec(),l=s.lessons[S.les];const n=l.quiz.filter((q,i)=>sel[i]===q.a).length;const key=s.id+':'+S.les;S.done[key]=Math.max(S.done[key]||0,n);checked=true;save();render();return}
+ if(d.retry){sel=[];checked=false;sel.key=null;render();return}
+ if(d.next){const s=sec();if(S.les<s.lessons.length-1)S.les++;sel=[];save();render();window.scrollTo(0,0);return}
+ if(d.copy){const l=sec().lessons[S.les];navigator.clipboard&&navigator.clipboard.writeText(l.code).then(()=>{t.textContent='Copied ✓'});return}});
+render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

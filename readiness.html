@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Readiness</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:0 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--accent)}.bar i.ok{background:var(--green)}
+.big{font-size:38px;font-weight:800;line-height:1.1}.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
+a.go{display:inline-block;margin-top:6px;font-weight:600}.done{color:var(--green);font-weight:700}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>📈 Readiness <span>can I pass the exam? can I do the job?</span></h1><span class="sp"></span><a href="exam.html">Exam prep</a><a href="index.html">Home</a></header>
+<main><div id="v"></div></main>
+<script src="tickets.js"></script>
+<script>
+const $=id=>document.getElementById(id);const rd=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}};
+const X=rd('exam-v1'),C=rd('capstone-v1'),T=rd('uat-tickets-v1'),Q=rd('sqllab-v1'),A=rd('apilab-v1'),AR=rd('arcade-v1'),CA=rd('careful-v1'),IV=rd('interview-v1'),WP=rd('workplace-v1'),TE=rd('tech-v1'),PF=rd('portfolio-v1');
+const nTickets=(window.TICKETS||[]).length||17;
+const G=[];const add=(goal,name,have,need,unit,detail,link,label)=>G.push({goal,name,have,need,unit,detail,link,label,pct:Math.min(1,have/need),done:have>=need});
+/* ---------- exam goal ---------- */
+const mocks=(X.mocks||[]);const good=mocks.filter(m=>m.score/40>=.8).length;
+add('exam','Timed mock exams at 80%+',good,3,'mocks',mocks.length?`Best so far: ${Math.max(...mocks.map(m=>m.score))}/40. The real pass mark is 26/40 (65%); 80% (32/40) leaves a safety margin.`:'Take a 60-minute mock exam. The real one is 40 questions, pass mark 26.','exam.html','Mock exam');
+const read=Object.keys(X.read||{}).length;add('exam','Syllabus lessons read',read,58,'of 64','Read at least 90% of the 64 learning-objective lessons.','exam.html','Lessons');
+const lo=X.lo||{};const loAns=Object.values(lo).reduce((a,s)=>a+s.n,0),loOk=Object.values(lo).reduce((a,s)=>a+s.c,0);add('exam','Practice: 100 answers at 75%+ accuracy',(loAns>=100&&loOk/loAns>=.75)?100:Math.min(99,loAns),100,'answers',loAns?`${loAns} answered so far, ${Math.round(loOk/Math.max(1,loAns)*100)}% correct. You need 100 answers with at least 75% correct.`:'Answer 100 practice questions at 75% or better.','exam.html','Practise');
+const TYPES=['ep_count','ep_set','bva_set','bva_count','dt_rules','dt_action','st_next','st_cov','code_cov','est_3pt','est_ratio','est_extrap','prio_risk','prio_cov'];
+const mastered=TYPES.filter(t=>{const r=(TE.recent||{})[t]||[];return r.length>=5&&r.filter(x=>x).length/r.length>=.8}).length;add('exam','Calculation techniques mastered (80% of your last answers)',mastered,TYPES.length,'of '+TYPES.length,'These are the K3 questions: 8 of the 40 exam points. Practise each until it is automatic.','techniques.html','Technique trainer');
+/* ---------- job goal ---------- */
+const tk=Object.values(T).filter(x=>x&&(x.status==='Passed'||x.status==='Failed')).length;add('job','Tickets completed',tk,Math.round(nTickets*.9),'of '+nTickets,'Each ticket explains what you test and why.','tickets.html','Tickets');
+const cap=(C.attempts||[]);const capPass=cap.filter(a=>a.pass).length;add('job','Final test on an unseen app: passed',capPass,1,'attempt','Find at least 5 of 7 hidden bugs with at most 2 false alarms and clear reports.'+(cap.length?` Best: ${Math.max(...cap.map(a=>a.found))}/7.`:''),'capstone.html','Final test');
+const gym=Object.keys(Q.gym||{}).length;add('job','SQL practice gym',gym,35,'of 44','Real testers use SQL to check data. 35 of 44 is about 80%.','sql-lab.html#gym','SQL gym');
+const sl=Object.keys(Q.done||{}).length+Object.keys(Q.cases||{}).length;add('job','SQL lessons and detective cases',sl,13,'of 13','8 lessons and 5 data-bug cases.','sql-lab.html#learn','SQL lab');
+const api=Object.keys(A.found||{}).length;add('job','API lab: bugs found',api,6,'of 8','Find at least 6 of the 8 hidden API bugs.','api-lab.html','API lab');
+const ses=(CA.sessions||[]).length;add('job','Exploratory sessions saved',ses,3,'sessions','Three timed sessions with a charter and notes.','careful.html','Careful toolkit');
+const ans=Object.values(IV.ans||{});const avg=ans.length?ans.reduce((a,x)=>a+x.pct,0)/ans.length:0;add('job','Interview answers practised (avg 70%+)',ans.length>=20&&avg>=.7?20:ans.length,20,'answers',ans.length?`${ans.length} answered, average self-score ${Math.round(avg*100)}%.`:'Answer 20 interview questions and tick the key points you covered.','interview.html','Interview practice');
+const wl=Object.values(WP.done||{}).filter(x=>x>=2).length;add('job','Work-skills lessons passed (2 of 3 quiz questions)',wl,27,'of 36','DevTools, Git, documents, Agile, automation, delivery.','workplace.html','Work skills');
+add('job','Portfolio exported',PF.exported?1:0,1,'time','Collect your best bug reports and test notes into one document you can show employers.','portfolio.html','Portfolio');
+add('job','Test arcade: Tester rank (100 XP)',AR.xp||0,100,'XP','Quick daily habits: boundary values, spotting defects, rating severity.','arcade.html','Arcade');
+function card(g){return `<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><b>${g.name}</b><span class="${g.done?'done':'mute'}">${g.done?'✅ done':Math.round(g.pct*100)+'%'}</span></div><div class="bar"><i class="${g.done?'ok':''}" style="width:${g.pct*100}%"></i></div><div class="mute">${g.have} / ${g.need} ${g.unit}. ${g.detail}</div><a class="go" href="${g.link}">${g.label} →</a></div>`}
+function goal(id,title,sub){const gs=G.filter(g=>g.goal===id);const dn=gs.filter(g=>g.done).length;const avg=gs.reduce((a,g)=>a+g.pct,0)/gs.length;
+ return `<div class="card" style="border-left:4px solid ${dn===gs.length?'var(--green)':'var(--accent)'}"><h2>${title}</h2><div class="big">${dn}/${gs.length} <span class="mute" style="font-size:16px">gates passed · ${Math.round(avg*100)}% of the way</span></div><div class="mute">${sub}</div><div class="bar"><i class="${dn===gs.length?'ok':''}" style="width:${avg*100}%"></i></div>${dn===gs.length?'<div class="done">All gates passed. Time to book the exam / start applying.</div>':''}</div><div class="grid">${gs.map(card).join('')}</div>`}
+$('v').innerHTML=`<div class="card"><h2>What "ready" means here</h2><div class="mute">No app can promise you a pass or a job. What it can do is replace a feeling with measurements. Each gate below is a bar you cross by <b>doing</b> something that the real exam or a real employer asks for. The two goals have different gates. When every gate for a goal is green, you have strong evidence, not a guarantee.</div></div>`+goal('exam','🎓 Goal 1: pass the ISTQB Foundation exam','Book the exam when all four are green. The mock exams are the closest thing to the real test.')+'<div style="height:14px"></div>'+goal('job','💼 Goal 2: test for a company','Employers look for a mix of testing thinking, data skills, API skills, clear writing and teamwork habits.')+`<div class="card"><h3>Honest limits</h3><ul style="margin:6px 0 0 18px;padding:0"><li>The exam questions here are original practice questions, not the real ones. Also do the official free sample exams on istqb.org.</li><li>Real jobs also need real experience. Use <a href="outside.html">the practice-outside-the-app page</a> to meet real software and real teams.</li></ul></div>`;
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

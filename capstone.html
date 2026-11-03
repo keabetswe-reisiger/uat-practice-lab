@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Final Test: Unseen App</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:0 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;font-weight:600}
+button.pri{background:var(--blue);border-color:var(--blue);color:#fff}button:disabled{opacity:.5;cursor:default}
+.two{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}@media(max-width:960px){.two{grid-template-columns:1fr}}
+.big{font-size:34px;font-weight:800;line-height:1.1}.timer{font:700 20px ui-monospace,monospace}
+input,select,textarea{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 10px;width:100%}label{display:block;font-size:13px;font-weight:600;color:var(--mute);margin:8px 0 3px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
+.res{border-radius:10px;padding:10px 12px;margin-top:10px}.res.ok{background:#16794a1f}.res.no{background:#c0392b1f}.res.info{background:#2563eb1a}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;font-size:14.5px;vertical-align:top}
+/* the app under test: deliberately light, like a real app screen */
+.app{background:#fff;color:#16202f;border:2px solid #cbd2dc;border-radius:16px;overflow:hidden;font-size:15px}
+.app *{color:inherit}.app .hd{background:#3b2a1d;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}.app .hd *{color:#fff}
+.app .tb{display:flex;border-bottom:1px solid #e4e7ec}.app .tb button{flex:1;border:0;border-radius:0;background:#faf7f3;color:#16202f;padding:10px 4px}.app .tb button.on{background:#fff;border-bottom:3px solid #b08d57}
+.app .tb button{background:#faf7f3!important;color:#16202f!important;border:0!important}.app .tb button.on{background:#fff!important;border-bottom:3px solid #b08d57!important}
+.app button{background:#f3ece4!important;color:#16202f!important;border:1px solid #d9c9b8!important}.app button.go{background:#b08d57!important;border-color:#b08d57!important;color:#16202f!important}.app button:disabled{opacity:.55}
+.app input{background:#fff!important;color:#16202f!important;border:1px solid #cbd2dc!important}.app .stamp.on{color:#16202f}.app .mute{color:#5b6472!important}.app h4,.app label,.app b,.app small,.app td,.app th{color:inherit}
+.app .bd{padding:12px 14px}.app button{background:#f3ece4;color:#16202f;border:1px solid #d9c9b8}.app button.go{background:#b08d57;border-color:#b08d57;color:#fff}.app input{background:#fff;color:#16202f;border-color:#cbd2dc}
+.app .it{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed #e4e7ec}.app .it .n{flex:1}.app .sold{background:#c0392b;color:#fff;border-radius:6px;padding:0 6px;font-size:12px}
+.app .msg{padding:7px 10px;border-radius:6px;margin-top:8px;font-size:14px}.app .msg.e{background:#fbe4e1;color:#8a1f13}.app .msg.s{background:#dff3e8;color:#145c38}
+.app .stamps{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.app .stamp{width:32px;height:32px;border-radius:50%;border:2px solid #b08d57;display:flex;align-items:center;justify-content:center}.app .stamp.on{background:#b08d57;color:#16202f}
+.app table td,.app table th{border-color:#e4e7ec}.app .tot{text-align:right}.app .tot b{font-size:18px}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>🏁 Final Test <span>Unseen App</span></h1><span class="sp"></span><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main><div id="v"></div></main>
+<script>
+const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* ---------------- the hidden bugs ---------------- */
+const BUGS={
+ b1:{area:'Order',type:'Calculation',d:'The total ignores quantity: 3 flat whites cost the price of one.',hint:'Add an item with quantity 3 and compare the line total with price × quantity.',idea:'Calculation check with more than one of an item (not just quantity 1).'},
+ b2:{area:'Order',type:'Calculation',d:'Promo code WELCOME10 takes 20% off instead of 10%.',hint:'Apply WELCOME10 and check the discount against 10% of the subtotal.',idea:'Recompute every discount by hand.'},
+ b3:{area:'Order',type:'Validation',d:'The quantity box accepts 0 and negative numbers and creates a negative line.',hint:'Try quantity 0, -2, and a decimal.',idea:'Invalid and boundary values on every input field.'},
+ b4:{area:'Order',type:'Business rule',d:'The expired code SUMMER25 is still accepted.',hint:'The note under the promo box says SUMMER25 expired. Try it.',idea:'Check rules that depend on time (expiry).'},
+ b5:{area:'Order',type:'State',d:'After removing an item the total is not updated until you add another item.',hint:'Add two items, remove one, and watch the total.',idea:'Change something back and check the screen refreshes (state change).'},
+ b6:{area:'Order',type:'Business rule',d:'A product marked Sold out can still be added to the cart.',hint:'Find the item with a Sold out badge and try to add it.',idea:'Check that restrictions shown on screen are really enforced.'},
+ b7:{area:'Loyalty',type:'Boundary',d:'The free coffee unlocks at 9 stamps instead of 10.',hint:'Buy until you have 9 stamps and look at the Redeem button.',idea:'Boundary: just below, on and just above the limit (9, 10, 11).'},
+ b8:{area:'Loyalty',type:'Calculation',d:'Points are rounded instead of rounded down: R19 earns 2 points, the rule is 1 point per full R10.',hint:'Pay an order of R19 to R29 and compare the points with the rule on the Loyalty tab.',idea:'Test amounts just below the next point (R19, R29).'},
+ b9:{area:'Loyalty',type:'Data not saved',d:'Stamps are lost when the app is reloaded.',hint:'Earn some stamps, reload the page, and look again.',idea:'Persistence: reload the page after a change and check it is still there.'},
+ b10:{area:'Account',type:'Validation',d:'The phone field accepts letters and numbers with fewer than 10 digits.',hint:'Save a phone like "abc123456" or "08212345".',idea:'Invalid formats and lengths on every field.'},
+ b11:{area:'Account',type:'Boundary',d:'Age 16 is rejected, but the rule says 16 or older is allowed.',hint:'The page says customers must be 16 or older. Test 15, 16 and 17.',idea:'Boundary: just below, on and just above the limit.'},
+ b12:{area:'Account',type:'Message',d:'An invalid email shows "Error 500: validation failed" instead of a helpful message.',hint:'Save an email like "abc".',idea:'Read every error message: is it clear to a customer?'},
+ b13:{area:'Account',type:'Data not saved',d:'The changed email is not saved after a reload.',hint:'Change the email, press Save, reload the page, and check the Account tab.',idea:'Persistence: reload the page after saving.'},
+ b14:{area:'History',type:'Calculation',d:'The VAT shown on a receipt is 15% of the total instead of the VAT included in it (15/115).',hint:'Check one receipt: total R115 should show VAT R15.00.',idea:'Recompute figures on receipts and summaries by hand.'},
+ b15:{area:'History',type:'Display',d:'Order dates are shown as month/day/year instead of day/month/year.',hint:'Look at the date on a receipt next to the date shown at the top of the app.',idea:'Compare the same data in two places on the screen.'}};
+const AREAS=['Order','Loyalty','Account','History'],TYPES=['Calculation','Validation','Boundary','Business rule','Data not saved','Display','Message','State'];
+const NBUGS=7;
+/* ---------------- state ---------------- */
+const KEY='capstone-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.attempts=S.attempts||[];S.cur=S.cur||null;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const AKEY='capstone-app';let A=null;const B=id=>!!(S.cur&&S.cur.bugs.includes(id));
+const rng=seed=>{let a=seed>>>0||1;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
+function pickBugs(seed){const r=rng(seed);const ids=Object.keys(BUGS);const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+ const used=new Set(),out=[];const tryAdd=id=>{const k=BUGS[id].area+'|'+BUGS[id].type;if(used.has(k)||out.includes(id))return false;used.add(k);out.push(id);return true};
+ AREAS.forEach(a=>{for(const id of shuf(ids.filter(i=>BUGS[i].area===a))){if(tryAdd(id))break}});
+ for(const id of shuf(ids)){if(out.length>=NBUGS)break;tryAdd(id)}return out}
+/* ---------------- the app under test: Brew Rewards ---------------- */
+const MENU=[{id:'esp',n:'Espresso',p:30,c:1},{id:'fw',n:'Flat White',p:38,c:1},{id:'il',n:'Iced Latte',p:45,c:1},{id:'cr',n:'Croissant',p:32},{id:'mf',n:'Blueberry Muffin',p:30,sold:1},{id:'bn',n:'Beans 1kg',p:280}];
+const TODAY=[17,11,2026];
+const fresh=()=>({cart:[],promo:null,stamps:0,points:0,orders:[],acct:{name:'',email:'',phone:'',age:''},tab:'order',msg:null,shownTotal:0});
+function loadApp(){try{A=JSON.parse(localStorage.getItem(AKEY))}catch{A=null}if(!A||A.seed!==S.cur.seed){A=Object.assign(fresh(),{seed:S.cur.seed})}}
+function saveApp(){const o=JSON.parse(JSON.stringify(A));if(B('b9'))o.stamps=0;if(B('b13'))o.acct.email='';o.msg=null;try{localStorage.setItem(AKEY,JSON.stringify(o))}catch{}}
+const money=x=>'R'+(Math.round(x*100)/100).toFixed(2);
+function calc(){let sub=0;A.cart.forEach(l=>{const m=MENU.find(x=>x.id===l.id);sub+=m.p*((B('b1')&&l.q>1)?1:l.q)});let rate=0;if(A.promo==='WELCOME10')rate=B('b2')?.2:.1;else if(A.promo==='SUMMER25'&&B('b4'))rate=.25;
+ const disc=sub*rate,total=sub-disc;return{sub,disc,total,vat:B('b14')?total*.15:total*15/115}}
+function appHTML(){const c=calc();const tab=A.tab;const pts=x=>B('b8')?Math.round(x/10):Math.floor(x/10);
+ const tabs=[['order','Order'],['loyalty','Loyalty'],['account','Account'],['history','History']];
+ let body='';
+ if(tab==='order'){const shown=B('b5')?A.shownTotal:c.total;
+  body=`<div>${MENU.map(m=>`<div class="it"><span class="n">${m.n} ${m.sold?'<span class="sold">Sold out</span>':''}<br><small>${money(m.p)}</small></span><input type="text" inputmode="numeric" id="q_${m.id}" value="1" style="width:56px"><button data-add="${m.id}">Add</button></div>`).join('')}</div>
+  <h4 style="margin:10px 0 2px">Your cart</h4>${A.cart.length?`<table>${A.cart.map((l,i)=>{const m=MENU.find(x=>x.id===l.id);return `<tr><td>${m.n}</td><td>× ${l.q}</td><td>${money(m.p*((B('b1')&&l.q>1)?1:l.q))}</td><td><button data-rm="${i}">Remove</button></td></tr>`}).join('')}</table>`:'<div class="mute">Cart is empty.</div>'}
+  <div style="margin-top:8px"><input type="text" id="promo" placeholder="Promo code" value="${esc(A.promo||'')}" style="width:150px"> <button data-promo="1">Apply</button> <small>Codes: WELCOME10 (10% off). SUMMER25 expired on 31 Jan.</small></div>
+  <div class="tot" style="margin-top:8px">Subtotal ${money(c.sub)}${c.disc?`<br>Discount −${money(c.disc)}`:''}<br>Total (incl. VAT) <b>${money(shown)}</b></div><div style="text-align:right;margin-top:8px"><button class="go" data-pay="1">Pay now</button></div>`}
+ else if(tab==='loyalty'){const need=B('b7')?9:10;
+  body=`<div>Collect <b>1 stamp for every coffee</b> (espresso, flat white, iced latte). <b>10 stamps = 1 free coffee.</b> You earn <b>1 point for every full R10</b> you spend.</div><div class="stamps">${Array.from({length:10},(_,i)=>`<span class="stamp ${i<A.stamps?'on':''}">${i<A.stamps?'☕':''}</span>`).join('')}</div><div>Stamps: <b>${A.stamps}</b> · Points: <b>${A.points}</b></div><div style="margin-top:8px"><button class="go" data-redeem="1" ${A.stamps>=need?'':'disabled'}>Redeem free coffee</button></div>`}
+ else if(tab==='account'){const a=A.acct;
+  body=`<div>Customers must be <b>16 or older</b>. Phone numbers have <b>10 digits</b>.</div><label>Name</label><input id="a_name" value="${esc(a.name)}"><label>Email</label><input id="a_email" value="${esc(a.email)}"><label>Phone</label><input id="a_phone" value="${esc(a.phone)}"><label>Age</label><input id="a_age" value="${esc(a.age)}"><div style="margin-top:8px"><button class="go" data-save="1">Save</button></div>`}
+ else{body=A.orders.length?`<table><tr><th>Date</th><th>Items</th><th>Total</th><th>VAT incl.</th></tr>${A.orders.slice().reverse().map(o=>`<tr><td>${B('b15')?`${o.d[1]}/${o.d[0]}/${o.d[2]}`:`${o.d[0]}/${o.d[1]}/${o.d[2]}`}</td><td>${esc(o.items)}</td><td>${money(o.total)}</td><td>${money(o.vat)}</td></tr>`).join('')}</table>`:'<div class="mute">No orders yet.</div>'}
+ return `<div class="app"><div class="hd"><b>☕ Brew Rewards</b><small>Today: ${TODAY[0]}/${TODAY[1]}/${TODAY[2]}${A.acct.name?' · Hi, '+esc(A.acct.name):''}</small></div><div class="tb">${tabs.map(([k,l])=>`<button data-apptab="${k}" class="${tab===k?'on':''}">${l}</button>`).join('')}</div><div class="bd">${body}${A.msg?`<div class="msg ${A.msg.k}">${esc(A.msg.t)}</div>`:''}</div></div>`}
+function appClick(d){
+ if(d.apptab){A.tab=d.apptab;A.msg=null;return true}
+ if(d.add){const m=MENU.find(x=>x.id===d.add);const raw=($('q_'+m.id)||{}).value;const q=Number(String(raw).trim());
+  if(m.sold&&!B('b6')){A.msg={k:'e',t:m.n+' is sold out.'};return true}
+  if(String(raw).trim()===''||isNaN(q)||!Number.isInteger(q)){A.msg={k:'e',t:'Please enter a whole number.'};return true}
+  if(q<1&&!B('b3')){A.msg={k:'e',t:'Quantity must be 1 or more.'};return true}
+  const ex=A.cart.find(l=>l.id===m.id);if(ex)ex.q+=q;else A.cart.push({id:m.id,q});A.shownTotal=calc().total;A.msg={k:'s',t:'Added '+m.n+'.'};return true}
+ if(d.rm!==undefined){A.cart.splice(+d.rm,1);if(!B('b5'))A.shownTotal=calc().total;A.msg=null;return true}
+ if(d.promo){const c=($('promo').value||'').trim().toUpperCase();if(!c){A.promo=null;A.msg=null;return true}
+  if(c==='WELCOME10'){A.promo=c;A.msg={k:'s',t:'Code applied.'}}else if(c==='SUMMER25'){if(B('b4')){A.promo=c;A.msg={k:'s',t:'Code applied.'}}else{A.promo=null;A.msg={k:'e',t:'This code has expired.'}}}else{A.promo=null;A.msg={k:'e',t:'Code not recognised.'}}A.shownTotal=calc().total;return true}
+ if(d.pay){if(!A.cart.length){A.msg={k:'e',t:'Your cart is empty.'};return true}const c=calc();let coffees=0;A.cart.forEach(l=>{if(MENU.find(x=>x.id===l.id).c)coffees+=Math.max(0,l.q)});
+  A.stamps+=coffees;A.points+=(B('b8')?Math.round(c.total/10):Math.floor(c.total/10));A.orders.push({d:TODAY.slice(),items:A.cart.map(l=>MENU.find(x=>x.id===l.id).n+' ×'+l.q).join(', '),total:c.total,vat:c.vat});A.cart=[];A.promo=null;A.shownTotal=0;A.msg={k:'s',t:'Paid '+money(c.total)+'. Thank you!'};return true}
+ if(d.redeem){const need=B('b7')?9:10;if(A.stamps>=need){A.stamps=Math.max(0,A.stamps-10);A.msg={k:'s',t:'Free coffee redeemed.'}}return true}
+ if(d.save){const name=$('a_name').value.trim(),email=$('a_email').value.trim(),phone=$('a_phone').value.trim(),age=$('a_age').value.trim();
+  if(!name){A.msg={k:'e',t:'Please enter your name.'};return true}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){A.msg={k:'e',t:B('b12')?'Error 500: validation failed':'Please enter a valid email like name@example.com.'};return true}
+  const okPhone=B('b10')?phone.length>=8:/^\d{10}$/.test(phone);if(!okPhone){A.msg={k:'e',t:'Phone number must be 10 digits.'};return true}
+  const n=Number(age);if(!Number.isInteger(n)||n<1||n>120){A.msg={k:'e',t:'Please enter a valid age.'};return true}
+  if(B('b11')?n<=16:n<16){A.msg={k:'e',t:'You must be 16 or older to join.'};return true}
+  A.acct={name,email,phone,age};A.msg={k:'s',t:'Saved.'};return true}
+ return false}
+/* ---------------- the test around it ---------------- */
+const REP=()=>S.cur.reports;let T0=0;
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function home(){const at=S.attempts;const ok=at.filter(a=>a.pass).length;
+ return `<div class="card" style="border-left:4px solid var(--accent)"><h2>Final test: a new app, no hints</h2><div>This is the proof that you can test real software. <b>Brew Rewards</b> is a small coffee ordering and loyalty app you have never seen. <b>${NBUGS} hidden bugs</b> are planted, picked at random from a pool of ${Object.keys(BUGS).length}, so every attempt is different. There is no spec and no hints. You write the defect reports.</div>
+ <ul style="margin:8px 0 0 18px;padding:0"><li>Take about <b>30 minutes</b>. Use what you learned: boundary values, invalid input, recalculating by hand, reloading the page, comparing the same data in two places.</li><li>For each bug, log a report: <b>area</b>, <b>type</b>, a <b>title</b> and clear <b>steps</b> with expected and actual results.</li><li>A report that does not match a real bug is a <b>false alarm</b>. Careful testers do not cry wolf.</li><li><b>You pass</b> with at least <b>5 of ${NBUGS}</b> found, at most <b>2 false alarms</b>, and good report quality.</li></ul><div style="margin-top:12px"><button class="pri" data-start="1">${S.cur?'Start a new attempt (this abandons the current one)':'Start attempt'}</button> ${S.cur?'<button data-resume="1">Resume current attempt</button>':''}</div></div>
+ ${at.length?`<div class="card"><h3>Your attempts (${ok} passed)</h3><div style="overflow-x:auto"><table><tr><th>Date</th><th>Found</th><th>False alarms</th><th>Report quality</th><th>Time</th><th>Result</th></tr>${at.map(a=>`<tr><td>${new Date(a.ts).toLocaleString()}</td><td>${a.found}/${a.n}</td><td>${a.fa}</td><td>${Math.round(a.q*100)}%</td><td>${Math.round(a.secs/60)} min</td><td>${a.pass?'✅ pass':'not yet'}</td></tr>`).join('')}</table></div></div>`:''}`}
+function runHTML(){if(!A)loadApp();const el=Math.round((Date.now()-S.cur.start)/1000);
+ return `<div class="two"><div>${appHTML()}<div class="mute" style="margin-top:6px">Everything here is real behaviour of the pretend app. The page remembers your data, so you can reload it like a real app.</div></div>
+ <div><div class="card" style="position:sticky;top:0"><div style="display:flex;justify-content:space-between;align-items:center"><b>Bug log</b><span class="timer" id="tm">${fmt(el)}</span></div><div class="mute">Target: about 30 minutes. ${REP().length} report(s) so far.</div>
+ <label>Area</label><select id="r_area">${AREAS.map(a=>`<option>${a}</option>`).join('')}</select><label>Type of problem</label><select id="r_type">${TYPES.map(a=>`<option>${a}</option>`).join('')}</select><label>Title</label><input id="r_title" placeholder="Short and specific, e.g. Total wrong when quantity is 3"><label>Steps, expected and actual result</label><textarea id="r_steps" rows="4" placeholder="1. Add 3 flat whites&#10;2. Look at the cart line&#10;Expected: R114.00  Actual: R38.00"></textarea><div style="margin-top:8px"><button class="pri" data-addrep="1">Log this defect</button></div></div>
+ ${REP().length?`<div class="card"><h3>Reports</h3>${REP().map((r,i)=>`<div style="border-bottom:1px solid var(--line);padding:6px 0"><div class="tags"><span class="tag">${r.area}</span><span class="tag">${r.type}</span></div><b>${esc(r.title)}</b><div class="mute" style="white-space:pre-wrap">${esc(r.steps)}</div><button data-delrep="${i}">Delete</button></div>`).join('')}</div>`:''}
+ <div class="card"><button class="pri" data-finish="1">Finish and score</button> <button data-quit="1">Abandon</button><div class="mute" style="margin-top:6px">You cannot go back after scoring.</div></div></div></div>`}
+function score(){const c=S.cur;const act=c.bugs.slice();const matched=[];const used=new Set();let fa=0;let goodQ=0;
+ c.reports.forEach(r=>{const id=act.find(b=>!used.has(b)&&BUGS[b].area===r.area&&BUGS[b].type===r.type);if(id){used.add(id);const q=(r.title.trim().length>=8)&&(r.steps.trim().length>=30)&&/expect/i.test(r.steps)&&/actual|got|result|show/i.test(r.steps);if(q)goodQ++;matched.push({id,r,q})}else fa++});
+ const found=used.size,qual=found?goodQ/found:0;const pass=found>=5&&fa<=2&&qual>=.6;
+ return{found,fa,q:qual,pass,matched,missed:act.filter(b=>!used.has(b)),n:act.length}}
+function resultHTML(){const a=S.last;return `<div class="card" style="border-left:4px solid ${a.pass?'var(--green)':'var(--red)'}"><h2>${a.pass?'✅ Passed':'Not yet: good practice'}</h2><div class="big">${a.found} / ${a.n} <span class="mute">bugs found</span></div><div class="mute">False alarms: ${a.fa} · Report quality: ${Math.round(a.q*100)}% (needs a clear title, steps with "expected" and "actual") · Time: ${Math.round(a.secs/60)} min</div>
+ ${a.pass?'<p>You found the bugs in an app you had never seen, with clear reports and few false alarms. That is the skill employers test.</p>':'<p>The bugs below are the ones that were planted. Read how each one could have been found, then try again. The next attempt has a different mix of bugs.</p>'}</div>
+ <div class="card"><h3>Every planted bug</h3>${a.bugs.map(id=>{const f=a.foundIds.includes(id);return `<div style="border-bottom:1px solid var(--line);padding:8px 0"><div class="tags"><span class="tag">${BUGS[id].area}</span><span class="tag">${BUGS[id].type}</span><span class="tag">${f?'✅ you found it':'❌ missed'}</span></div><b>${esc(BUGS[id].d)}</b><div class="mute"><b>Where to look:</b> ${esc(BUGS[id].hint)}<br><b>Test idea that finds it:</b> ${esc(BUGS[id].idea)}</div></div>`}).join('')}</div>
+ ${a.falseReports.length?`<div class="card"><h3>False alarms (reports that did not match a planted bug)</h3>${a.falseReports.map(r=>`<div style="padding:6px 0"><div class="tags"><span class="tag">${r.area}</span><span class="tag">${r.type}</span></div><b>${esc(r.title)}</b><div class="mute">Check: is it really wrong according to the rules shown on screen? Did you pick the right area and type? If it is real but unplanted, it may be a limitation of this pretend app.</div></div>`).join('')}</div>`:''}
+ <div class="card"><button class="pri" data-start="1">Try a new attempt</button> <button data-home="1">Back</button></div>`}
+function render(){const v=$('v');if(S.view==='result'&&S.last){v.innerHTML=resultHTML();return}if(!S.cur){v.innerHTML=home();return}if(S.view==='home'){v.innerHTML=home();return}v.innerHTML=runHTML()}
+function startAttempt(){if(S.cur&&!confirm('Abandon the current attempt and start a new one?'))return;const seed=(Date.now()%1e9)+7;S.cur={seed,bugs:pickBugs(seed),start:Date.now(),reports:[]};S.view='run';S.last=null;A=null;try{localStorage.removeItem(AKEY)}catch{}loadApp();save();render()}
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
+ if(d.start){startAttempt();return}if(d.resume){S.view='run';save();render();return}if(d.home){S.view='home';save();render();return}
+ if(d.addrep){const r={area:$('r_area').value,type:$('r_type').value,title:$('r_title').value,steps:$('r_steps').value};if(r.title.trim().length<3||r.steps.trim().length<5){alert('Give the defect a title and some steps first.');return}REP().push(r);save();render();return}
+ if(d.delrep!==undefined){REP().splice(+d.delrep,1);save();render();return}
+ if(d.quit){if(confirm('Abandon this attempt? Nothing is scored.')){S.cur=null;S.view='home';save();render()}return}
+ if(d.finish){if(!REP().length&&!confirm('You have not logged any defects. Score anyway?'))return;if(!confirm('Finish and score your attempt?'))return;const s=score();const secs=Math.round((Date.now()-S.cur.start)/1000);
+  const rec={ts:Date.now(),seed:S.cur.seed,n:s.n,found:s.found,fa:s.fa,q:s.q,pass:s.pass,secs,bugs:S.cur.bugs,foundIds:s.matched.map(m=>m.id),falseReports:S.cur.reports.filter(r=>!s.matched.some(m=>m.r===r)).map(r=>({area:r.area,type:r.type,title:r.title})),reports:S.cur.reports.map(r=>({area:r.area,type:r.type,title:r.title,steps:r.steps,ok:s.matched.some(m=>m.r===r)}))};
+  S.attempts.push(rec);S.last=rec;S.cur=null;S.view='result';try{localStorage.removeItem(AKEY)}catch{}save();render();window.scrollTo(0,0);return}
+ if(S.cur&&A&&S.view==='run'){if(appClick(d)){saveApp();const keep={a:$('r_area')?.value,t:$('r_type')?.value,ti:$('r_title')?.value,st:$('r_steps')?.value};render();if($('r_area')){$('r_area').value=keep.a;$('r_type').value=keep.t;$('r_title').value=keep.ti;$('r_steps').value=keep.st}}}});
+setInterval(()=>{const t=$('tm');if(t&&S.cur)t.textContent=fmt(Math.round((Date.now()-S.cur.start)/1000))},1000);
+if(S.cur){S.view=S.view||'home';loadApp()}render();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

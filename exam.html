@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Exam Prep: ISTQB Foundation</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:0 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;font-weight:600}
+button.pri{background:var(--blue);border-color:var(--blue);color:#fff}button:disabled{opacity:.5;cursor:default}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.bar{height:9px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:7px 0;background:var(--card);font-weight:500}
+.opt b{min-width:22px;color:var(--mute)}.opt.sel{border-color:var(--blue);box-shadow:0 0 0 2px #2563eb44}.opt.right{border-color:var(--green);background:#16794a22}.opt.wrong{border-color:var(--red);background:#c0392b22}
+.qt{white-space:pre-wrap;font-size:17px;line-height:1.5}.cl{display:block;font-family:ui-monospace,Menlo,monospace;font-size:14px;background:#00000014;padding:0 8px}
+.res{border-radius:10px;padding:10px 12px;margin-top:10px}.res.ok{background:#16794a1f}.res.no{background:#c0392b1f}.res.info{background:#2563eb1a}
+.cof{border-left:3px solid var(--accent);padding:4px 10px;margin:8px 0;background:#b08d5714;border-radius:4px;font-size:15px}
+.trap{border-left:3px solid var(--red);padding:4px 10px;margin:8px 0;background:#c0392b14;border-radius:4px;font-size:15px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
+.qn{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.qn button{padding:4px 0;min-width:36px;font-size:13px}.qn button.ans{background:#2563eb26}.qn button.flag{border-color:var(--amber);box-shadow:inset 0 -3px 0 var(--amber)}.qn button.cur{outline:2px solid var(--blue)}
+.big{font-size:34px;font-weight:800;line-height:1.1}.timer{font:700 20px ui-monospace,monospace}.timer.low{color:var(--red)}
+.k{display:inline-block;font:12px ui-monospace,monospace;border-radius:6px;padding:0 6px;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;font-size:14.5px;vertical-align:top}
+input[type=search],select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 10px}input[type=search]{width:100%}
+details summary{cursor:pointer;font-weight:600}
+.scroll{overflow-x:auto}
+@media(max-width:640px){main{padding:12px 12px 48px}.qt{font-size:16px}}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>🎓 Exam Prep <span>ISTQB Foundation</span></h1><span class="sp"></span><a href="index.html">Home</a><a href="tickets.html">Tickets</a></header>
+<main><div id="top"></div><nav id="nav"></nav><div id="v"></div></main>
+<script src="qgen.js"></script><script src="exam-ch1.js"></script><script src="exam-ch23.js"></script><script src="exam-ch4.js"></script><script src="exam-ch5.js"></script><script src="exam-ch6.js"></script>
+<script>
+const D=window.EXAMDATA||{lessons:[],qs:[],terms:[],cheats:[],tips:[]};const G=window.QGEN;
+const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CH=[{n:1,t:'Fundamentals of Testing',w:8},{n:2,t:'Testing Throughout the Software Development Lifecycle',w:6},{n:3,t:'Static Testing',w:4},{n:4,t:'Test Analysis and Design',w:11},{n:5,t:'Managing the Test Activities',w:9},{n:6,t:'Test Tools',w:2}];
+const MOCK={1:{K1:2,K2:6},2:{K1:2,K2:4},3:{K1:2,K2:2},4:{K2:6,K3:5},5:{K1:1,K2:5,K3:3},6:{K1:1,K2:1}};
+const GENLO={};Object.entries(G.byLO).forEach(([lo,ts])=>ts.forEach(t=>{GENLO[t]=lo}));
+const GENK={code_cov:'K2',risk_level:'K1'};const kOf=t=>GENK[t]||'K3';const chOf=t=>+GENLO[t]?.slice(3,4)||+(t==='risk_level'?5:0)||+({ep_count:4}[t]||0);
+const GENCH=t=>t==='risk_level'?5:+(GENLO[t]||'FL-4').slice(3,4);
+const QB={};D.qs.forEach(q=>{QB[q.id]=q});
+const KEY='exam-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}
+S.read=S.read||{};S.lo=S.lo||{};S.q=S.q||{};S.mocks=S.mocks||[];S.tab=S.tab||'home';S.cur=S.cur||null;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const hash=s=>{let h=2166136261;for(const c of String(s))h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
+const day=()=>Math.floor(Date.now()/864e5);
+/* ---------- build a question object from a reference ---------- */
+function Q(ref,pseed){
+ if(ref.startsWith('g:')){const[,t,seed]=ref.split(':');const q=G.make(t,+seed);q.ref=ref;q.ch=q.ch||GENCH(t);return q}
+ const b=QB[ref];if(!b)return null;const r=G.R(pseed||hash(ref));const order=r.shuf([0,1,2,3]);
+ return{ref,id:b.id,ch:b.ch,lo:b.lo,k:b.k,q:b.q,o:order.map(i=>b.o[i]),a:order.indexOf(b.a),why:b.why}}
+const qHTML=s=>esc(s).split('\n').map(l=>/^\s*\d+\s{2,}\S/.test(l)||/--\S+-->/.test(l)||/^\s{3,}\S/.test(l)?`<span class="cl">${l}</span>`:l).join('\n').replace(/<\/span>\n/g,'</span>');
+const ALL=()=>[...D.qs.map(q=>q.id),...Object.keys(G.types).map(t=>'g:'+t)];
+const refInfo=r=>{if(r.startsWith('g:')){const t=r.split(':')[1];return{ch:GENCH(t),k:kOf(t),lo:GENLO[t]||(t==='risk_level'?'FL-5.2.1':''),gen:true,t}}const b=QB[r];return b?{ch:b.ch,k:b.k,lo:b.lo}:null};
+const mkGen=(r,t)=>'g:'+t+':'+(1+Math.floor(r()*1e9));
+const poolFor=(ch,k,r)=>{const hw=D.qs.filter(q=>q.ch===ch&&q.k===k).map(q=>q.id);const gen=Object.keys(G.types).filter(t=>GENCH(t)===ch&&kOf(t)===k);return{hw,gen}};
+/* ---------- mock exam ---------- */
+function newMock(extra){const seed=(Date.now()%1e9)+1;const r=G.R(seed);const refs=[];
+ for(const c of CH){for(const k of ['K1','K2','K3']){const need=(MOCK[c.n]||{})[k]||0;if(!need)continue;const{hw,gen}=poolFor(c.n,k);
+  const cand=r.shuf([...hw.map(id=>({id})),...gen.map(t=>({t}))]);const used=new Set();let take=[];
+  for(const x of cand){if(take.length>=need)break;if(x.t){if(used.has(x.t))continue;used.add(x.t);take.push(mkGen(r,x.t))}else take.push(x.id)}
+  while(take.length<need&&gen.length)take.push(mkGen(r,r.pick(gen)));refs.push(...take.slice(0,need))}}
+ const mins=extra?75:60;S.cur={type:'mock',seed,refs,ans:refs.map(()=>null),flag:{},i:0,start:Date.now(),end:Date.now()+mins*60000,mins};save()}
+const left=()=>Math.max(0,Math.round((S.cur.end-Date.now())/1000));const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+function finishMock(){const c=S.cur;const qs=c.refs.map((r,i)=>Q(r,c.seed+i));let score=0;const byCh={};CH.forEach(x=>byCh[x.n]={n:0,c:0});
+ qs.forEach((q,i)=>{const ok=c.ans[i]===q.a;byCh[q.ch].n++;if(ok){score++;byCh[q.ch].c++}stat(q,ok)});
+ S.mocks.push({ts:Date.now(),seed:c.seed,refs:c.refs,ans:c.ans,score,byCh,secs:Math.round((Date.now()-c.start)/1000),mins:c.mins});S.cur=null;S.review=S.mocks.length-1;S.tab='result';save();render()}
+/* ---------- stats + spaced repetition ---------- */
+const BOX=[0,0,1,3,7,21];
+function stat(q,ok){const lo=q.lo||('ch'+q.ch);const s=S.lo[lo]=S.lo[lo]||{n:0,c:0,ch:q.ch};s.n++;if(ok)s.c++;s.ch=q.ch;
+ if(q.id){const e=S.q[q.id]=S.q[q.id]||{b:1,d:0,n:0,c:0};e.n++;if(ok){e.c++;e.b=Math.min(5,e.b+1)}else e.b=1;e.d=Date.now()+BOX[e.b]*864e5}save()}
+const chAcc=n=>{let a=0,c=0;Object.values(S.lo).forEach(s=>{if(s.ch===n){a+=s.n;c+=s.c}});return{n:a,acc:a?c/a:null}};
+const due=()=>Object.entries(S.q).filter(([id,e])=>QB[id]&&e.d<=Date.now()&&e.b<5).map(([id])=>id);
+function estimate(){let tot=0,ok=true,w=0;CH.forEach(c=>{const a=chAcc(c.n);if(a.n<10)ok=false;tot+=(a.acc??0)*c.w;w+=a.n});return{score:tot,enough:ok,answered:w}}
+/* ---------- practice session ---------- */
+let P=null;
+function startPractice(opt){const r=G.R((Date.now()%1e9)+1);let refs=[];
+ if(opt.mode==='due')refs=due();
+ else{let hw=D.qs.filter(q=>(!opt.ch||q.ch===opt.ch)&&(!opt.lo||q.lo===opt.lo)&&(!opt.k||q.k===opt.k)).map(q=>q.id);
+  if(opt.mode==='weak'){const weak=Object.entries(S.lo).filter(([lo,s])=>s.n>=2&&s.c/s.n<.7).map(([lo])=>lo);hw=D.qs.filter(q=>weak.includes(q.lo)).map(q=>q.id);const gl=Object.keys(G.types).filter(t=>weak.includes(GENLO[t]));refs=r.shuf(hw).slice(0,Math.max(0,opt.n-gl.length));gl.forEach(t=>refs.push(mkGen(r,t)))}
+  else{const gen=Object.keys(G.types).filter(t=>(!opt.ch||GENCH(t)===opt.ch)&&(!opt.lo||GENLO[t]===opt.lo)&&(!opt.k||kOf(t)===opt.k));
+   const wantGen=Math.min(gen.length*2,Math.round(opt.n*.35));refs=r.shuf(hw).slice(0,opt.n-(gen.length?wantGen:0));for(let i=0;i<(gen.length?wantGen:0);i++)refs.push(mkGen(r,r.pick(gen)))}}
+ refs=r.shuf(refs).slice(0,opt.n);if(!refs.length){P=null;alert('No questions match yet. Try another chapter, or a mock exam.');return}
+ P={refs,i:0,sel:null,done:false,right:0,results:[]};S.tab='practice';render()}
+/* ---------- views ---------- */
+const tabs=[['home','🏠 Plan'],['learn','📖 Learn'],['practice','✏️ Practise'],['mock','⏱ Mock exam'],['terms','🔤 Glossary'],['cheat','⚡ Cheat sheets']];
+function drawNav(){$('nav').innerHTML=tabs.map(([k,l])=>`<button data-tab="${k}" class="${S.tab===k||(k==='mock'&&S.tab==='result')?'pri':''}">${l}</button>`).join('')}
+function lessonCard(l){const n=D.qs.filter(q=>q.lo===l.id).length+(Object.entries(GENLO).filter(([t,lo])=>lo===l.id).length?'+':'');return `<div class="card"><div class="tags"><span class="tag">${l.id}</span><span class="tag">${l.k}</span></div><h3 style="margin-top:6px">${esc(l.title)}</h3><p style="margin:6px 0">${esc(l.plain)}</p><div class="cof">☕ ${esc(l.coffee)}</div><ul style="margin:6px 0 6px 18px;padding:0">${l.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul><div class="trap">⚠ <b>Exam trap:</b> ${esc(l.trap)}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><button data-read="${l.id}" class="${S.read[l.id]?'pri':''}">${S.read[l.id]?'✓ Read':'Mark as read'}</button><button data-plo="${l.id}">Practise this (${n} questions)</button></div></div>`}
+function homeHTML(){const est=estimate();const mocks=S.mocks;const last=mocks[mocks.length-1];const good=mocks.filter(m=>m.score/40>=.8).length;const readN=Object.keys(S.read).length,totL=D.lessons.length||64;
+ const dueN=due().length;const pass=last?last.score>=26:null;
+ const weak=CH.map(c=>({c,a:chAcc(c.n)})).filter(x=>x.a.n>=3).sort((x,y)=>x.a.acc-y.a.acc)[0];
+ return `<div class="card" style="border-left:4px solid var(--accent)"><h2>Your goal: pass ISTQB Foundation (CTFL v4.0)</h2><div class="mute">Official exam: <b>40 questions</b>, <b>60 minutes</b> (75 if English is not your first language), closed book, one correct answer each, no negative marking. You need <b>26 of 40 (65%)</b>. <a href="https://www.istqb.org/wp-content/uploads/2024/11/ISTQB_Exam-Structure-Tables_v1.10.pdf" target="_blank" rel="noopener">Official exam structure ↗</a></div></div>
+ <div class="grid"><div class="card"><div class="mute">Readiness gate</div><div class="big">${good}/3</div><div class="mute">timed mock exams scored 80% or more. Book the real exam after 3, because 80% leaves a safety margin over the 65% pass line.</div><div class="bar" style="margin-top:8px"><i style="width:${Math.min(100,good/3*100)}%"></i></div></div>
+ <div class="card"><div class="mute">Latest mock exam</div><div class="big">${last?last.score+'/40':'–'}</div><div class="mute">${last?(pass?'✅ Pass line reached (26)':'Below the pass line (26)')+' · '+new Date(last.ts).toLocaleDateString():'You have not taken one yet.'}</div></div>
+ <div class="card"><div class="mute">Estimated score from your practice</div><div class="big">${est.answered?(est.enough?Math.round(est.score)+'/40':'?'):'–'}</div><div class="mute">${est.enough?'Weighted by how many questions each chapter gets in the real exam.':'Needs at least 10 answers in every chapter (you have '+est.answered+' so far).'}</div></div>
+ <div class="card"><div class="mute">Lessons read</div><div class="big">${readN}/${totL}</div><div class="bar" style="margin-top:8px"><i style="width:${readN/totL*100}%"></i></div><div class="mute" style="margin-top:6px">${dueN?dueN+' question'+(dueN>1?'s':'')+' due for review today.':'Nothing due for review today.'}</div></div></div>
+ <div class="card"><h3>Chapters: how the real exam is split, and how you are doing</h3><div class="scroll"><table><tr><th>Chapter</th><th>Exam questions</th><th>Your accuracy</th><th></th></tr>${CH.map(c=>{const a=chAcc(c.n);const lessons=D.lessons.filter(l=>l.ch===c.n);const rd=lessons.filter(l=>S.read[l.id]).length;return `<tr><td><b>${c.n}.</b> ${c.t}<div class="mute">${rd}/${lessons.length} lessons read</div></td><td>${c.w} of 40</td><td style="min-width:140px">${a.acc===null?'<span class="mute">not started</span>':Math.round(a.acc*100)+'% <span class="mute">('+a.n+' answers)</span>'}<div class="bar"><i style="width:${a.acc===null?0:a.acc*100}%"></i></div></td><td><button data-gochl="${c.n}">Learn</button> <button data-pch="${c.n}">Practise</button></td></tr>`}).join('')}</table></div></div>
+ <div class="card"><h3>Your next step</h3>${!readN?'<p>Start with Chapter 1. Read each lesson (they are short), then answer its questions.</p><button class="pri" data-gochl="1">Start Chapter 1</button>':weak?`<p>Your weakest chapter is <b>${weak.c.n}. ${weak.c.t}</b> (${Math.round(weak.a.acc*100)}%). Do a round of 10 questions there, then read the lessons you missed.</p><button class="pri" data-pch="${weak.c.n}">Practise chapter ${weak.c.n}</button> `:'<p>Answer some practice questions to see where you stand.</p>'}${dueN?`<button data-pdue="1">Review ${dueN} due question${dueN>1?'s':''}</button> `:''}<button data-mockstart="1">Take a mock exam</button></div>
+ <div class="card"><h3>How to use this honestly</h3><ul style="margin:6px 0 0 18px;padding:0"><li>The lessons and questions here are <b>original practice material</b> written to the official CTFL v4.0 learning objectives. They are <b>not</b> official ISTQB questions.</li><li>Also do the official free sample exams and read the official syllabus (both on <a href="https://www.istqb.org" target="_blank" rel="noopener">istqb.org</a>). Real questions are worded differently, so do not rely on one source.</li><li>The exam is closed book. Use the cheat sheets to learn, then test yourself without them.</li></ul></div>`}
+function learnHTML(){const ch=S.lch||1;const ls=D.lessons.filter(l=>l.ch===ch).sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));
+ return `<div class="card"><h2>Learn the syllabus</h2><div class="mute">One short lesson for each of the 64 learning objectives. K1 = remember, K2 = understand, K3 = apply (these are the calculation questions).</div><div class="qn" style="margin-top:8px">${CH.map(c=>`<button data-gochl="${c.n}" class="${c.n===ch?'pri':''}">Ch ${c.n}</button>`).join('')}</div><h3>${ch}. ${CH[ch-1].t} <span class="mute">· ${CH[ch-1].w} of 40 exam questions</span></h3></div>${ls.length?ls.map(lessonCard).join(''):'<div class="card mute">Lessons for this chapter are not loaded.</div>'}`}
+function practiceHTML(){
+ if(!P)return `<div class="card"><h2>Practise</h2><div class="mute">Immediate feedback with an explanation after every answer. Questions you miss come back later (spaced repetition).</div></div>
+ <div class="card"><h3>Pick what to practise</h3><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><select id="pch"><option value="">All chapters</option>${CH.map(c=>`<option value="${c.n}">Chapter ${c.n}: ${c.t}</option>`).join('')}</select><select id="pk"><option value="">All levels</option><option value="K1">K1 remember</option><option value="K2">K2 understand</option><option value="K3">K3 apply (calculations)</option></select><select id="pn"><option>10</option><option>20</option><option>40</option></select><button class="pri" data-pgo="1">Start</button></div></div>
+ <div class="grid"><div class="card"><h3>🎯 Weak spots</h3><div class="mute">Questions from the learning objectives where you score below 70%.</div><button data-pweak="1" style="margin-top:8px">Practise weak spots</button></div><div class="card"><h3>🔁 Due for review</h3><div class="mute">${due().length} question(s) due today.</div><button data-pdue="1" style="margin-top:8px" ${due().length?'':'disabled'}>Review now</button></div><div class="card"><h3>🧮 Calculation questions (K3)</h3><div class="mute">Equivalence partitioning, boundary values, decision tables, state transitions, estimation, prioritisation. New numbers every time. <a href="techniques.html">Technique trainer →</a></div><button data-pgo="1" data-k3="1" style="margin-top:8px">Practise K3</button></div></div>`;
+ if(P.i>=P.refs.length){const pc=Math.round(P.right/P.refs.length*100);return `<div class="card"><h2>Round finished</h2><div class="big">${P.right}/${P.refs.length}</div><div class="mute">${pc}% · The real exam needs 65%.</div><div class="btns" style="margin-top:10px"><button class="pri" data-pagain="1">Another round</button> <button data-pend="1">Back</button></div></div>`}
+ const q=Q(P.refs[P.i]);if(!q){P.i++;return practiceHTML()}
+ return `<div class="card"><div class="tags"><span class="tag">Question ${P.i+1} of ${P.refs.length}</span><span class="tag">${q.lo||''}</span><span class="tag">${q.k}</span>${q.gen?'<span class="tag">new numbers each time</span>':''}</div><div class="qt" style="margin-top:8px">${qHTML(q.q)}</div>${q.o.map((o,i)=>`<button class="opt ${P.done?(i===q.a?'right':P.sel===i?'wrong':''):P.sel===i?'sel':''}" data-psel="${i}" ${P.done?'disabled':''}><b>${'ABCD'[i]}</b><span>${esc(o)}</span></button>`).join('')}
+ ${P.done?`<div class="res ${P.sel===q.a?'ok':'no'}"><b>${P.sel===q.a?'✅ Correct.':'❌ Not quite. The answer is '+'ABCD'[q.a]+'.'}</b><div style="white-space:pre-wrap;margin-top:4px">${esc(q.why)}</div></div><div class="btns" style="margin-top:10px"><button class="pri" data-pnext="1">${P.i+1>=P.refs.length?'Finish':'Next question →'}</button></div>`:`<div class="btns" style="margin-top:10px"><button class="pri" data-pcheck="1" ${P.sel===null?'disabled':''}>Check answer</button></div>`}</div>`}
+function mockHTML(){
+ if(!S.cur)return `<div class="card"><h2>Mock exam</h2><div class="mute">The same shape as the real exam: <b>40 questions</b>, <b>60 minutes</b>, pass at <b>26</b>. The mix is the official one: 8 questions on chapter 1, 6 on chapter 2, 4 on chapter 3, 11 on chapter 4, 9 on chapter 5 and 2 on chapter 6. 8 are recall (K1), 24 are understanding (K2) and 8 are calculations (K3). Each mock is a different draw, and calculation questions get new numbers.</div><div class="btns" style="margin-top:10px"><button class="pri" data-mockstart="1">Start a 60-minute mock</button> <button data-mockstart="75">Start a 75-minute mock (extra time)</button></div></div>
+ ${S.mocks.length?`<div class="card"><h3>Your mock exams</h3><div class="scroll"><table><tr><th>Date</th><th>Score</th><th>Result</th><th>Time used</th><th></th></tr>${S.mocks.map((m,i)=>`<tr><td>${new Date(m.ts).toLocaleString()}</td><td><b>${m.score}/40</b> (${Math.round(m.score/.4)}%)</td><td>${m.score>=26?'✅ pass line':'below pass line'}${m.score>=32?' · counts for the gate':''}</td><td>${Math.round(m.secs/60)} min</td><td><button data-rev="${i}">Review</button></td></tr>`).join('')}</table></div></div>`:''}`;
+ const c=S.cur,q=Q(c.refs[c.i],c.seed+c.i);const sel=c.ans[c.i];const lf=left();
+ return `<div class="card" style="position:sticky;top:0;z-index:5"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><b>Mock exam · question ${c.i+1} of 40</b><span class="timer ${lf<300?'low':''}" id="tmr">${fmt(lf)}</span><span class="mute">${c.ans.filter(x=>x!==null).length} answered</span></div><div class="qn">${c.refs.map((_,i)=>`<button data-mgo="${i}" class="${c.ans[i]!==null?'ans':''} ${c.flag[i]?'flag':''} ${i===c.i?'cur':''}">${i+1}</button>`).join('')}</div></div>
+ <div class="card"><div class="tags"><span class="tag">${q.k}</span><span class="tag">Chapter ${q.ch}</span></div><div class="qt" style="margin-top:8px">${qHTML(q.q)}</div>${q.o.map((o,i)=>`<button class="opt ${sel===i?'sel':''}" data-msel="${i}"><b>${'ABCD'[i]}</b><span>${esc(o)}</span></button>`).join('')}<div class="btns" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button data-mprev="1" ${c.i===0?'disabled':''}>← Previous</button><button data-mnext="1" ${c.i===39?'disabled':''}>Next →</button><button data-mflag="1">${c.flag[c.i]?'⚑ Unflag':'⚐ Flag for review'}</button><span class="sp" style="flex:1"></span><button class="pri" data-msubmit="1">Submit exam</button></div></div><div class="mute">No feedback until you submit, like the real exam. You can change answers and come back to flagged questions. Wrong answers are not penalised, so never leave one blank.</div>`}
+function resultHTML(){const m=S.mocks[S.review];if(!m){S.tab='mock';return mockHTML()}const qs=m.refs.map((r,i)=>Q(r,m.seed+i));const pass=m.score>=26;const f=S.rfilter||'all';
+ const rows=qs.map((q,i)=>({q,i,a:m.ans[i]}));const show=rows.filter(x=>f==='all'||(f==='wrong'&&x.a!==x.q.a)||(f==='blank'&&x.a===null));
+ return `<div class="card" style="border-left:4px solid ${pass?'var(--green)':'var(--red)'}"><h2>${pass?'✅ Pass line reached':'Below the pass line'}</h2><div class="big">${m.score}/40 <span class="mute">${Math.round(m.score/.4)}%</span></div><div class="mute">Pass mark is 26. Time used: ${Math.round(m.secs/60)} of ${m.mins} minutes.${m.score/40>=.8?' This counts toward your readiness gate (80%+).':' You want 80%+ on three mocks before you book the real exam.'}</div></div>
+ <div class="card"><h3>By chapter</h3><div class="scroll"><table><tr><th>Chapter</th><th>Score</th><th></th></tr>${CH.map(c=>{const b=m.byCh[c.n];return `<tr><td>${c.n}. ${c.t}</td><td>${b.c}/${b.n}</td><td style="min-width:120px"><div class="bar"><i style="width:${b.n?b.c/b.n*100:0}%"></i></div></td></tr>`}).join('')}</table></div></div>
+ <div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap"><button data-rf="all" class="${f==='all'?'pri':''}">All 40</button><button data-rf="wrong" class="${f==='wrong'?'pri':''}">Wrong (${rows.filter(x=>x.a!==x.q.a).length})</button><button data-rf="blank" class="${f==='blank'?'pri':''}">Blank</button><button data-mockstart="1">Take another mock</button></div></div>
+ ${show.map(({q,i,a})=>`<div class="card"><div class="tags"><span class="tag">Q${i+1}</span><span class="tag">${q.lo||''}</span><span class="tag">${q.k}</span><span class="tag">${a===q.a?'✅ correct':a===null?'blank':'❌ wrong'}</span></div><div class="qt" style="margin-top:8px">${qHTML(q.q)}</div>${q.o.map((o,j)=>`<div class="opt ${j===q.a?'right':a===j?'wrong':''}"><b>${'ABCD'[j]}</b><span>${esc(o)}${a===j?' <i class="mute">(your answer)</i>':''}</span></div>`).join('')}<div class="res info" style="white-space:pre-wrap">${esc(q.why)}</div></div>`).join('')}`}
+function termsHTML(){const f=(S.tq||'').toLowerCase();const ts=[...D.terms].sort((a,b)=>a.t.localeCompare(b.t));const seen=new Set();const list=ts.filter(t=>{const k=t.t.toLowerCase();if(seen.has(k))return false;seen.add(k);return !f||(t.t+' '+t.d).toLowerCase().includes(f)});
+ return `<div class="card"><h2>Glossary</h2><div class="mute">The exam uses precise words. Learn these in plain English first, then check the exact official wording in the ISTQB glossary.</div><input type="search" id="tq" placeholder="Search terms…" value="${esc(S.tq||'')}" style="margin-top:8px"></div><div class="card"><table>${list.map(t=>`<tr><td style="white-space:nowrap"><b>${esc(t.t)}</b><div class="mute">Ch ${t.ch}</div></td><td>${esc(t.d)}</td></tr>`).join('')}</table></div>`}
+function cheatHTML(){return `<div class="card"><h2>Cheat sheets</h2><div class="mute">The facts the exam loves. Study from these, then test yourself without them. (The real exam is closed book.)</div></div>${(D.cheats||[]).sort((a,b)=>a.ch-b.ch).map(c=>`<div class="card"><h3>${esc(c.title)}</h3><ul style="margin:6px 0 0 18px;padding:0">${c.facts.map(f=>`<li>${esc(f)}</li>`).join('')}</ul></div>`).join('')}${(D.tips||[]).length?`<div class="card"><h3>Exam-day strategy</h3><ol style="margin:6px 0 0 18px;padding:0">${D.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ol></div>`:''}`}
+function render(){drawNav();const v=$('v');if(S.tab==='home')v.innerHTML=homeHTML();else if(S.tab==='learn')v.innerHTML=learnHTML();else if(S.tab==='practice')v.innerHTML=practiceHTML();else if(S.tab==='mock')v.innerHTML=mockHTML();else if(S.tab==='result')v.innerHTML=resultHTML();else if(S.tab==='terms')v.innerHTML=termsHTML();else if(S.tab==='cheat')v.innerHTML=cheatHTML()}
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
+ if(d.tab){S.tab=d.tab;P=d.tab==='practice'?P:P;save();render();window.scrollTo(0,0);return}
+ if(d.gochl){S.lch=+d.gochl;S.tab='learn';save();render();window.scrollTo(0,0);return}
+ if(d.read){if(S.read[d.read])delete S.read[d.read];else S.read[d.read]=1;save();render();return}
+ if(d.plo){const lo=d.plo;P=null;startPractice({lo,n:10,mode:'lo'});return}
+ if(d.pch){P=null;startPractice({ch:+d.pch,n:10,mode:'ch'});return}
+ if(d.pgo){const ch=+($('pch')?.value||0)||0,k=d.k3?'K3':($('pk')?.value||''),n=+($('pn')?.value||10);startPractice({ch,k,n,mode:'pick'});return}
+ if(d.pweak){startPractice({n:15,mode:'weak'});return}
+ if(d.pdue){startPractice({n:20,mode:'due'});return}
+ if(d.pagain){P=null;render();return}
+ if(d.pend){P=null;render();return}
+ if(d.psel!==undefined&&P&&!P.done){P.sel=+d.psel;render();return}
+ if(d.pcheck&&P&&P.sel!==null){const q=Q(P.refs[P.i]);P.done=true;const ok=P.sel===q.a;if(ok)P.right++;stat(q,ok);render();return}
+ if(d.pnext&&P){P.i++;P.sel=null;P.done=false;render();window.scrollTo(0,0);return}
+ if(d.mockstart){if(S.cur&&!confirm('Start a new mock? The one in progress will be lost.'))return;newMock(d.mockstart==='75');S.tab='mock';save();render();window.scrollTo(0,0);return}
+ if(S.cur&&S.tab==='mock'){const c=S.cur;
+  if(d.msel!==undefined){c.ans[c.i]=+d.msel;save();render();return}
+  if(d.mgo!==undefined){c.i=+d.mgo;save();render();window.scrollTo(0,0);return}
+  if(d.mprev){c.i=Math.max(0,c.i-1);save();render();return}if(d.mnext){c.i=Math.min(39,c.i+1);save();render();return}
+  if(d.mflag){c.flag[c.i]=!c.flag[c.i];save();render();return}
+  if(d.msubmit){const blank=c.ans.filter(x=>x===null).length;if(confirm(blank?`${blank} question(s) are blank. Wrong answers are not penalised, so answer them all if you can. Submit anyway?`:'Submit your exam now?'))finishMock();return}}
+ if(d.rev!==undefined){S.review=+d.rev;S.rfilter='all';S.tab='result';save();render();window.scrollTo(0,0);return}
+ if(d.rf){S.rfilter=d.rf;save();render();return}});
+document.addEventListener('input',e=>{if(e.target.id==='tq'){S.tq=e.target.value;save();const p=e.target.selectionStart;render();const n=$('tq');n.focus();n.setSelectionRange(p,p)}});
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;const k=e.key;if(S.tab==='practice'&&P&&P.i<P.refs.length){if('1234'.includes(k)&&!P.done){P.sel=+k-1;render()}else if(k==='Enter'){const b=document.querySelector('[data-pcheck]:not(:disabled),[data-pnext]');b&&b.click()}}else if(S.tab==='mock'&&S.cur){if('1234'.includes(k)){S.cur.ans[S.cur.i]=+k-1;save();render()}}});
+setInterval(()=>{if(S.tab==='mock'&&S.cur){const lf=left();const t=$('tmr');if(t){t.textContent=fmt(lf);t.classList.toggle('low',lf<300)}if(lf<=0)finishMock()}},1000);
+if(S.cur&&left()<=0){finishMock()}else render();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

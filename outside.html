@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Practice Outside the App</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 6px;font-size:19px}h3{margin:0 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}.grid .card{margin:0}
+a.l{font-weight:600}.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
+.warn{border-left:4px solid #b7791f;background:#b7791f14}
+ol li,ul li{margin-bottom:6px}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>🌍 Practice <span>Outside the App</span></h1><span class="sp"></span><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main>
+<div class="card" style="border-left:4px solid var(--accent)"><h2>Why leave this app?</h2><div>Everything here is built to teach you. Real software is messier, and real teams give you feedback you cannot get from a practice app. A hiring manager trusts evidence from real systems more than anything else. Do the tasks below, write what you find, and put the best results in your <a href="portfolio.html">portfolio</a>.</div></div>
+<div class="card warn"><b>Rules for practising on other people's sites.</b> Only test sites that <b>invite</b> testing (the ones below). Never run security scans, load tests or automated attacks against any site you do not own. Never enter real personal or payment details on a practice site. If you find a real security issue on a real company's site, do not exploit it: report it through the company's published security contact.</div>
+<h2 style="margin-top:16px">1. Free practice sites made for testers</h2>
+<div class="grid">
+<div class="card"><h3><a class="l" href="https://www.saucedemo.com" target="_blank" rel="noopener">Sauce Demo ↗</a></h3><span class="tag">web shop</span><p>A small online shop with several test users (some deliberately broken). <b>Task:</b> log in as each user, add items, check out, and write 3 bug reports with steps, expected and actual.</p></div>
+<div class="card"><h3><a class="l" href="https://restful-booker.herokuapp.com" target="_blank" rel="noopener">Restful-Booker ↗</a></h3><span class="tag">API</span><p>A booking API built for testers. <b>Task:</b> use a free API client (Postman, or the browser) to create, read, update and delete a booking, then try invalid data and missing authorisation.</p></div>
+<div class="card"><h3><a class="l" href="https://parabank.parasoft.com" target="_blank" rel="noopener">ParaBank ↗</a></h3><span class="tag">banking app</span><p>A demo bank with accounts, transfers and loans. <b>Task:</b> test a money transfer: boundary amounts, same-account transfer, and checking balances on both sides.</p></div>
+<div class="card"><h3><a class="l" href="https://the-internet.herokuapp.com" target="_blank" rel="noopener">The Internet ↗</a></h3><span class="tag">UI elements</span><p>A page of tricky web elements: dropdowns, drag and drop, alerts, file upload. <b>Task:</b> test five elements with the keyboard only (accessibility).</p></div>
+<div class="card"><h3><a class="l" href="https://automationexercise.com" target="_blank" rel="noopener">Automation Exercise ↗</a></h3><span class="tag">e-commerce</span><p>A full demo shop with sign-up, cart and contact form. <b>Task:</b> write 10 test cases for the sign-up form (valid, invalid, boundary), run them, and record results.</p></div>
+<div class="card"><h3><a class="l" href="https://demoqa.com" target="_blank" rel="noopener">DemoQA ↗</a></h3><span class="tag">forms &amp; widgets</span><p>Forms, tables and widgets to test. <b>Task:</b> test the practice form: required fields, email and phone formats, date picker boundaries.</p></div>
+<div class="card"><h3><a class="l" href="https://petstore.swagger.io" target="_blank" rel="noopener">Swagger Petstore ↗</a></h3><span class="tag">API docs</span><p>A sample API with documentation you can try live. <b>Task:</b> read the documentation like a spec, then send a request that breaks one rule and record the response.</p></div>
+<div class="card"><h3><a class="l" href="https://reqres.in" target="_blank" rel="noopener">ReqRes ↗</a></h3><span class="tag">API</span><p>A hosted test API for practising requests and responses. <b>Task:</b> check status codes for valid, missing and invalid input (200, 201, 400, 404).</p></div>
+</div>
+<h2 style="margin-top:20px">2. Learn from real communities and courses</h2>
+<div class="grid">
+<div class="card"><h3><a class="l" href="https://www.istqb.org/certifications/certified-tester-foundation-level" target="_blank" rel="noopener">ISTQB Foundation Level ↗</a></h3><p>The official syllabus, exam structure and <b>free sample exams</b>. Do these before you book. Real questions are worded differently from any practice material.</p></div>
+<div class="card"><h3><a class="l" href="https://www.sastqb.org.za" target="_blank" rel="noopener">South African Software Testing Qualifications Board ↗</a></h3><p>The local ISTQB member board: find where and how to write the exam in South Africa.</p></div>
+<div class="card"><h3><a class="l" href="https://www.ministryoftesting.com" target="_blank" rel="noopener">Ministry of Testing ↗</a></h3><p>A friendly worldwide testing community: articles, talks and meet-ups. Read how working testers think.</p></div>
+<div class="card"><h3><a class="l" href="https://testautomationu.applitools.com" target="_blank" rel="noopener">Test Automation University ↗</a></h3><p>Free courses on automation. Start when you are comfortable with the manual skills here.</p></div>
+<div class="card"><h3><a class="l" href="https://playwright.dev" target="_blank" rel="noopener">Playwright ↗</a></h3><p>A popular modern automation tool with good documentation. Try its “getting started” guide after the <a href="workplace.html">automation lessons</a>.</p></div>
+<div class="card"><h3><a class="l" href="https://developer.chrome.com/docs/devtools" target="_blank" rel="noopener">Chrome DevTools guide ↗</a></h3><p>The official guide for the tools in the <a href="workplace.html">DevTools lessons</a>.</p></div>
+<div class="card"><h3><a class="l" href="https://docs.github.com/en/get-started/start-your-journey/hello-world" target="_blank" rel="noopener">GitHub: Hello World ↗</a></h3><p>A 10-minute official tutorial: make a repository, a branch, a commit and a pull request.</p></div>
+</div>
+<h2 style="margin-top:20px">3. Get real experience (and real feedback)</h2>
+<div class="grid">
+<div class="card"><h3><a class="l" href="https://www.utest.com" target="_blank" rel="noopener">uTest ↗</a></h3><span class="tag">paid crowd testing</span><p>A community where testers are paid per accepted bug on real products. Read their academy and rules first. Early on, expect to learn more than you earn.</p></div>
+<div class="card"><h3><a class="l" href="https://github.com/topics/good-first-issue" target="_blank" rel="noopener">Open-source “good first issues” ↗</a></h3><span class="tag">volunteer</span><p>Real projects label beginner-friendly tasks. <b>Task:</b> pick a small project, install it, try to reproduce an open bug report, and comment with your steps. Be polite and follow the project's guidelines.</p></div>
+<div class="card"><h3>Test something you already use</h3><span class="tag">your own world</span><p>You run a coffee business. Test your own ordering, payment or stock tools: where does the screen disagree with the receipt? Write it up like a defect report. Real, honest, and unique to you.</p></div>
+</div>
+<h2 style="margin-top:20px">4. A simple 4-week plan after you finish the app</h2>
+<div class="card"><ol><li><b>Week 1.</b> Sauce Demo + ParaBank: write 6 bug reports with evidence (screenshots).</li><li><b>Week 2.</b> Restful-Booker: test 10 API requests, including 5 invalid ones; record status codes.</li><li><b>Week 3.</b> Take the official ISTQB sample exams under time. Review every wrong answer against the syllabus.</li><li><b>Week 4.</b> Build your <a href="portfolio.html">portfolio</a>, practise <a href="interview.html">interviews</a> out loud, then apply. Keep testing something every week.</li></ol></div>
+<div class="card"><div class="mute">Links were checked when this page was written. Websites change; if one is gone, search for its name.</div></div>
+</main>
+<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

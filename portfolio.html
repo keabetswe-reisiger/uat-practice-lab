@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Test Portfolio</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:0 0 4px;font-size:16px}.mute{color:var(--mute);font-size:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;font-weight:600}button.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+input[type=text]{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 10px;width:100%}
+.two{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}@media(max-width:900px){.two{grid-template-columns:1fr}}
+.doc{background:#fff;color:#16202f;border:1px solid var(--line);border-radius:6px;padding:28px 34px;font-family:Georgia,'Times New Roman',serif;line-height:1.5}
+.doc h1{font-size:26px;margin:0}.doc h2{font:700 17px system-ui,sans-serif;border-bottom:2px solid #b08d57;margin:22px 0 8px;padding-bottom:2px}.doc h3{font:700 14.5px system-ui,sans-serif;margin:12px 0 2px}
+.doc pre{white-space:pre-wrap;font:13px/1.45 ui-monospace,Menlo,monospace;background:#f5f3ef;padding:8px 10px;border-radius:4px;margin:4px 0}.doc .sub{color:#555}
+.doc *{color:inherit}.doc h1,.doc h2,.doc h3{color:#16202f!important}.doc h2{border-bottom-color:#b08d57!important}.doc a{color:#1d4ed8!important}.doc table{border-collapse:collapse;width:100%;font:13.5px system-ui,sans-serif}.doc td,.doc th{border:1px solid #ddd;padding:4px 8px;text-align:left}
+label.ck{display:flex;gap:8px;align-items:center;padding:4px 0;cursor:pointer}
+@media print{header,#side,.noprint{display:none!important}body{background:#fff!important}main{padding:0!important;max-width:none!important}.two{display:block}.doc{border:0;padding:0}}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>📁 Test <span>Portfolio</span></h1><span class="sp"></span><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main><div class="two"><div id="side" class="card"></div><div id="doc" class="doc"></div></div></main>
+<script src="tickets.js"></script>
+<script>
+const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rd=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}};
+const T=rd('uat-tickets-v1'),C=rd('capstone-v1'),CA=rd('careful-v1'),Q=rd('sqllab-v1'),X=rd('exam-v1'),IV=rd('interview-v1'),WP=rd('workplace-v1'),TE=rd('tech-v1'),AP=rd('apilab-v1');
+const KEY='portfolio-v1';let S=rd(KEY);S.inc=S.inc||{def:1,ses:1,data:1,rec:1};S.name=S.name||'';S.role=S.role||'Junior software tester (in training)';
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const CASES=['The wrong totals','The double order','Impossible quantities','Negative stock','Expired but still on the shelf'];
+const tk=window.TICKETS||[];
+function defects(){const out=[];tk.forEach(t=>{const x=T[t.key];if(x&&x.status==='Failed'&&(x.actual||'').trim())out.push({title:t.title,src:'Ticket '+t.key+' · '+t.appName,env:t.env,sev:x.sev||'Major',steps:t.steps,exp:t.expected,act:x.actual})});
+ (C.attempts||[]).slice(-3).forEach(a=>(a.reports||[]).filter(r=>r.ok).forEach(r=>out.push({title:r.title,src:'Unseen-app test ('+r.area+' / '+r.type+')',env:'Brew Rewards practice app',sev:'',steps:null,body:r.steps})));return out}
+const sessions=()=>(CA.sessions||[]);
+function build(){const name=S.name||'Your name';const d=new Date().toLocaleDateString('en-ZA',{dateStyle:'long'});
+ const df=defects(),ss=sessions();const solved=Object.keys(Q.cases||{}).map(Number);const gym=Object.keys(Q.gym||{}).length;
+ const mocks=X.mocks||[];const ans=Object.values(IV.ans||{});const wl=Object.values(WP.done||{}).filter(x=>x>=2).length;const att=C.attempts||[];const best=att.length?Math.max(...att.map(a=>a.found)):0;
+ const md=[],html=[];const H=(l,t)=>{md.push('#'.repeat(l)+' '+t+'\n');html.push(`<h${l}>${esc(t)}</h${l}>`)};const P=t=>{md.push(t+'\n');html.push(`<p>${esc(t)}</p>`)};const PRE=t=>{md.push('```\n'+t+'\n```\n');html.push(`<pre>${esc(t)}</pre>`)};
+ H(1,name);html[0]=`<h1>${esc(name)}</h1><div class="sub">${esc(S.role)} · Portfolio generated ${d}</div>`;md[0]='# '+name+'\n\n_'+S.role+' · Portfolio generated '+d+'_\n';
+ H(2,'Summary');
+ const facts=[`Practised manual testing across ${tk.length} structured test tasks (smoke, functional, security, regression, exploratory, usability, accessibility, compatibility, boundary, API and data testing) with written pass/fail evidence.`,att.length?`Tested an unseen web app under time pressure: best result ${best} of ${att[att.length-1].n} planted defects found (${att.filter(a=>a.pass).length} attempt(s) passed).`:'',gym||solved.length?`Uses SQL to check data: ${solved.length} data-defect investigations and ${gym} practice queries completed (filters, joins, grouping, subqueries).`:'',Object.keys(AP.found||{}).length?`Tested a REST API: ${Object.keys(AP.found).length} of 8 planted API defects found using requests, status codes and role checks.`:'',ss.length?`Ran ${ss.length} time-boxed exploratory test session(s) with a charter, notes and debrief.`:'',mocks.length?`Studying for ISTQB Certified Tester Foundation Level (CTFL v4.0): best practice mock score ${Math.max(...mocks.map(m=>m.score))}/40 (pass mark 26).`:''].filter(Boolean);
+ facts.forEach(f=>{md.push('- '+f);});md.push('');html.push('<ul>'+facts.map(f=>`<li>${esc(f)}</li>`).join('')+'</ul>');
+ if(S.inc.def){H(2,'Defect reports');if(!df.length)P('(No defect reports yet. Fail a ticket with a clear actual result, or find bugs in the unseen-app test.)');
+  df.forEach(x=>{H(3,x.title);const body=x.steps?`Source: ${x.src}\nEnvironment: ${x.env}\nSeverity: ${x.sev}\nSteps:\n${x.steps.map((s,i)=>(i+1)+'. '+s).join('\n')}\nExpected: ${x.exp}\nActual: ${x.act}`:`Source: ${x.src}\nEnvironment: ${x.env}\n${x.body}`;PRE(body)})}
+ if(S.inc.ses){H(2,'Exploratory test sessions');if(!ss.length)P('(No saved sessions yet. Run one in the Careful tester toolkit, tab Session studio.)');ss.slice(0,4).forEach(s=>{H(3,s.when+' · '+s.mins+' min');PRE(`Charter: ${s.charter}\nNotes:\n${s.notes||'(none)'}\nOn charter: ${s.on||'-'}   Covered: ${s.cv||'-'}   Not covered: ${s.nc||'-'}`)})}
+ if(S.inc.data){H(2,'Data checks with SQL');if(!solved.length)P('(No data cases solved yet.)');solved.forEach(i=>{H(3,CASES[i]||('Case '+(i+1)));const q=(Q.drafts||{})['C'+i];PRE(q?q:'(query saved in the SQL lab)')})}
+ if(S.inc.rec){H(2,'Learning record');const rows=[];if(mocks.length)rows.push('Mock exams (60 min, 40 questions): '+mocks.map(m=>m.score+'/40').join(', '));rows.push(`Interview practice: ${ans.length} questions answered${ans.length?', average self-score '+Math.round(ans.reduce((a,x)=>a+x.pct,0)/ans.length*100)+'%':''}`);rows.push(`Work-skills lessons passed (DevTools, Git, documents, Agile, automation, delivery): ${wl}`);rows.push(`Test-design techniques practised: ${Object.keys(TE.recent||{}).length} of 14 calculation types attempted`);rows.forEach(r=>{md.push('- '+r)});md.push('');html.push('<ul>'+rows.map(r=>`<li>${esc(r)}</li>`).join('')+'</ul>')}
+ return{md:md.join('\n'),html:html.join('')}}
+function render(){const b=build();$('doc').innerHTML=b.html;
+ $('side').innerHTML=`<h2>Your portfolio</h2><div class="mute">Built automatically from what you have actually done in this app. Only real work appears. Edit your name, choose sections, then print or download.</div><label class="mute" style="display:block;margin-top:10px">Your name</label><input type="text" id="nm" value="${esc(S.name)}" placeholder="Your name"><label class="mute" style="display:block;margin-top:8px">Headline</label><input type="text" id="rl" value="${esc(S.role)}">
+ <div style="margin-top:10px"><b>Include</b>${[['def','Defect reports'],['ses','Exploratory sessions'],['data','SQL data checks'],['rec','Learning record']].map(([k,l])=>`<label class="ck"><input type="checkbox" data-inc="${k}" ${S.inc[k]?'checked':''}> ${l}</label>`).join('')}</div>
+ <div style="display:grid;gap:8px;margin-top:10px"><button class="pri" data-print="1">Print / Save as PDF</button><button data-copy="1">Copy as Markdown</button><button data-dl="1">Download .md file</button></div><div class="mute" style="margin-top:10px">Tip: in the print window choose “Save as PDF”. Before sharing, read every line: remove anything you would not want an employer to see. Never include real customer data.</div>`}
+document.addEventListener('input',e=>{if(e.target.id==='nm'){S.name=e.target.value;save();$('doc').innerHTML=build().html}if(e.target.id==='rl'){S.role=e.target.value;save();$('doc').innerHTML=build().html}});
+document.addEventListener('change',e=>{if(e.target.dataset.inc){S.inc[e.target.dataset.inc]=e.target.checked?1:0;save();render()}});
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;const mark=()=>{S.exported=Date.now();save()};
+ if(d.print){mark();window.print()}
+ if(d.copy){mark();navigator.clipboard&&navigator.clipboard.writeText(build().md).then(()=>{t.textContent='Copied ✓'})}
+ if(d.dl){mark();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([build().md],{type:'text/markdown'}));a.download='test-portfolio.md';a.click()}});
+render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>
