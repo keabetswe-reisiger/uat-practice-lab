@@ -70,5 +70,5 @@ document.addEventListener('click',e=>{const d=e.target.dataset||{};
 document.addEventListener('change',e=>{const d=e.target.dataset||{};if(d.done){S.done[d.done]=e.target.checked;save();view()}});
 view();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

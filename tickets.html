@@ -114,5 +114,5 @@ document.addEventListener('input',e=>{const d=e.target.dataset||{};if(d.f){st(op
 const openHash=()=>{const k=(location.hash||'').slice(1);if(T.some(x=>x.key===k)){open=k;drawer()}};window.addEventListener('hashchange',openHash);
 $('ft').onchange=$('fp').onchange=board;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){open=null;drawer()}});
 board();openHash();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

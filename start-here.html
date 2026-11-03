@@ -76,5 +76,5 @@ function draw(){
  SEC[cur].after&&SEC[cur].after();scrollTo(0,0)}
 document.addEventListener('click',e=>{const d=e.target.dataset||{};if(d.go!==undefined){cur=+d.go}else if(d.got){S.done[cur]=true;if(cur<SEC.length-1)cur++}else return;save();draw()});
 draw();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script></main><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script></main><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

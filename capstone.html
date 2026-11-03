@@ -144,5 +144,5 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
 setInterval(()=>{const t=$('tm');if(t&&S.cur)t.textContent=fmt(Math.round((Date.now()-S.cur.start)/1000))},1000);
 if(S.cur){S.view=S.view||'home';loadApp()}render();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

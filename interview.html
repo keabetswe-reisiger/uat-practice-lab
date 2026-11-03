@@ -52,5 +52,5 @@ document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)r
  if(d.redo){cur=Q.find(q=>q.id===d.redo);reveal=false;hit=[];draft=S.ans[cur.id].text;S.tab='practice';S.cat='all';render();window.scrollTo(0,0);return}});
 document.addEventListener('change',e=>{const i=e.target.dataset.pt;if(i===undefined)return;const n=+i;const k=hit.indexOf(n);if(e.target.checked&&k<0)hit.push(n);if(!e.target.checked&&k>=0)hit.splice(k,1);const a=$('ans');if(a)draft=a.value;render()});
 render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

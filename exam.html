@@ -158,5 +158,5 @@ if(S.cur&&left()<=0){finishMock()}else render();
 function hashGo(){const h=location.hash.slice(1);if(h==='due'){startPractice({mode:'due',n:20})}else if(h==='mock'){S.tab='mock';save();render()}else if(/^learn-\d$/.test(h)){S.lch=+h.slice(6);S.tab='learn';save();render()}}
 window.addEventListener('hashchange',hashGo);hashGo();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

@@ -93,3 +93,9 @@ main{max-width:none!important;padding-left:clamp(16px,3vw,64px)!important;paddin
 }
 /* pop-up panels sit above the top menu */
 #ov,.ov,.overlay,.lk-ov,.lrn-ov{z-index:9990!important}.drawer{z-index:9991!important}
+
+/* the menu bar is pinned to the top; anything else that sticks sits just below it */
+[style*="position:sticky"]{top:var(--mmh,0px)!important}
+.side{top:calc(var(--mmh,0px) + 10px)!important;max-height:calc(100vh - var(--mmh,0px) - 20px)!important}
+.mob-bar{top:var(--mmh,0px)!important}
+.dh{top:0!important}

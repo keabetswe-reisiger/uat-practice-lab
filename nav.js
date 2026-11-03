@@ -26,7 +26,7 @@
     <li><a href="tickets.html">${I.dash}To do</a></li><li><a href="tickets.html">${I.alert}In progress<em>${counts.prog}</em></a></li><li><a href="tickets.html">${I.ok}Passed<em>${counts.done}</em></a></li><li><a href="tickets.html">${I.x}Failed<em>${counts.fail}</em></a></li></ul></div></li>
   <li class="mm-i"><a class="mm-t mm-link" href="index.html">Home</a></li></ul></div>`;
  const css=document.createElement('style');css.textContent=`
- #mm{position:relative;z-index:60;border-bottom:1px solid #d5dae2;background:#ffffff;font-family:Manrope,system-ui,sans-serif}
+ #mm{position:sticky;top:0;z-index:60;border-bottom:1px solid #d5dae2;background:#ffffff;font-family:Manrope,system-ui,sans-serif}
  #mm .mm-in{display:flex;align-items:center;gap:18px;padding:6px clamp(16px,3vw,64px);flex-wrap:wrap}
  #mm .mm-brand{color:#16202f;text-decoration:none;font-weight:500;font-size:14px;margin-right:6px}#mm .mm-brand b{color:#7a5a1e}
  #mm ul{list-style:none;margin:0;padding:0}#mm .mm-list{display:flex;gap:2px;flex-wrap:wrap}
@@ -42,18 +42,17 @@
  #mm .mm-p a b{font-size:14px;font-weight:600}#mm .mm-p a span{font-size:12.5px;line-height:1.35;color:#4a5568}
  #mm .mm-p a:hover,#mm .mm-p a[aria-current]{background:#f1f3f6}
  #mm .mm-ico a{flex-direction:row;align-items:center;gap:10px;font-size:14px}#mm .mm-ico em{margin-left:auto;font-style:normal;font:600 12px 'Geist Mono',monospace;background:#eef1f5;border-radius:99px;padding:1px 8px;color:#3b4658}
- @media(max-width:700px){#mm .mm-in{gap:4px}#mm .mm-brand{width:100%}#mm .mm-i{position:static}#mm .mm-p{left:12px;right:12px;top:auto;margin-top:6px}#mm .mm-grid{grid-template-columns:1fr;width:auto}#mm .mm-col1,#mm .mm-ico{width:auto}#mm .mm-t{padding:9px 10px}}
+ @media(max-width:700px){#mm .mm-in{gap:2px;flex-wrap:nowrap;overflow-x:auto;padding:2px 8px;scrollbar-width:none}#mm .mm-in::-webkit-scrollbar{display:none}#mm .mm-brand{display:none}#mm .mm-list{flex-wrap:nowrap}#mm .mm-i{position:static}#mm .mm-t{padding:10px 10px;white-space:nowrap}#mm .mm-p{position:fixed;left:10px;right:10px;top:var(--mmh,46px);max-height:72vh;overflow:auto;margin-top:4px}#mm .mm-grid{grid-template-columns:1fr;width:auto}#mm .mm-col1,#mm .mm-ico{width:auto}#mm .an-all{display:none}}
  @media print{#mm{display:none}}`;
  document.head.appendChild(css);
  const hd=document.querySelector('header');(hd&&hd.parentNode===document.body?hd.after(bar):document.body.prepend(bar));
+  const setH=()=>document.documentElement.style.setProperty('--mmh',bar.offsetHeight+'px');setH();window.addEventListener('resize',setH);if(window.ResizeObserver)new ResizeObserver(setH).observe(bar);
  const panels=()=>[...bar.querySelectorAll('.mm-p')],trig=()=>[...bar.querySelectorAll('button.mm-t')];
  const closeAll=()=>{panels().forEach(p=>p.classList.remove('on'));trig().forEach(b=>b.setAttribute('aria-expanded','false'))};
  const open=b=>{closeAll();trig().forEach(x=>{if(x!==b)x.dataset.pin=''});b.setAttribute('aria-expanded','true');document.getElementById(b.getAttribute('aria-controls')).classList.add('on')};
- let ht;
  bar.querySelectorAll('.mm-i').forEach(li=>{const b=li.querySelector('button.mm-t');if(!b)return;
   b.addEventListener('click',()=>{if(b.getAttribute('aria-expanded')==='true'&&b.dataset.pin==='1'){closeAll();b.dataset.pin=''}else{open(b);b.dataset.pin='1'}});
-  li.addEventListener('mouseenter',()=>{if(matchMedia('(hover:hover) and (min-width:701px)').matches){clearTimeout(ht);open(b)}});
-  li.addEventListener('mouseleave',()=>{if(matchMedia('(hover:hover) and (min-width:701px)').matches){ht=setTimeout(closeAll,180)}})});
+  });
  document.addEventListener('click',e=>{if(!bar.contains(e.target))closeAll()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=trig().find(b=>b.getAttribute('aria-expanded')==='true');closeAll();o&&o.focus()}});
 })();
