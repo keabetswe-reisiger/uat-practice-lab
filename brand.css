@@ -2,8 +2,8 @@
    Tokens taken from reisiger.io's compiled CSS (2 Nov 2026). Loaded LAST on every page so it wins. */
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
 :root{
- --r-bg:#0d0c0a;--r-card:#141210;--r-muted:#1e1c1a;--r-line:#272421;--r-ink:#fbfaf9;--r-mute:#c9c3b9;--r-gold:#c9a66e;--r-gold-deep:#a98850;--r-on-gold:#11100d;
- --bg:#0d0c0a!important;--card:#141210!important;--ink:#fbfaf9!important;--mute:#c9c3b9!important;--line:#272421!important;
+ --r-bg:#0d0c0a;--r-card:#141210;--r-muted:#1e1c1a;--r-line:#272421;--r-ink:#fbfaf9;--r-mute:#d6d0c6;--r-gold:#c9a66e;--r-gold-deep:#a98850;--r-on-gold:#11100d;
+ --bg:#0d0c0a!important;--card:#141210!important;--ink:#fbfaf9!important;--mute:#d6d0c6!important;--line:#272421!important;
  --brand:#c9a66e!important;--accent:#c9a66e!important;--blue:#c9a66e!important;
  --green:#7fc29b!important;--red:#e8907f!important;--amber:#d9b373!important;--pass:#7fc29b!important;--fail:#e8907f!important;--block:#d9b373!important;--pend:#7a746b!important;
  color-scheme:dark}
@@ -72,7 +72,7 @@ table.intro td.hl,table.intro th.hl{background:#c9a66e33!important;outline:2px s
 button.act.go{background:var(--r-gold)!important;border-color:var(--r-gold)!important;color:var(--r-on-gold)!important}
 body{padding-bottom:80px!important}
 .badge.b-Pass,.badge.b-Fail,.badge.b-Blocked{color:#0d0c0a!important}.badge{font-weight:700}
-#us-p .m{color:#c9c3b9!important}
+#us-p .m{color:#d6d0c6!important}
 /* tidy-up pass (3 Nov 2026) */
 body{letter-spacing:0!important}
 h1,h2,h3,h4,a.c b{letter-spacing:-.01em!important;word-spacing:.08em}
@@ -114,11 +114,15 @@ body{background-color:#0d0c0a!important;background-image:
  background-attachment:fixed!important;background-repeat:no-repeat!important}
 .card,.sec,.stat,.col,details.card,a.c{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 header{background:rgba(13,12,10,.72)!important;backdrop-filter:blur(8px)}
-/* gradient lives on <html> so it always fills the whole window, even on short pages */
-html{min-height:100%;background-color:#0d0c0a!important;background-image:
- radial-gradient(1100px 700px at 4% -5%,rgba(201,166,110,.42),transparent 62%),
- radial-gradient(1000px 700px at 104% 4%,rgba(64,128,150,.42),transparent 62%),
- radial-gradient(1100px 800px at 98% 104%,rgba(150,70,115,.40),transparent 62%),
- radial-gradient(1000px 800px at -4% 100%,rgba(70,125,85,.36),transparent 62%)!important;
+/* mixed-colour page background: a diagonal blend of deep violet, teal, olive-gold and wine, with brighter glows on top. Stays dark so text is readable. */
+html{min-height:100%;background-color:#14101c!important;background-image:
+ radial-gradient(900px 650px at 8% 8%,rgba(214,170,90,.36),transparent 65%),
+ radial-gradient(900px 650px at 94% 12%,rgba(40,150,170,.38),transparent 65%),
+ radial-gradient(900px 700px at 90% 95%,rgba(190,70,130,.36),transparent 65%),
+ radial-gradient(900px 700px at 6% 92%,rgba(80,160,100,.32),transparent 65%),
+ linear-gradient(135deg,#241543 0%,#0c303b 35%,#33270c 65%,#401530 100%)!important;
  background-attachment:fixed!important;background-repeat:no-repeat!important}
 body{background:transparent!important}
+
+/* labels that sit directly on the coloured background get lighter ink */
+main>h2,.eyebrow,main>h2 em{color:#f3e2bd!important}.sidehd,.lvl,main>.s,main>p.s{color:#e4dfd5!important}
