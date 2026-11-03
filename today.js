@@ -36,6 +36,8 @@
   const done=AR.last===todayStr();c.push({k:'Daily 5',t:done?'Done today':'Play today\'s Daily 5',d:done?`Streak: ${AR.streak||1} day${(AR.streak||1)===1?'':'s'}. Come back tomorrow for a new set.`:`Five quick questions, about 5 minutes.${AR.streak?` Streak: ${AR.streak} day${AR.streak===1?'':'s'}.`:''}`,a:done?'Play again':'Play now',h:'arcade.html'});
   c.push({k:'SQL question of the day',t:N.sqlGym.have>=N.sqlGym.need?'All 44 gym questions done':'One new SQL question',d:`${N.sqlGym.have} of 44 gym questions finished. Today\'s question is picked for you.`,a:'Open today\'s question',h:'sql-lab.html#daily'});
   c.push(dueN?{k:'Exam prep',t:dueN+' question'+(dueN===1?'':'s')+' due for review',d:'Questions you missed come back on a schedule. Ten minutes now saves hours later.',a:'Review now',h:'exam.html#due'}:nextLesson?{k:'Exam prep',t:'Next lesson: FL-'+nextLesson,d:`${N.examRead.have} of 64 syllabus lessons read.`,a:'Read it',h:'exam.html#learn-'+nextLesson.split('.')[0]}:{k:'Exam prep',t:'Take a mock exam',d:'All lessons read. A timed 40-question mock shows where you stand.',a:'Start a mock',h:'exam.html#mock'});
+  const lastBk=localStorage.getItem('uatbackup-last');const hasProgress=Object.values(N).some(x=>x.have>0);const old=!lastBk||(Date.now()-new Date(lastBk).getTime())>7*864e5;
+  if(hasProgress&&old)c.push({k:'Backup',t:lastBk?'Time for a new backup':'Back up your progress',d:lastBk?'Your last backup is over a week old.':'Save a copy of your progress to a file. It takes ten seconds and protects weeks of work.',a:'Open backup',h:'#backup'});
   const pct=Math.round(Object.values(N).reduce((a,x)=>a+Math.min(1,x.have/x.need),0)/Object.keys(N).length*100);
   c.push({k:'Overall',t:pct+'% of the learning map',d:'See the whole path below, or check the exam and job gates.',a:'Readiness check',h:'readiness.html'});return c}
  /* ----- the map ----- */
@@ -59,6 +61,7 @@
  function render(){const a=document.getElementById('today'),m=document.getElementById('map');
   if(a)a.innerHTML=`<div class="td-h"><h2><em>Today</em>&nbsp; ${new Date().toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long'})}</h2></div><div class="td-g">${cards().map(c=>`<div class="td-c"><div class="td-k">${c.k}</div><div class="td-t">${c.t}</div><div class="td-d">${c.d}</div><a class="go" href="${c.h}">${c.a}</a></div>`).join('')}</div>`;
   if(m)m.innerHTML=`<div class="map">${STAGES.map(([h,ns])=>`<div class="st"><h3>${h}</h3>${ns.map(([n,x,l])=>{const p=Math.min(1,x.have/x.need);return `<a class="nd ${p>=1?'full':p>0?'part':'none'}" href="${l}"><b>${n}</b><div class="bar2"><i style="width:${p*100}%"></i></div><small>${x.have} of ${x.need}${p>=1?' · done':''}</small></a>`}).join('')}</div>`).join('')}</div>`}
+ document.addEventListener('click',e=>{const l=e.target.closest('a[href="#backup"]');if(l){e.preventDefault();e.stopImmediatePropagation();const b=document.getElementById('us-b');if(b)b.click()}});
  window.TODAY={N,cards,nextTicket,render};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
 })();
