@@ -85,3 +85,4 @@ h1,h2,h3,h4,a.c b{letter-spacing:-.01em!important;word-spacing:.08em}
 @media(max-width:700px){#us-b{left:8px!important;bottom:8px!important}.cols{grid-template-columns:1fr!important}}
 .card+.card,.card+.steps,.steps+.card{margin-top:12px}
 .steps{margin:6px 0 10px}
+.cats button.on small{color:#11100d!important;opacity:.85}.cats button.on{color:#11100d!important}

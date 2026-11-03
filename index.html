@@ -6,13 +6,14 @@
 :root{--bg:#f6f3ee;--card:#fff;--ink:#1f2430;--mute:#6b7280;--line:#e3ddd3;--brand:#5b3a29}
 @media(prefers-color-scheme:dark){:root{--bg:#16181d;--card:#20242c;--ink:#eceff4;--mute:#9aa3b2;--line:#323844;--brand:#d9b38c}}
 *{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--ink)}
-main{max-width:700px;margin:auto;padding:20px 16px 90px}h1{color:var(--brand);margin:8px 0 2px}p.s{color:var(--mute);margin:0 0 16px}
+main{max-width:1120px;margin:auto;padding:20px 16px 90px}h1{color:var(--brand);margin:8px 0 2px}p.s{color:var(--mute);margin:0 0 16px}
 h2{font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);margin:22px 0 8px}
 a.c{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin-bottom:9px}a.c:hover{border-color:var(--brand)}
 a.c b{color:var(--brand);font-size:17px}a.c small{display:block;color:var(--mute);margin-top:2px}.tag{font-size:12px;background:var(--line);padding:1px 8px;border-radius:99px;margin-left:6px;white-space:nowrap}
 .hero{border-radius:14px;padding:18px 20px;margin:12px 0 4px}.hero b{font-size:18px}.hero a{display:inline-block;margin-top:10px;background:#fff;color:#5b3a29;text-decoration:none;font-weight:700;border-radius:9px;padding:8px 14px}
 @media(prefers-color-scheme:dark){.hero{background:#2b2218}.hero a{background:#d9b38c;color:#16181d}}
 .path{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;font-size:14.5px}.t{background:#b08d5722;border-left:3px solid #b08d57;padding:8px 10px;font-size:14px;border-radius:4px;margin-top:18px}
+@media(min-width:860px){main{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;row-gap:10px;align-content:start}main>*{grid-column:1/-1}main>a.c{grid-column:auto;margin-bottom:0}main>a.c[href="tickets.html"]{grid-column:1/-1}main>h2{margin-bottom:2px}main>a.c,main>.t{margin-top:0}}
 </style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
 </head><body><main>
 <div class="eyebrow" style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase">UAT Practice Lab</div><h1>Learn to test software. Properly.</h1><p class="s">Plain words. Coffee-shop examples. Real practice, on your phone or laptop.</p>
