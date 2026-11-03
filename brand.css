@@ -73,3 +73,15 @@ button.act.go{background:var(--r-gold)!important;border-color:var(--r-gold)!impo
 body{padding-bottom:80px!important}
 .badge.b-Pass,.badge.b-Fail,.badge.b-Blocked{color:#0d0c0a!important}.badge{font-weight:700}
 #us-p .m{color:#aba59c!important}
+/* tidy-up pass (3 Nov 2026) */
+body{letter-spacing:0!important}
+h1,h2,h3,h4,a.c b{letter-spacing:-.01em!important;word-spacing:.08em}
+.chips{margin:14px 0 8px!important;gap:4px!important}
+.chips button{font-size:11px!important;padding:2px 7px!important;color:var(--r-mute)!important}
+.chips button:hover{color:var(--r-gold)!important}
+.cols{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))!important;overflow:visible!important}
+.col:empty,.col h3+.empty{opacity:.7}
+#us-b{padding:6px 11px!important;font-size:12px!important;opacity:.85}#us-b:hover{opacity:1}
+@media(max-width:700px){#us-b{left:8px!important;bottom:8px!important}.cols{grid-template-columns:1fr!important}}
+.card+.card,.card+.steps,.steps+.card{margin-top:12px}
+.steps{margin:6px 0 10px}
