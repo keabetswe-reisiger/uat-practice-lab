@@ -27,12 +27,13 @@ label.ck{display:flex;gap:8px;align-items:center;padding:4px 0;cursor:pointer}
 <script>
 const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const rd=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}};
-const T=rd('uat-tickets-v1'),C=rd('capstone-v1'),CA=rd('careful-v1'),Q=rd('sqllab-v1'),X=rd('exam-v1'),IV=rd('interview-v1'),WP=rd('workplace-v1'),TE=rd('tech-v1'),AP=rd('apilab-v1');
+const AB=rd('appbugs-v1'),T=rd('uat-tickets-v1'),C=rd('capstone-v1'),CA=rd('careful-v1'),Q=rd('sqllab-v1'),X=rd('exam-v1'),IV=rd('interview-v1'),WP=rd('workplace-v1'),TE=rd('tech-v1'),AP=rd('apilab-v1');
 const KEY='portfolio-v1';let S=rd(KEY);S.inc=S.inc||{def:1,ses:1,data:1,rec:1};S.name=S.name||'';S.role=S.role||'Junior software tester (in training)';
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
 const CASES=['The wrong totals','The double order','Impossible quantities','Negative stock','Expired but still on the shelf'];
 const tk=window.TICKETS||[];
 function defects(){const out=[];tk.forEach(t=>{const x=T[t.key];if(x&&x.status==='Failed'&&(x.actual||'').trim())out.push({title:t.title,src:'Ticket '+t.key+' · '+t.appName,env:t.env,sev:x.sev||'Major',steps:t.steps,exp:t.expected,act:x.actual})});
+ (AB.items||[]).forEach(r=>out.push({title:r.title,src:'Practice Lab, '+r.page,env:r.dev,sev:r.sev,steps:r.steps.split('\n').filter(x=>x.trim()),exp:r.exp,act:r.act}));
  (C.attempts||[]).slice(-3).forEach(a=>(a.reports||[]).filter(r=>r.ok).forEach(r=>out.push({title:r.title,src:'Unseen-app test ('+r.area+' / '+r.type+')',env:'Brew Rewards practice app',sev:'',steps:null,body:r.steps})));return out}
 const sessions=()=>(CA.sessions||[]);
 function build(){const name=S.name||'Your name';const d=new Date().toLocaleDateString('en-ZA',{dateStyle:'long'});

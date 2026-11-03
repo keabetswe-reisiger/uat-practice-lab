@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Automation Lab</title>
+<meta name="theme-color" content="#ffffff"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#fff;--card:#fff;--ink:#16202f;--mute:#4a5568;--line:#d5dae2;--brand:#7a5a1e;--accent:#7a5a1e;--blue:#7a5a1e;--green:#11663f;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line)}header h1{font-size:18px;margin:0}.sp{flex:1}header a{border:1px solid var(--line);border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none;color:inherit}
+main{max-width:1280px;margin:auto;padding:16px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}h2{margin:0 0 4px;font-size:19px}h3{margin:10px 0 4px;font-size:15px}.mute{color:var(--mute);font-size:14px}
+.shell{display:grid;grid-template-columns:290px minmax(0,1fr);gap:16px;align-items:start}@media(max-width:980px){.shell{grid-template-columns:1fr}}
+.list{display:flex;flex-direction:column;gap:6px}.list button{text-align:left;display:flex;gap:8px;align-items:center;width:100%}
+button{font:inherit;cursor:pointer;border:1px solid #b8c0cc;background:#fff;color:var(--ink);padding:7px 13px;border-radius:9px;font-weight:600}button.pri{background:#c9a66e;border-color:#b38e52;color:#1d1608}button.on{background:#c9a66e55;border-color:#b38e52}button:disabled{opacity:.5}
+.n{min-width:22px;font:600 12px ui-monospace,monospace}.tag{font:12px ui-monospace,monospace;background:#eef1f5;border:1px solid var(--line);border-radius:99px;padding:1px 9px}
+.cof{border-left:3px solid #b38e52;background:#c9a66e24;padding:6px 10px;border-radius:4px;margin:8px 0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}@media(max-width:980px){.two{grid-template-columns:1fr}}
+textarea{width:100%;font:13.5px/1.5 ui-monospace,Menlo,Consolas,monospace;border:1px solid #b8c0cc;border-radius:10px;padding:10px;background:#fff;color:var(--ink);min-height:200px}
+pre{background:#f3f4f6;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:13px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;margin:6px 0}
+.log div{padding:3px 0;border-bottom:1px solid var(--line);font-size:14px}.log .ok{color:#0b4a2d}.log .bad{color:#8a1f13;font-weight:600}.log .info{color:var(--mute)}
+.res{border-radius:10px;padding:10px 12px;margin-top:10px}.res.ok{background:#11663f1a;border:1px solid var(--green)}.res.no{background:#b423181a;border:1px solid var(--red)}.res.warn{background:#c9a66e33;border:1px solid #b38e52}
+#sb{border:2px solid #b8c0cc;border-radius:12px;padding:12px;background:#fff;min-height:120px}#sb label{display:block;margin:6px 0}#sb input{font:inherit;border:1px solid #b8c0cc;border-radius:8px;padding:6px 9px;width:100%;max-width:260px;background:#fff;color:#16202f}#sb button{margin:6px 6px 0 0;background:#eef1f5;color:#16202f}#sb table{border-collapse:collapse;width:100%}#sb td{border-bottom:1px solid #e4e7ec;padding:6px}
+details{border:1px dashed var(--line);border-radius:10px;padding:6px 10px;margin-top:8px}summary{cursor:pointer;font-weight:600}
+.bar{height:9px;background:#e5e8ee;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:#b38e52}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Automation Lab</h1><span class="sp"></span><a href="workplace.html">Work skills</a><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main><div id="v"></div></main>
+<script>
+const $=id=>document.getElementById(id);const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KEY='autolab-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.done=S.done||{};S.scripts=S.scripts||{};S.tries=S.tries||{};S.cur=S.cur||'c1';
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+/* ===================== the pretend apps (what the test drives) ===================== */
+const APPS={
+ login(){return `<label>Email <input id="email" aria-label="Email"></label><label>Password <input id="pw" type="password" aria-label="Password"></label><button id="go">Log in</button><div id="out" role="status"></div>`},
+ orders(){return `<button id="load">Load orders</button><div id="out" role="status"></div>`},
+ rows(){return `<table><tr><td>Espresso</td><td><button>Add</button></td></tr><tr><td>Latte</td><td><button>Add</button></td></tr></table><div id="out" role="status">Cart is empty</div>`},
+ calc(){return `<label>Quantity <input id="qty" aria-label="Quantity"></label><button id="calc">Calculate</button><div id="out" role="status"></div>`},
+ api(){return `<div class="mute">This test has no screen. It talks to a pretend server (an API). Use the request commands.</div><div id="out" role="status"></div>`}};
+function wire(app){const sb=$('sb');
+ if(app==='login'){$('go').onclick=()=>{const e=$('email').value.trim(),p=$('pw').value;$('out').textContent=(e==='anna@example.com'&&p==='Coffee#2026')?'Welcome, Anna':'Wrong email or password'}}
+ if(app==='orders'){$('load').onclick=()=>{$('out').textContent='Loading…';setTimeout(()=>{$('out').textContent='3 orders found'},1000)}}
+ if(app==='rows'){sb.querySelectorAll('tr').forEach(tr=>{tr.querySelector('button').onclick=()=>{$('out').textContent='Cart: '+tr.children[0].textContent}})}
+ if(app==='calc'){$('calc').onclick=()=>{const q=parseInt($('qty').value,10);$('out').textContent=isNaN(q)?'Enter a number':'Total: R'+(q*30)}}}
+const MOCK=(m,path,body)=>{if(m==='GET'&&path==='/api/orders/42')return{status:200,body:{id:42,item:'Flat White',qty:2}};if(m==='GET'&&/^\/api\/orders\/\d+$/.test(path))return{status:404,body:{error:'Not found'}};
+ if(m==='POST'&&path==='/api/orders'){if(!body||!body.item)return{status:400,body:{error:'item is required'}};return{status:201,body:{id:43,item:body.item,qty:body.qty||1}}}return{status:404,body:{error:'Unknown route'}}};
+/* ===================== the test language ===================== */
+const Q=s=>{const m=s.match(/"([^"]*)"/g);return m?m.map(x=>x.slice(1,-1)):[]};
+function expand(lines){const out=[];for(let i=0;i<lines.length;i++){const raw=lines[i];if(!raw.trim()||raw.trim().startsWith('#'))continue;
+  const m=raw.match(/^for\s+(\w+)\s+in\s+(.+?)\s*:?\s*$/i);
+  if(m&&!/^\s/.test(raw)){const vals=m[2].split(',').map(x=>x.trim().replace(/^"|"$/g,'')).filter(x=>x!=='');const body=[];while(i+1<lines.length&&(/^\s+\S/.test(lines[i+1])||!lines[i+1].trim())){i++;if(lines[i].trim())body.push(lines[i].trim())}
+   if(!body.length)throw new Error('The "for" line needs steps under it, indented by two spaces.');
+   vals.forEach(v=>body.forEach(b=>out.push({line:b.replace(/\{([^{}]*)\}/g,(w,e)=>e.trim()===m[1]?v:'{'+e.replace(new RegExp('\\b'+m[1]+'\\b','g'),v)+'}').replace(/\{([\d\s+\-*/().]+)\}/g,(_,e)=>{try{return String(Function('"use strict";return ('+e+')')())}catch{return '?'}}),loopVar:m[1],loopVal:v})));continue}
+  out.push({line:raw.trim()})}return out}
+const text=()=>$('sb').innerText.replace(/\s+/g,' ').trim();
+const findInput=l=>{const sb=$('sb');const lab=[...sb.querySelectorAll('label')].find(x=>x.textContent.trim().toLowerCase().startsWith(l.toLowerCase()));if(lab)return lab.querySelector('input');return [...sb.querySelectorAll('input')].find(i=>(i.getAttribute('aria-label')||i.placeholder||i.name||'').toLowerCase()===l.toLowerCase())};
+const findButton=(t,scope)=>[...(scope||$('sb')).querySelectorAll('button')].find(b=>b.textContent.trim().toLowerCase()===t.toLowerCase());
+let LAST=null;
+async function runStep(st){const L=st.line,q=Q(L);let m;
+ if(m=L.match(/^fill\s+"[^"]*"\s+with\s+"[^"]*"$/i)){const el=findInput(q[0]);if(!el)throw new Error('I could not find a field called "'+q[0]+'". Fields on this page: '+[...$('sb').querySelectorAll('label')].map(x=>'"'+x.textContent.trim().replace(/\s+/g,' ')+'"').join(', '));el.value=q[1];return 'Typed "'+q[1]+'" into "'+q[0]+'"'}
+ if(/^click\s+"[^"]*"\s+in\s+row\s+"[^"]*"$/i.test(L)){const row=[...$('sb').querySelectorAll('tr')].find(r=>r.textContent.toLowerCase().includes(q[1].toLowerCase()));if(!row)throw new Error('I could not find a row containing "'+q[1]+'".');const b=findButton(q[0],row);if(!b)throw new Error('There is no "'+q[0]+'" button in the "'+q[1]+'" row.');b.click();return 'Clicked "'+q[0]+'" in the "'+q[1]+'" row'}
+ if(/^click\s+"[^"]*"$/i.test(L)){const bs=[...$('sb').querySelectorAll('button')].filter(b=>b.textContent.trim().toLowerCase()===q[0].toLowerCase());if(!bs.length)throw new Error('I could not find a button called "'+q[0]+'".');if(bs.length>1)throw new Error('There are '+bs.length+' buttons called "'+q[0]+'", so I do not know which one you mean. Name the row too: click "'+q[0]+'" in row "..."');bs[0].click();return 'Clicked "'+q[0]+'"'}
+ if(/^expect\s+page\s+not\s+to\s+contain\s+"/i.test(L)){if(text().toLowerCase().includes(q[0].toLowerCase()))throw new Error('The page should NOT contain "'+q[0]+'" but it does. The page says: "'+text()+'"');return 'The page does not contain "'+q[0]+'"'}
+ if(/^expect\s+page\s+to\s+contain\s+"/i.test(L)){if(!text().toLowerCase().includes(q[0].toLowerCase()))throw new Error('Expected the page to contain "'+q[0]+'" but the page says: "'+text()+'"'+(/loading/i.test(text())?'. The page was still loading. A good test waits for the result: wait until page contains "..."':''));return 'The page contains "'+q[0]+'"'}
+ if(/^expect\s+"[^"]*"\s+to\s+have\s+value\s+"/i.test(L)){const el=findInput(q[0]);if(!el)throw new Error('I could not find a field called "'+q[0]+'".');if(el.value!==q[1])throw new Error('Expected "'+q[0]+'" to have value "'+q[1]+'" but it has "'+el.value+'"');return '"'+q[0]+'" has value "'+q[1]+'"'}
+ if(m=L.match(/^wait\s+until\s+page\s+contains\s+"[^"]*"$/i)){const t0=Date.now();while(Date.now()-t0<3000){if(text().toLowerCase().includes(q[0].toLowerCase()))return 'Waited until the page contained "'+q[0]+'" ('+(Date.now()-t0)+' ms)';await sleep(50)}throw new Error('Waited 3 seconds but the page never contained "'+q[0]+'". The page says: "'+text()+'"')}
+ if(m=L.match(/^wait\s+(\d+)\s*ms$/i)){await sleep(Math.min(+m[1],3000));return 'Waited '+m[1]+' ms (a fixed wait: it works, but it is slow and breaks when the app is slower. Prefer: wait until page contains "...")'}
+ if(m=L.match(/^request\s+(GET|POST)\s+"([^"]*)"(?:\s+with\s+(\{.*\}))?$/i)){let body=null;if(m[3]){try{body=JSON.parse(m[3])}catch{throw new Error('The body after "with" must be valid JSON, like {"item":"Latte"}')}}LAST=MOCK(m[1].toUpperCase(),m[2],body);$('out').textContent=m[1].toUpperCase()+' '+m[2]+' -> '+LAST.status;return 'Sent '+m[1].toUpperCase()+' '+m[2]+(body?' with '+JSON.stringify(body):'')+'. Server answered '+LAST.status}
+ if(m=L.match(/^expect\s+status\s+to\s+be\s+(\d+)$/i)){if(!LAST)throw new Error('Send a request first, then check its status.');if(LAST.status!==+m[1])throw new Error('Expected status '+m[1]+' but the server answered '+LAST.status+' with '+JSON.stringify(LAST.body));return 'Status is '+m[1]}
+ if(/^expect\s+body\s+"[^"]*"\s+to\s+be\s+"?[^"]*"?$/i.test(L)){if(!LAST)throw new Error('Send a request first.');const v=L.replace(/^expect\s+body\s+"[^"]*"\s+to\s+be\s+/i,'').replace(/^"|"$/g,'');const got=LAST.body[q[0]];if(String(got)!==v)throw new Error('Expected body "'+q[0]+'" to be "'+v+'" but it is "'+got+'". Full body: '+JSON.stringify(LAST.body));return 'Body "'+q[0]+'" is "'+v+'"'}
+ throw new Error('I did not understand this line: '+L+'. Open "The commands" below to see what is allowed.')}
+async function run(src){const log=[];let ok=true,cmds;try{cmds=expand(src.split('\n'))}catch(e){return{ok:false,log:[{c:'bad',t:e.message}],cmds:[]}}
+ if(!cmds.length)return{ok:false,log:[{c:'bad',t:'Your test is empty. Type some steps first.'}],cmds:[]};
+ LAST=null;for(const st of cmds){try{const r=await runStep(st);log.push({c:'ok',t:'PASS  '+st.line+(r?'  ->  '+r:'')})}catch(e){log.push({c:'bad',t:'FAIL  '+st.line});log.push({c:'bad',t:'      '+e.message});ok=false;break}}
+ return{ok,log,cmds}}
+/* ===================== the challenges ===================== */
+const CH=[
+ {id:'c1',title:'Log in and check the welcome',concept:'Actions and assertions',app:'login',
+  teach:'An automated test is a list of steps a computer can repeat: do something (an <b>action</b>), then check something (an <b>assertion</b>). Without an assertion a test proves nothing, because it only clicks.',
+  coffee:'You press the espresso button (action) and then check a coffee came out (assertion).',
+  goal:'Log in as anna@example.com with password Coffee#2026 and check the page says "Welcome, Anna".',
+  start:'# write your test here\n',sample:'fill "Email" with "anna@example.com"\nfill "Password" with "Coffee#2026"\nclick "Log in"\nexpect page to contain "Welcome, Anna"',
+  need:(c)=>c.some(x=>/^expect\s/i.test(x.line))||'Add at least one "expect" line. A test needs an assertion.',hint:'Three actions (two fill lines and a click) and one expect line.'},
+ {id:'c2',title:'A negative test: the wrong password',concept:'Testing what should NOT work',app:'login',
+  teach:'Good test suites also check that bad input is refused. A <b>negative test</b> uses wrong data and asserts the right error message appears.',
+  coffee:'You check the till refuses a card with the wrong PIN, not only that it accepts the right one.',
+  goal:'Log in with a WRONG password and check the page says "Wrong email or password".',
+  start:'# write your test here\n',sample:'fill "Email" with "anna@example.com"\nfill "Password" with "not-the-password"\nclick "Log in"\nexpect page to contain "Wrong email or password"',
+  need:(c)=>c.some(x=>/wrong email or password/i.test(x.line)&&/^expect/i.test(x.line))||'Assert the error message: expect page to contain "Wrong email or password".',hint:'Use any password except Coffee#2026, then expect the error message.'},
+ {id:'c3',title:'Wait for slow pages',concept:'Waiting (the main cause of flaky tests)',app:'orders',
+  teach:'Apps take time to respond. A test that checks too soon fails even though the app is fine. That is a <b>flaky test</b>. Instead of a fixed pause, <b>wait until</b> the thing you expect appears.',
+  coffee:'You do not check the cup the instant you press the button. You wait until the machine finishes.',
+  goal:'Click "Load orders" and check the page shows "3 orders found". First try it WITHOUT a wait and see it fail, then fix it.',
+  start:'click "Load orders"\nexpect page to contain "3 orders found"\n',sample:'click "Load orders"\nwait until page contains "3 orders found"\nexpect page to contain "3 orders found"',
+  need:(c)=>(c.findIndex(x=>/^wait until/i.test(x.line))>=0&&c.findIndex(x=>/^wait until/i.test(x.line))<c.findIndex(x=>/^expect/i.test(x.line)))||'Put "wait until page contains ..." BEFORE the expect line.',hint:'Add: wait until page contains "3 orders found"'},
+ {id:'c4',title:'Pick the right button (locators)',concept:'Locators: telling the test which element you mean',app:'rows',
+  teach:'A <b>locator</b> is how the test finds an element. "Add" alone is ambiguous when there are two Add buttons. Be specific by naming the row, so the test does not break when rows move.',
+  coffee:'"Pour the milk" is unclear with two jugs. "Pour the oat milk jug" is clear.',
+  goal:'Add the Latte to the cart and check the cart says "Cart: Latte".',
+  start:'click "Add"\n',sample:'click "Add" in row "Latte"\nexpect page to contain "Cart: Latte"',
+  need:(c)=>c.some(x=>/in\s+row\s+"latte"/i.test(x.line))||'Use: click "Add" in row "Latte" so the test picks the Latte, not the Espresso.',hint:'click "Add" in row "Latte" then expect page to contain "Cart: Latte"'},
+ {id:'c5',title:'Test many values with a loop',concept:'Data-driven tests',app:'calc',
+  teach:'Instead of copying the same steps for every value, a <b>data-driven test</b> repeats the steps with a list of values. Boundary values (1, 5, 10) are perfect for this.',
+  coffee:'You taste the same recipe at three strengths instead of writing three recipes.',
+  goal:'Each coffee costs R30. For quantities 1, 5 and 10 check the total is quantity x 30. Use a loop.',
+  start:'for qty in 1, 5, 10\n  fill "Quantity" with "{qty}"\n  click "Calculate"\n',sample:'for qty in 1, 5, 10\n  fill "Quantity" with "{qty}"\n  click "Calculate"\n  expect page to contain "Total: R{qty*30}"',
+  need:(c)=>(c.filter(x=>x.loopVar).length>=9&&c.some(x=>/^expect/i.test(x.line)))||'Use a "for qty in 1, 5, 10" loop with fill, click and an expect line under it (indented).',hint:'Inside the loop, expect page to contain "Total: R{qty*30}". {qty*30} is worked out for you.'},
+ {id:'c6',title:'Test an API: no screen needed',concept:'API tests (fast, reliable, no browser)',app:'api',
+  teach:'Many tests never open a page. They send a <b>request</b> to the server and check the <b>status code</b> and the <b>data</b> that comes back. 200 means OK, 201 created, 400 bad request, 404 not found.',
+  coffee:'Instead of walking to the counter, you phone the kitchen and listen to the answer.',
+  goal:'Check that order 42 exists (status 200 and body id is 42). Then check order 999 does not exist (status 404).',
+  start:'request GET "/api/orders/42"\n',sample:'request GET "/api/orders/42"\nexpect status to be 200\nexpect body "id" to be 42\nrequest GET "/api/orders/999"\nexpect status to be 404',
+  need:(c)=>(c.filter(x=>/^request/i.test(x.line)).length>=2&&c.filter(x=>/^expect status/i.test(x.line)).length>=2)||'Send two requests and check the status after each: one for 42 (200) and one for 999 (404).',hint:'request GET "/api/orders/999" then expect status to be 404'}];
+const CMDS=`fill "Email" with "anna@example.com"        type into a field (name it as the label says)
+click "Log in"                           press a button
+click "Add" in row "Latte"              press a button inside one row
+expect page to contain "Welcome"        check some text is on the page
+expect page not to contain "Error"      check some text is NOT on the page
+expect "Email" to have value "x"       check what a field holds
+wait until page contains "Done"         wait (up to 3 seconds) for text to appear
+wait 500ms                              fixed pause (slow, avoid if you can)
+request GET "/api/orders/42"            send a request to the pretend server
+request POST "/api/orders" with {"item":"Latte"}
+expect status to be 200                  check the status code of the last request
+expect body "id" to be 42                check a value in the last response
+for qty in 1, 5, 10                      repeat the indented steps under it; use {qty} and {qty*30}
+# a comment`;
+/* ===================== the page ===================== */
+let sbApp='';
+function mountApp(a){if(sbApp===a&&$('sb')&&$('sb').dataset.app===a){/* keep */}sbApp=a;$('sb').dataset.app=a;$('sb').innerHTML=APPS[a]();wire(a)}
+function render(){const c=CH.find(x=>x.id===S.cur)||CH[0];const done=Object.keys(S.done).length;
+ $('v').innerHTML=`<div class="card" style="border-left:4px solid #b38e52"><h2>Automation Lab: write real automated tests</h2><div>Employers expect testers to understand automation. Here you write the steps of an automated test in a safe, simple test language. The lab runs them against small practice apps and shows exactly where a step passes or fails. This is the same thinking as tools like Playwright, without installing anything.</div><div class="mute" style="margin-top:6px">${done} of ${CH.length} challenges done. The readiness gate is 4.</div><div class="bar" style="margin-top:6px"><i style="width:${done/CH.length*100}%"></i></div></div>
+ <div class="shell"><div class="card"><div class="list">${CH.map((x,i)=>`<button data-c="${x.id}" class="${x.id===c.id?'on':''}"><span class="n">${S.done[x.id]?'done':i+1}</span><span>${esc(x.title)}</span></button>`).join('')}</div></div>
+ <div><div class="card"><div class="tag">${esc(c.concept)}</div><h2 style="margin-top:6px">${esc(c.title)}</h2><p>${c.teach}</p><div class="cof">${esc(c.coffee)}</div><h3>Your goal</h3><div>${esc(c.goal)}</div>
+ <details><summary>The commands</summary><pre>${esc(CMDS)}</pre></details></div>
+ <div class="two"><div class="card"><h3>Your test</h3><textarea id="src" spellcheck="false" aria-label="Your test">${esc(S.scripts[c.id]!==undefined?S.scripts[c.id]:c.start)}</textarea><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="pri" data-a="run">Run my test</button><button data-a="reset">Start again</button><button data-a="hint">Hint</button><button data-a="sample" ${(S.tries[c.id]||0)<2&&!S.done[c.id]?'disabled title="Available after 2 runs"':''}>Show a sample solution</button></div><div id="res"></div></div>
+ <div class="card"><h3>The page being tested</h3><div id="sb" data-app=""></div><h3>What happened</h3><div id="log" class="log"><div class="info">Press "Run my test".</div></div></div></div></div></div>`;
+ mountApp(c.app)}
+document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;const c=CH.find(x=>x.id===S.cur);
+ if(d.c){S.scripts[S.cur]=($('src')||{}).value;S.cur=d.c;save();render();return}
+ if(d.a==='reset'){delete S.scripts[c.id];save();render();return}
+ if(d.a==='hint'){$('res').innerHTML=`<div class="res warn"><b>Hint:</b> ${esc(c.hint)}</div>`;return}
+ if(d.a==='sample'){S.scripts[c.id]=c.sample;save();render();$('res').innerHTML='<div class="res warn">This is one way to do it. Read every line and make sure you can explain it, then press Run.</div>';return}
+ if(d.a==='run'){const src=$('src').value;S.scripts[c.id]=src;S.tries[c.id]=(S.tries[c.id]||0)+1;{const sb=document.querySelector('[data-a=sample]');if(sb&&S.tries[c.id]>=2){sb.disabled=false;sb.removeAttribute('title')}}mountApp(c.app);b.disabled=true;$('log').innerHTML='<div class="info">Running…</div>';
+  const r=await run(src);b.disabled=false;$('log').innerHTML=r.log.map(l=>`<div class="${l.c}">${esc(l.t)}</div>`).join('');
+  let msg;if(!r.ok)msg=`<div class="res no"><b>Not passing yet.</b> Read the first FAIL line: it says what the test expected and what it found. Fix that step and run again.</div>`;
+  else{const need=c.need(r.cmds);if(need===true){S.done[c.id]=1;msg=`<div class="res ok"><b>Challenge complete.</b> Your test runs and it checks the right things.</div>`}else msg=`<div class="res warn"><b>Your test ran, but it is not doing what the challenge asks.</b> ${esc(need)}</div>`}
+  save();$('res').innerHTML=msg;if(r.ok&&S.done[c.id]){const first=document.querySelector(`[data-c="${c.id}"] .n`);if(first)first.textContent='done'}}});
+document.addEventListener('input',e=>{if(e.target.id==='src'){S.scripts[S.cur]=e.target.value;save()}});
+render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

@@ -4,12 +4,13 @@
  const rd=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}};
  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const todayStr=()=>new Date().toISOString().slice(0,10);
- const T=window.TICKETS||[];const TS=rd('uat-tickets-v1'),EX=rd('exam-v1'),AR=rd('arcade-v1'),SQ=rd('sqllab-v1'),AP=rd('apilab-v1'),CA=rd('careful-v1'),SH=rd('start-here-v1'),TE=rd('tech-v1'),CP=rd('capstone-v1'),IV=rd('interview-v1'),WP=rd('workplace-v1'),PF=rd('portfolio-v1'),LA=rd('labapps-v1'),LM=rd('labmarks-v1');
+ const T=window.TICKETS||[];const TS=rd('uat-tickets-v1'),EX=rd('exam-v1'),AR=rd('arcade-v1'),SQ=rd('sqllab-v1'),AP=rd('apilab-v1'),CA=rd('careful-v1'),SH=rd('start-here-v1'),TE=rd('tech-v1'),CP=rd('capstone-v1'),IV=rd('interview-v1'),WP=rd('workplace-v1'),PF=rd('portfolio-v1'),LA=rd('labapps-v1'),LM=rd('labmarks-v1'),AL=rd('autolab-v1');
  const status=k=>(TS[k]&&TS[k].status)||'Open';
  /* ----- numbers ----- */
  const N={
   tickets:{have:T.filter(t=>['Passed','Failed'].includes(status(t.key))).length,need:T.length||37},
-  apps:{have:Object.values(LA.best||{}).filter(b=>b&&b.pass).length+Object.values(LM.p||{}).filter(x=>x&&x.best&&x.best.pass).length,need:8},
+  apps:{have:Object.values(LA.best||{}).filter(b=>b&&b.pass).length+Object.values(LM.p||{}).filter(x=>x&&x.best&&x.best.pass).length,need:11},
+  auto:{have:Math.min(Object.keys(AL.done||{}).length,4),need:4},
   arcade:{have:Math.min(AR.xp||0,100),need:100},
   api:{have:Object.keys(AP.found||{}).length,need:8},
   sqlLearn:{have:Object.keys(SQ.done||{}).length+Object.keys(SQ.cases||{}).length,need:13},
@@ -32,7 +33,7 @@
   open.sort((a,b)=>(status(a.key)==='In progress'?0:1)-(status(b.key)==='In progress'?0:1)||String(a.due).localeCompare(String(b.due))||a.key.localeCompare(b.key));return open[0]}
  function cards(){const nt=nextTicket();const w=window.COACH?COACH.weak():[];const c=[];
   c.push(nt?{k:'Next ticket',t:esc(nt.key)+': '+esc(nt.title),d:`${esc(nt.type)} test · about ${esc(nt.est)} · due ${esc(nt.due)}${status(nt.key)==='In progress'?' · <b>in progress</b>':''}. ${N.tickets.have} of ${N.tickets.need} tickets finished.`,a:'Open this ticket',h:'tickets.html#'+nt.key}:{k:'Tickets',t:'All tickets finished',d:'Excellent. Open the board to review your results or export your report.',a:'Open the board',h:'tickets.html'});
-  c.push(w.length?{k:'Practise a weak point',t:esc(w[0].name),d:`You got ${w[0].ok} of ${w[0].n} right so far. Read its plan and example, then test it again in a practice app.`,a:'Practise in a practice app',h:'lab.html'}:{k:'Practice app',t:N.apps.have?'Pass another practice app':'Try the Online shop',d:`${N.apps.have} of 8 practice apps passed. The app marks you automatically and coaches you after every test.`,a:'Choose an app',h:N.apps.have?'lab.html':'lab.html?app=shop'});
+  c.push(w.length?{k:'Practise a weak point',t:esc(w[0].name),d:`You got ${w[0].ok} of ${w[0].n} right so far. Read its plan and example, then test it again in a practice app.`,a:'Practise in a practice app',h:'lab.html'}:{k:'Practice app',t:N.apps.have?'Pass another practice app':'Try the Online shop',d:`${N.apps.have} of 11 practice apps passed. The app marks you automatically and coaches you after every test.`,a:'Choose an app',h:N.apps.have?'lab.html':'lab.html?app=shop'});
   const done=AR.last===todayStr();c.push({k:'Daily 5',t:done?'Done today':'Play today\'s Daily 5',d:done?`Streak: ${AR.streak||1} day${(AR.streak||1)===1?'':'s'}. Come back tomorrow for a new set.`:`Five quick questions, about 5 minutes.${AR.streak?` Streak: ${AR.streak} day${AR.streak===1?'':'s'}.`:''}`,a:done?'Play again':'Play now',h:'arcade.html'});
   c.push({k:'SQL question of the day',t:N.sqlGym.have>=N.sqlGym.need?'All 44 gym questions done':'One new SQL question',d:`${N.sqlGym.have} of 44 gym questions finished. Today\'s question is picked for you.`,a:'Open today\'s question',h:'sql-lab.html#daily'});
   c.push(dueN?{k:'Exam prep',t:dueN+' question'+(dueN===1?'':'s')+' due for review',d:'Questions you missed come back on a schedule. Ten minutes now saves hours later.',a:'Review now',h:'exam.html#due'}:nextLesson?{k:'Exam prep',t:'Next lesson: FL-'+nextLesson,d:`${N.examRead.have} of 64 syllabus lessons read.`,a:'Read it',h:'exam.html#learn-'+nextLesson.split('.')[0]}:{k:'Exam prep',t:'Take a mock exam',d:'All lessons read. A timed 40-question mock shows where you stand.',a:'Start a mock',h:'exam.html#mock'});
@@ -45,7 +46,7 @@
   ['1. Learn the basics',[['Start here guide',N.start,'start-here.html'],['Careful tester toolkit (3 sessions)',N.careful,'careful.html']]],
   ['2. Practise on apps',[['Tickets finished',N.tickets,'tickets.html'],['Practice apps passed',N.apps,'lab.html'],['Test arcade (XP)',N.arcade,'arcade.html'],['API lab bugs found',N.api,'api-lab.html'],['SQL lessons and cases',N.sqlLearn,'sql-lab.html#learn'],['SQL practice gym',N.sqlGym,'sql-lab.html#gym']]],
   ['3. Build exam skills',[['Syllabus lessons read',N.examRead,'exam.html#learn-1'],['Mocks at 80% or more',N.mocks,'exam.html#mock'],['Techniques mastered',N.tech,'techniques.html']]],
-  ['4. Prove it for a job',[['Final test passed',N.final,'capstone.html'],['Interview answers',N.interview,'interview.html'],['Work-skills lessons',N.work,'workplace.html'],['Portfolio exported',N.portfolio,'portfolio.html']]]];
+  ['4. Prove it for a job',[['Final test passed',N.final,'capstone.html'],['Automation lab challenges',N.auto,'autolab.html'],['Interview answers',N.interview,'interview.html'],['Work-skills lessons',N.work,'workplace.html'],['Portfolio exported',N.portfolio,'portfolio.html']]]];
  const css=document.createElement('style');css.textContent=`
  .td-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:6px 0 8px}.td-h h2{margin:0}
  .td-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}.td-c{border:1px solid var(--line,#d5dae2);border-radius:14px;padding:14px 16px;background:var(--card,#fff);display:flex;flex-direction:column;gap:6px}
