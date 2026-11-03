@@ -1,4 +1,4 @@
-const V='uat-lab-v24';
+const V='uat-lab-v25';
 const FILES=['./','index.html','coffee.html','stockwatch-practice.html','clinic-practice.html','testing-types.html','start-here.html','tickets.html','arcade.html','brand.css','nav.js','lab.html','labapp.js','labkit.js','coach.js','app-shop.js','app-bank.js','app-crm.js','app-docs.js','app-ui.js','exam.html','techniques.html','capstone.html','interview.html','workplace.html','readiness.html','portfolio.html','outside.html','qgen.js','exam-ch1.js','exam-ch23.js','exam-ch4.js','exam-ch5.js','exam-ch6.js','interview-data.js','workplace-a.js','workplace-b.js','sql-lab.html','sql-wasm.js','sql-wasm.wasm','api-lab.html','careful.html','sync.js','tickets.js','manifest.webmanifest','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
