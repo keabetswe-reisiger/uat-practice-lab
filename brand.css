@@ -99,3 +99,43 @@ main{max-width:none!important;padding-left:clamp(16px,3vw,64px)!important;paddin
 .side{top:calc(var(--mmh,0px) + 10px)!important;max-height:calc(100vh - var(--mmh,0px) - 20px)!important}
 .mob-bar{top:var(--mmh,0px)!important}
 .dh{top:0!important}
+
+/* ===== Phone and touch friendly (added 2026-11-03) ===== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,a,select,summary,label,input[type=checkbox],input[type=radio]{touch-action:manipulation;-webkit-tap-highlight-color:rgba(176,141,87,.25)}
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+@media (pointer:coarse),(max-width:700px){
+  button,select,.btn,a.go,header a,.mm-t,.an-b,summary,[role=button]{min-height:44px}
+  .btn,header a,a.go{display:inline-flex;align-items:center;justify-content:center}
+  header a,header button{padding-left:10px;padding-right:10px;min-height:40px!important;font-size:13.5px}
+  header{gap:6px!important}
+  input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px!important;min-height:44px}
+  input[type=checkbox],input[type=radio]{width:22px;height:22px}
+  .tag,.chip,.td-k{font-size:12.5px!important;padding-top:3px;padding-bottom:3px}
+  .mute,small{font-size:13.5px}
+  p a,li a,td a,.mute a{padding:6px 2px;display:inline-block}
+  .an-b{padding:8px 14px}
+  table{font-size:14px}
+  textarea{line-height:1.45}
+  pre,code{white-space:pre-wrap;word-break:break-word}
+  .scroll{-webkit-overflow-scrolling:touch}
+  #mm .mm-t{padding-top:10px;padding-bottom:10px}
+  #mm .mm-p a{min-height:46px;display:flex;align-items:center}
+}
+@media (max-width:700px){
+  main,.wrap,.page{padding-left:12px!important;padding-right:12px!important}
+  h1{font-size:1.5rem}h2{font-size:1.25rem}
+  .btns,.row{flex-wrap:wrap}
+  .btns button,.btns a{flex:1 1 140px}
+  .card{padding:14px}
+  img,video,svg,canvas{max-width:100%;height:auto}
+  .modal,.dlg,[role=dialog]{max-width:calc(100vw - 16px)!important;max-height:calc(100vh - 24px)!important;overflow:auto}
+}
+@media (pointer:coarse),(max-width:700px){
+  button,.mob-bar button{min-height:44px!important}
+  .card a:not(.btn):not(.go),li a,.ev a,td a{display:inline-block;padding:11px 4px;min-height:44px;box-sizing:border-box}
+  .an-b,.tk-tab,[class*=tpanel] button,[id*=tp] button{min-height:44px}
+}
+@media (pointer:coarse),(max-width:700px){#tp-tab{min-width:44px;padding:14px 10px!important;font-size:14px!important;top:auto!important;bottom:84px}}
+@media (max-width:700px){body{padding-bottom:72px}}
+@media (pointer:coarse),(max-width:700px){button{min-width:44px}}
