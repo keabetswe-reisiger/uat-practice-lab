@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Practice Apps</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}header h1{font-size:18px;margin:0}.sp{flex:1}
+header a,header button{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none;background:transparent;cursor:pointer;font-weight:600}
+main{max-width:1280px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:10px 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}a.appcard{text-decoration:none;color:inherit;margin:0}a.appcard:hover{border-color:var(--accent)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
+.tag.st-Pass,.tag.st-Found{background:#16794a33}.tag.st-Recheck,.tag.st-Missed,.tag.st-Misread{background:#c0392b33}
+.two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}@media(max-width:980px){.two{grid-template-columns:1fr}}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.map{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+button.b{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 13px;border-radius:9px;font-weight:600}button.b.pri{background:var(--blue);border-color:var(--blue);color:#fff}button.b:disabled{opacity:.5;cursor:default}
+.map button.b{min-width:34px;padding:3px 0;font-size:12.5px}.map button.cur{outline:2px solid var(--blue)}.map button.Pass,.map button.Found{background:#16794a33}.map button.Missed,.map button.Misread,.map button.Recheck{background:#c0392b33}
+.why{border-left:3px solid var(--accent);background:#b08d5714;padding:6px 10px;border-radius:4px;margin:8px 0}
+.ob{margin:8px 0}.ob label{display:block;font-weight:600;font-size:14px;margin-bottom:3px}input[type=text],select{font:inherit;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 10px}
+.fb{border-radius:10px;padding:10px 12px;margin-top:10px}.fb.ok{background:#16794a22;border:1px solid var(--green)}.fb.no{background:#c0392b1f;border:1px solid var(--red)}
+.det{margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:6px 10px}.det summary{cursor:pointer;font-weight:600;color:var(--mute)}pre{white-space:pre-wrap;background:#00000012;border-radius:8px;padding:8px 10px;font:13px/1.45 ui-monospace,Menlo,monospace}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;font-size:14.5px}.big{font-size:32px;font-weight:800;line-height:1.1}
+.ov{position:fixed;inset:0;background:#000a;z-index:9998;display:flex;justify-content:flex-end}.dr{background:var(--card);color:var(--ink);width:min(580px,100%);height:100%;overflow:auto;padding:14px 16px}.dr details{border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:8px 0}.dr summary{cursor:pointer;font-weight:700}
+/* the system under test: always light, like a real app */
+.app{background:#fff;color:#16202f;border:2px solid #cbd2dc;border-radius:16px;overflow:hidden;font-size:15px}.app *{color:inherit}
+.app .hd{background:#26364f;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.app .hd *{color:#fff}
+.app .tb{display:flex;flex-wrap:wrap;border-bottom:1px solid #e4e7ec;background:#f3f5f9}.app .tb button{flex:1;min-width:70px;border:0!important;border-radius:0!important;background:#f3f5f9!important;color:#16202f!important;padding:10px 6px}.app .tb button.on{background:#fff!important;border-bottom:3px solid #2563eb!important}
+.app .bd{padding:12px 14px}.app button{font:inherit;cursor:pointer;background:#eef1f6!important;color:#16202f!important;border:1px solid #c7ced9!important;border-radius:8px;padding:6px 12px;font-weight:600}.app button.go{background:#2563eb!important;border-color:#2563eb!important;color:#fff!important}.app button.dng{background:#fbe4e1!important;border-color:#e6a49b!important}.app button:disabled{opacity:.55;cursor:default}
+.app input,.app select,.app textarea{font:inherit;background:#fff!important;color:#16202f!important;border:1px solid #c7ced9!important;border-radius:8px;padding:6px 9px;width:auto;max-width:100%}.app textarea{width:100%}
+.app .it{display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px dashed #e4e7ec;flex-wrap:wrap}.app .it .n{flex:1;min-width:140px}.app .msg{padding:7px 10px;border-radius:6px;margin-top:8px;font-size:14px}.app .msg.e{background:#fbe4e1;color:#8a1f13!important}.app .msg.s{background:#dff3e8;color:#145c38!important}.app .msg.e *,.app .msg.s *{color:inherit}
+.app th{background:#eef1f6!important;color:#16202f!important}.app td{color:#16202f}.app .mute{color:#5b6472!important}.app small{color:#5b6472}.app table td,.app table th{border-color:#e4e7ec}.app .tot{text-align:right}.app .badge{display:inline-block;border-radius:99px;padding:0 8px;font-size:12px;background:#e4e7ec}.app .badge.red{background:#fbe4e1}.app .badge.green{background:#dff3e8}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1 id="title">🧪 Practice apps</h1><span class="sp"></span><button id="fin" type="button">Finish &amp; see my result</button><button type="button" data-top="extra">📚 Extra info</button><a href="lab.html">All apps</a><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main id="v"></main>
+<script src="labapp.js"></script>
+<!--APPS--><script src="app-shop.js"></script><script src="app-bank.js"></script><script src="app-crm.js"></script><script src="app-docs.js"></script><script src="app-ui.js"></script><!--/APPS-->
+<script>(function(){const p=new URLSearchParams(location.search).get('app');if(!p){document.getElementById('fin').style.display='none';document.querySelector('[data-top=extra]').style.display='none'}LABSTART()})();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>
