@@ -334,6 +334,7 @@ document.addEventListener('click',e=>{const d=e.target.dataset||{};
   else $('out').innerHTML=table(r.res)+`<div class="res no"><b>Not quite.</b> ${msg}<br><span class="mute">Tap 💡 Hint if you’re stuck. Getting it wrong is how you learn.</span></div>`;return}});
 document.addEventListener('input',e=>{if(e.target.id==='ed')updXl()});
 
+const hashTab=()=>{const h=location.hash.slice(1);if(['intro','learn','cases','play','gym'].includes(h)){S.tab=h;save();return true}return false};hashTab();window.addEventListener('hashchange',()=>{if(hashTab())render()});
 initSqlJs({locateFile:f=>f}).then(s=>{SQL=s;build();render()}).catch(e=>{$('v').innerHTML='<div class="card">Could not load the SQL engine: '+esc(e.message||e)+'</div>'});
 </script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

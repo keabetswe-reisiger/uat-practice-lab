@@ -1,4 +1,4 @@
-const V='uat-lab-v20';
+const V='uat-lab-v21';
 const FILES=['./','index.html','coffee.html','stockwatch-practice.html','clinic-practice.html','testing-types.html','start-here.html','tickets.html','arcade.html','brand.css','bg.jpg','nav.js','sql-lab.html','sql-wasm.js','sql-wasm.wasm','api-lab.html','careful.html','sync.js','tickets.js','manifest.webmanifest','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
