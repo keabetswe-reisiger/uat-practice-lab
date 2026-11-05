@@ -139,3 +139,15 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 @media (pointer:coarse),(max-width:700px){#tp-tab{min-width:44px;padding:14px 10px!important;font-size:14px!important;top:auto!important;bottom:84px}}
 @media (max-width:700px){body{padding-bottom:72px}}
 @media (pointer:coarse),(max-width:700px){button{min-width:44px}}
+
+/* ---- phone polish round 2 ---- */
+@media (max-width:700px){
+  button,select,.btn,a.go,header a,header button,.mm-t,.an-b,summary,[role=button]{min-height:48px!important}
+  #us-b{bottom:calc(64px + env(safe-area-inset-bottom))!important;min-height:44px}
+  #us-p{bottom:116px!important}
+  .lrn-dock{bottom:calc(70px + env(safe-area-inset-bottom))!important}
+  #tp-tab{bottom:130px!important}
+  body{padding-bottom:140px}
+  #mm::after{content:"\203A";position:absolute;right:0;top:0;bottom:0;width:40px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font:700 26px system-ui;color:#7a5a1e;background:linear-gradient(90deg,#fff0,#fff 70%);pointer-events:none;z-index:2}
+}
+.hero span,.hero small{opacity:1!important;color:#2b3648!important}
