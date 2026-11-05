@@ -61,11 +61,12 @@
  .map .nd b{display:block;font-size:14px}.map .nd small{color:var(--mute,#4a5568)}.map .bar2{height:6px;background:#e5e8ee;border-radius:99px;overflow:hidden;margin:4px 0}.map .bar2 i{display:block;height:100%;background:#b38e52}.map .nd.full .bar2 i{background:#11663f}
  @media(min-width:1101px){.map .st:not(:last-child)::after{content:"→";position:absolute;right:-12px;top:0;color:var(--mute,#4a5568);font-size:16px}}`;
  document.head.appendChild(css);
+ function mapHTML(){return `<div class="map">${STAGES.map(([h,ns])=>`<div class="st"><h3>${h}</h3>${ns.map(([n,x,l])=>{const p=Math.min(1,x.have/x.need);return `<a class="nd ${p>=1?'full':p>0?'part':'none'}" href="${l}"><b>${n}</b><div class="bar2"><i style="width:${p*100}%"></i></div><small>${x.have} of ${x.need}${p>=1?' · done':''}</small></a>`}).join('')}</div>`).join('')}</div>`}
  function render(){const a=document.getElementById('today'),m=document.getElementById('map');
   if(a)a.innerHTML=`<div class="td-h"><h2><em>Today</em>&nbsp; ${new Date().toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long'})}</h2></div><div class="td-g">${cards().map(c=>`<div class="td-c"><div class="td-k">${c.k}</div><div class="td-t">${c.t}</div><div class="td-d">${c.d}</div>${c.p?`<div class="td-p"><span>${c.p.have} of ${c.p.need} ${c.p.w} finished</span><div class="td-bar"><i style="width:${Math.round(100*c.p.have/Math.max(1,c.p.need))}%"></i></div></div>`:''}<a class="go" href="${c.h}">${c.a}</a></div>`).join('')}</div>`;
-  if(m)m.innerHTML=`<div class="map">${STAGES.map(([h,ns])=>`<div class="st"><h3>${h}</h3>${ns.map(([n,x,l])=>{const p=Math.min(1,x.have/x.need);return `<a class="nd ${p>=1?'full':p>0?'part':'none'}" href="${l}"><b>${n}</b><div class="bar2"><i style="width:${p*100}%"></i></div><small>${x.have} of ${x.need}${p>=1?' · done':''}</small></a>`}).join('')}</div>`).join('')}</div>`}
+  if(m)m.innerHTML=mapHTML()}
  document.addEventListener('click',e=>{const l=e.target.closest('a[href="#backup"]');if(l){e.preventDefault();e.stopImmediatePropagation();const b=document.getElementById('us-b');if(b)b.click()}});
- window.TODAY={N,cards,nextTicket,render};
+ window.TODAY={N,cards,nextTicket,render,mapHTML};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
 })();
 /* put the learning map in the sidebar on wide screens, back under "Today" on phones */

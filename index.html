@@ -17,7 +17,7 @@ a.c b{color:var(--brand);font-size:17px}a.c small{display:block;color:var(--mute
 </style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
 <style>
 /* learning map: a pinned sidebar on tablets, laptops and PCs; a normal section on phones */
-.home-l{display:block}.map-col{display:none}
+.home-l{display:block}@media(max-width:700px){.ph-hide,#mapside{display:none!important}}.map-col{display:none}
 @media(min-width:701px){.home-l{display:grid;grid-template-columns:clamp(240px,24vw,330px) minmax(0,1fr);column-gap:clamp(12px,2vw,28px);align-items:start;padding:0 clamp(16px,3vw,56px);box-sizing:border-box}
 .home-l>main{padding-left:0!important;padding-right:0!important;min-width:0}
 .map-col{display:block;position:sticky;top:calc(var(--mmh,0px) + 12px);max-height:calc(100vh - var(--mmh,0px) - 24px);overflow-y:auto;margin-top:22px;border:1px solid #d5dae2;border-radius:14px;padding:4px 14px 14px;background:#fff;overscroll-behavior:contain}
@@ -63,6 +63,6 @@ a.c b{color:var(--brand);font-size:17px}a.c small{display:block;color:var(--mute
 <a class="c" href="portfolio.html"><b>Test portfolio</b><span class="tag">jobs</span><small>Turn your real bug reports and test notes into a document for employers.</small></a>
 <a class="c" href="outside.html"><b>Practice outside the app</b><span class="tag">real world</span><small>Free practice sites, communities, volunteer testing and a 4-week plan.</small></a>
 <div class="t"><b>Your progress follows you.</b> Tap the <b>Sync</b> button (bottom right) once on each device to connect. <b>On a phone:</b> use the App / Workbook switch at the top of each practice app, and tap <b></b> for plain explanations.</div>
-</main></div><script>if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{})</script>
+<script>(function(){var re=/^(\/0\d\s*)?\s*(Suggested path|Practise on apps|Build your skills|Exam and career)/;var m=document.querySelector('main');if(!m)return;m.querySelectorAll(':scope>h2').forEach(function(h){if(!re.test(h.textContent.replace(/\u00a0/g,' ').trim()))return;var e=h;while(e){e.classList.add('ph-hide');e=e.nextElementSibling;if(!e||e.tagName==='H2'||e.id==='mapside')break}})})();</script></main></div><script>if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{})</script>
 <script src="tickets.js"></script><script src="coach.js"></script><script src="today.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>
