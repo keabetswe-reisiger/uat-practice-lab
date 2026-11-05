@@ -68,3 +68,5 @@
  window.TODAY={N,cards,nextTicket,render};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
 })();
+/* put the learning map in the sidebar on wide screens, back under "Today" on phones */
+(function(){const mq=window.matchMedia('(min-width:701px)');const place=()=>{const side=document.getElementById('mapside'),slot=document.getElementById('mapslot'),today=document.getElementById('today');if(!side||!slot||!today)return;if(mq.matches){if(side.parentNode!==slot)slot.appendChild(side)}else if(today.nextElementSibling!==side)today.after(side)};place();(mq.addEventListener?mq.addEventListener('change',place):mq.addListener(place))})();

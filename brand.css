@@ -129,7 +129,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
   .btns button,.btns a{flex:1 1 140px}
   .card{padding:14px}
   img,video,svg,canvas{max-width:100%;height:auto}
-  .modal,.dlg,[role=dialog]{max-width:calc(100vw - 16px)!important;max-height:calc(100vh - 24px)!important;overflow:auto}
+  .modal,.dlg,[role=dialog]:not(.sh){max-width:calc(100vw - 16px)!important;max-height:calc(100vh - 24px)!important;overflow:auto}
 }
 @media (pointer:coarse),(max-width:700px){
   button,.mob-bar button{min-height:44px!important}
@@ -143,11 +143,11 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 /* ---- phone polish round 2 ---- */
 @media (max-width:700px){
   button,select,.btn,a.go,header a,header button,.mm-t,.an-b,summary,[role=button]{min-height:48px!important}
-  #us-b{bottom:calc(64px + env(safe-area-inset-bottom))!important;min-height:44px}
-  #us-p{bottom:116px!important}
-  .lrn-dock{bottom:calc(70px + env(safe-area-inset-bottom))!important}
-  #tp-tab{bottom:130px!important}
-  body{padding-bottom:140px}
+  #us-b{bottom:calc(14px + env(safe-area-inset-bottom))!important;min-height:44px}
+  #us-p{bottom:66px!important}
+  .lrn-dock{bottom:calc(14px + env(safe-area-inset-bottom))!important}
+  #tp-tab{bottom:84px!important}
+  body{padding-bottom:84px}
   #mm::after{content:"\203A";position:absolute;right:0;top:0;bottom:0;width:40px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;font:700 26px system-ui;color:#7a5a1e;background:linear-gradient(90deg,#fff0,#fff 70%);pointer-events:none;z-index:2}
 }
 .hero span,.hero small{opacity:1!important;color:#2b3648!important}
@@ -175,3 +175,4 @@ select:invalid{color:#4a5568}
 /* hovering a coloured button must keep its white text (the generic hover rule turned it brown) */
 button.ok:hover:not(:disabled),button.no:hover:not(:disabled),button.hold:hover:not(:disabled),button.act.ok:hover:not(:disabled),button.act.no:hover:not(:disabled),button.act.hold:hover:not(:disabled){color:#fff!important}
 button.ok:hover:not(:disabled){background:#0d5333!important;border-color:#0d5333!important}button.no:hover:not(:disabled){background:#8f1c12!important;border-color:#8f1c12!important}button.hold:hover:not(:disabled){background:#6b4600!important;border-color:#6b4600!important}
+body.sh-lock #us-b{display:none!important}
