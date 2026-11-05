@@ -28,7 +28,7 @@ a.c b{color:var(--r-ink)!important;font-weight:700}a.c small{color:var(--r-mute)
 .tag,.chip,.pill{background:#eef1f5!important;color:#3b4658!important;border:1px solid var(--r-line);font-family:"Geist Mono",monospace;font-size:11px!important;letter-spacing:.02em}
 .c-Critical,.s-Failed{background:#fbe4e1!important;color:#8a1f13!important}.c-High,.s-Blocked{background:#f9ebcf!important;color:#6b4400!important}.c-Medium,.s-In{background:#f3e9d3!important;color:#5c4310!important}.s-Passed{background:#dff3e8!important;color:#0b4a2d!important}.c-Low{background:#eef1f5!important;color:#3b4658!important}
 /* controls */
-button,a.btn,a.open{border-radius:8px!important;border:1px solid #b8c0cc!important;background:#ffffff!important;color:var(--r-ink)!important;font-weight:600;transition:border-color .15s,color .15s}
+button,a.btn,a.open{border-radius:8px!important;border:1px solid #b8c0cc!important;background:#ffffff!important;color:var(--r-ink)!important;font-weight:600;transition:border-color .15s}
 button:hover:not(:disabled){border-color:var(--r-gold-deep)!important;color:var(--r-gold-text)!important}
 button.on,button.pri,button.primary,button.go,.tabs button.on,a.open{background:var(--r-gold)!important;border-color:var(--r-gold-deep)!important;color:var(--r-on-gold)!important}
 button.on:hover,button.pri:hover,button.primary:hover,button.go:hover,a.open:hover{background:var(--r-gold-deep)!important;color:var(--r-on-gold)!important}
