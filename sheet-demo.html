@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sheet Preview</title>
+<meta name="theme-color" content="#ffffff"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#fff;--card:#fff;--ink:#16202f;--mute:#4a5568;--line:#d5dae2;--brand:#7a5a1e;--accent:#7a5a1e;--blue:#7a5a1e;--green:#11663f;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line)}header h1{font-size:18px;margin:0}.sp{flex:1}header a{border:1px solid var(--line);border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none;color:inherit}
+main{max-width:1180px;margin:auto;padding:16px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}h2{margin:0 0 4px;font-size:19px}h3{margin:10px 0 4px;font-size:15px}.mute{color:var(--mute);font-size:14px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}@media(max-width:980px){.two{grid-template-columns:1fr}}
+label{display:block;font-weight:600;font-size:14px;margin:10px 0 3px}input,select,textarea{font:inherit;width:100%;border:1px solid #b8c0cc;border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}
+button{font:inherit;cursor:pointer;border:1px solid #b8c0cc;background:#fff;color:var(--ink);padding:7px 13px;border-radius:9px;font-weight:600}button.pri{background:#c9a66e;border-color:#b38e52;color:#1d1608}
+.tag{font:12px ui-monospace,monospace;background:#eef1f5;border:1px solid var(--line);border-radius:99px;padding:1px 9px}
+pre{background:#f3f4f6;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:13px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;margin:6px 0}
+.q{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.q span{font-size:12.5px;border-radius:99px;padding:1px 9px;border:1px solid var(--line)}.q .y{background:#11663f1a;border-color:#11663f}.q .n{background:#b423181a;border-color:#b42318}
+.cof{border-left:3px solid #b38e52;background:#c9a66e24;padding:6px 10px;border-radius:4px;margin:8px 0}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Sheet preview</h1><span class="sp"></span><a href="index.html">Home</a></header>
+<main><div id="v"></div></main>
+<script>
+const $=id=>document.getElementById(id);
+const BODY=n=>Array.from({length:n},(_,i)=>`<p style="margin:0 0 10px">${['A ticket is a small test job. Read what it asks, do the steps in the practice app, then record Pass or Fail with what you saw.','Write the expected result before you test, with exact figures such as R36.00, so you do not accept whatever the app shows.','If two things go wrong, report two problems. One idea per report makes each one easy to fix.','Keep the ticket open beside the app: look at the steps, switch to the app, tick each one off.'][i%4]}</p>`).join('');
+const demo=side=>SHEET.open({side,title:'Your ticket: UAT-101',desc:'Smoke check: Clinic app builds and every screen opens. Close this when you are ready to test.',html:BODY(side==='top'||side==='bottom'?6:12),actions:[{label:'Mark as started',primary:true,onClick:()=>{}},{label:'Cancel'}]});
+$('v').innerHTML=`<div class="card" style="border-left:4px solid #b38e52"><h2>Sheets: a panel that slides over the page</h2><div>A sheet slides in from the top, right, bottom or left and dims the page behind it. Tap the dimmed area, press Escape or use Close to put it away. Try all four and see which one sits best on your phone.</div></div>
+<div class="card"><h3>Try each side</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${['Top','Right','Bottom','Left'].map(s=>`<button data-side="${s.toLowerCase()}">${s}</button>`).join('')}</div><div class="mute" style="margin-top:8px">The bottom sheet is the one phones use most: it sits where your thumb is and shows a grab handle.</div></div>
+<div class="card"><h3>Where it could be used in the Lab</h3><ul><li>Your ticket on a phone, as a bottom sheet over the practice app.</li><li>Report a problem, opened over the exam question you are on.</li><li>Filters and settings on small screens, from the right.</li><li>The full menu, from the left.</li></ul></div>`;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-side]');if(b)demo(b.dataset.side)});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="sheet.js"></script><script src="nav.js"></script>
+</body></html>
