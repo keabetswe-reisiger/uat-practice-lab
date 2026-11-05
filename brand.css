@@ -171,3 +171,7 @@ select:invalid{color:#4a5568}
 @keyframes tpUp{from{transform:translateY(100%)}to{transform:none}}
 @media (prefers-reduced-motion:reduce){#tp.on{animation:none}}
 @media (max-width:700px){body:has(#tp.on) #us-b{display:none!important}}
+
+/* hovering a coloured button must keep its white text (the generic hover rule turned it brown) */
+button.ok:hover:not(:disabled),button.no:hover:not(:disabled),button.hold:hover:not(:disabled),button.act.ok:hover:not(:disabled),button.act.no:hover:not(:disabled),button.act.hold:hover:not(:disabled){color:#fff!important}
+button.ok:hover:not(:disabled){background:#0d5333!important;border-color:#0d5333!important}button.no:hover:not(:disabled){background:#8f1c12!important;border-color:#8f1c12!important}button.hold:hover:not(:disabled){background:#6b4600!important;border-color:#6b4600!important}
