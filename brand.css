@@ -1,6 +1,5 @@
 /* UAT Practice Lab: white theme. Dark ink on white, dark-gold accents, Manrope + Geist Mono.
    Loaded LAST on every page so it wins. Every text colour is chosen to read on white (WCAG AA). */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
 :root{
  --r-bg:#ffffff;--r-card:#ffffff;--r-soft:#f6f7f9;--r-muted:#f1f3f6;--r-line:#d5dae2;--r-ink:#16202f;--r-mute:#4a5568;
  --r-gold:#c9a66e;--r-gold-deep:#b38e52;--r-gold-text:#7a5a1e;--r-on-gold:#1d1608;

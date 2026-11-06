@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>UAT Lab</title>
+<meta name="theme-color" content="#ffffff"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#fff;--card:#fff;--ink:#16202f;--mute:#4a5568;--line:#d5dae2;--brand:#7a5a1e;--accent:#7a5a1e;--bar:#b08d57;--track:#eef0f4}
+/* this page: top bar shows only the app name and the search box */
+#mm .mm-list,#mm .an-all,#crumbs,#sb-go,#bn{display:none!important}#mm .mm-s{margin-left:auto}#mm .mm-s input{width:min(340px,50vw)}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+.lab{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;width:100%;margin:0;padding:18px clamp(14px,2.5vw,36px) 60px;align-items:start;transition:grid-template-columns .2s}.lab.closed{grid-template-columns:minmax(0,1fr)}.lab.closed .side{display:none}
+.stage-c{min-width:0}.tgl{margin:0 0 10px}#sbt{width:48px;height:48px;padding:0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}#sbt i{display:block;width:20px;height:2px;border-radius:2px;background:var(--ink)}#sbt:hover{border-color:#b08d57}
+@media(min-width:701px) and (max-width:999px){.lab{grid-template-columns:200px minmax(0,1fr);gap:16px}}
+.side{position:sticky;top:calc(var(--mmh,0px) + 14px);border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
+.side h2{font:600 12px 'Geist Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:2px 6px 8px}
+.side a{display:flex;align-items:center;gap:8px;min-height:48px;padding:0 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:600;font-size:15.5px}
+.side a:hover{background:#f3f4f6}.side a[aria-current=page]{background:#c9a66e;color:#1d1608;font-weight:800}
+.side a i{font-style:normal;font:600 12px 'Geist Mono',ui-monospace,monospace;color:inherit;opacity:.8;min-width:16px}
+.pick{display:none}@media(max-width:700px){.tgl{display:none}}
+@media(max-width:700px){.lab{grid-template-columns:minmax(0,1fr);padding-top:12px}.stage-c{min-width:0}.side{display:none}.pick{display:block;margin-bottom:12px}.pick select{width:100%;min-height:52px;font-size:16px;font-weight:700}}
+.lab main h1{font-size:clamp(30px,4.5vw,46px)!important;line-height:1.1;margin:0 0 6px}.lede{color:var(--mute);margin:0 0 22px;font-size:clamp(17px,2vw,21px)}
+.path{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+.path a{display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;column-gap:12px;row-gap:2px;min-height:88px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink);background:#fff}.path .n{grid-row:1/3;font-size:28px;text-align:center}.path b{font-size:clamp(17px,1.8vw,21px)}.path small{grid-column:2;font-size:14.5px}
+.path a:hover{border-color:#b08d57}.path .n{font-family:'Geist Mono',ui-monospace,monospace;font-weight:700;color:var(--brand)}.path b{font-weight:700}.path small{color:var(--mute);white-space:nowrap}
+.path .done{border-left:4px solid #11663f}.path .part{border-left:4px solid #b08d57}.path .none{border-left:4px solid #d5dae2}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:18px}.cc.span{grid-column:1/-1}
+.cc{border:1px solid var(--line);border-radius:16px;background:#fff;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.cc h3{margin:0;font-size:clamp(20px,2.2vw,26px);color:var(--ink)!important}.cc .d{color:var(--mute);font-size:15.5px;margin:0}
+.plot{position:relative;padding:0 0 4px}.gl{position:absolute;top:0;bottom:22px;left:0;right:var(--vw,72px);pointer-events:none}.gl i{position:absolute;top:0;bottom:0;width:1px;background:#e1e5eb}.ax{position:relative;height:18px;margin:2px var(--vw,72px) 0 0;font:500 12px 'Geist Mono',ui-monospace,monospace;color:var(--mute)}.ax span{position:absolute;top:0;transform:translateX(-50%)}.ax span:first-child{transform:none}.ax span:last-child{transform:translateX(-100%)}
+.ch{list-style:none;margin:0;padding:0;display:grid;gap:8px;position:relative}
+.ch li{display:grid;grid-template-columns:minmax(0,1fr) var(--vc,60px);align-items:center;gap:12px}.ch li.xp{display:block;grid-column:1/-1;position:relative;z-index:1}.ch li[hidden]{display:none}.plot{--vc:60px;--vw:72px}.plot.wide{--vc:84px;--vw:96px}
+.ch a{padding:0!important;margin:0!important;display:flex;align-items:center;min-height:28px;text-decoration:none;color:var(--ink);outline-offset:2px;border-radius:4px}@media(pointer:coarse){.ch a{min-height:44px}}
+.ch .bar{position:relative;display:block;flex:1;min-width:0;height:32px;border-radius:4px;background:var(--track);overflow:hidden}
+.ch .f{position:absolute;left:0;top:0;bottom:0;background:var(--bar);border-radius:0 4px 4px 0}
+.ch .t{position:relative;display:block;padding:0 10px;line-height:32px;font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch .v{font-size:15px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.ch a:hover .bar,.ch a:focus-visible .bar{box-shadow:0 0 0 2px var(--ink)}
+.cc .ft{display:flex;flex-direction:column;gap:2px;font-size:15.5px}.cc .ft b{font-weight:700}.cc .ft span{color:var(--mute)}
+.cc .go{align-self:flex-start;min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border:1px solid #b38e52;background:#c9a66e;color:#1d1608;border-radius:9px;font-weight:700;text-decoration:none}
+details.tb{border-top:1px solid var(--line);padding-top:6px;margin-top:auto}.lab main{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;max-width:none!important}details.tb summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:600;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}td:last-child,th:last-child{text-align:right}
+#tip{position:fixed;z-index:9990;pointer-events:none;background:#16202f;color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;max-width:260px;box-shadow:0 6px 18px rgba(0,0,0,.2)}#tip[hidden]{display:none}
+.big .ch li{grid-template-columns:minmax(0,1fr) var(--vc,70px)}.big .plot{--vc:70px;--vw:82px}.big .plot.wide{--vc:90px;--vw:102px}.big .ch .bar{height:40px}.big .ch .t{line-height:40px;font-size:16px}.big .ch .v{font-size:17px}
+.lens{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 8px}.lens button{min-height:44px;padding:0 14px;border:1px solid #b8c0cc;border-radius:99px;background:#fff;color:var(--ink);font-weight:600;font-size:14.5px;font-family:inherit;cursor:pointer}.lens button[aria-pressed=true]{background:#c9a66e;border-color:#b38e52;color:#1d1608}
+.helpbulb{width:44px;height:44px;flex:none;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid #b8c0cc;border-radius:10px;background:#fff;color:#7a5a1e;cursor:pointer}.helpbulb:hover{border-color:#b08d57;background:#c9a66e24}.helpbulb[aria-expanded=true]{background:#c9a66e;color:#1d1608;border-color:#b38e52}.helpbulb:focus-visible{outline:2px solid #7a5a1e;outline-offset:2px}
+#mm .helpbulb{margin-left:8px}.sb-s.hasbulb{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:8px;align-items:start}.sb-s.hasbulb #sb-res{grid-column:1/-1;grid-row:2}.sb-s.hasbulb .helpbulb{grid-column:2;grid-row:1;margin-top:2px}
+#xpop{position:fixed;z-index:10001;top:56px;right:16px;width:min(480px,calc(100vw - 24px));max-height:calc(100vh - 80px);overflow:auto;background:#fff;border:1px solid #b8c0cc;border-radius:14px;box-shadow:0 18px 44px rgba(22,32,47,.22);padding:14px 16px}#xpop[hidden]{display:none}
+#xpop .xh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;font-size:17px}.xc{min-height:44px;padding:0 14px;border:1px solid #b8c0cc;border-radius:10px;background:#fff;font:600 14.5px inherit;font-family:inherit;cursor:pointer}
+#xpop .xi{border-top:1px solid #eef0f4;padding:8px 0}#xpop p{margin:0 0 6px;font-size:15.5px;line-height:1.55}#xpop .k{font:600 11.5px 'Geist Mono',ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:6px 0 2px}#xpop .k.xs{margin-top:12px}
+@media(max-width:700px){#xpop{top:auto;bottom:0;left:0;right:0;width:auto;max-height:78vh;border-radius:16px 16px 0 0}}
+.opsw{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px}.opsw button{min-height:44px;padding:0 16px;border:1px solid #b8c0cc;background:#fff;color:var(--ink);font-weight:600;font-size:15px;font-family:inherit;cursor:pointer;border-radius:10px}.opsw button[aria-pressed=true]{background:#c9a66e;color:#1d1608;border-color:#b38e52;font-weight:800}
+.plot.simple .ch{gap:8px}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css">
+</head><body>
+<div class="lab">
+<nav class="side" id="sbnav" aria-label="UAT Lab sections"><h2>Practice Lab</h2><div id="sb"></div></nav>
+<div class="stage-c"><div class="tgl"><button type="button" id="sbt" aria-controls="sbnav" aria-expanded="true" aria-label="Hide sidebar"><i></i><i></i><i></i></button></div><main id="v" tabindex="-1"></main></div>
+</div>
+<div id="tip" role="status" hidden></div>
+<script src="tickets.js"></script><script src="coach.js"></script><script src="today.js"></script><script src="uatdash.js"></script>
+<script>
+(function(){
+ const $=id=>document.getElementById(id);
+ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+ const N=TODAY.N,ST=TODAY.STAGES;
+ /* the four sections, taken from the learning map so the numbers match the home page */
+ const SEC=[['learn','Learn the basics','Start here, then build a careful tester’s habits.'],['practise','Practise on apps','Tickets, practice apps, the arcade, the API lab and SQL.'],['exam','Build exam skills','Read the syllabus, sit mock exams and master the techniques.'],['job','Prove it for a job','The final test, automation, interviews, work skills and your portfolio.']].map((s,i)=>({id:s[0],name:s[1],desc:s[2],items:ST[i][1].map(([n,x,l])=>({n,key:Object.keys(N).find(k=>N[k]===x),have:x.have,need:x.need,href:l,p:Math.min(1,x.have/x.need)}))}));
+ SEC.forEach(s=>{s.pct=Math.round(s.items.reduce((a,x)=>a+x.p,0)/s.items.length*100);s.done=s.items.filter(x=>x.p>=1).length;const nx=s.items.find(x=>x.p<1);s.next=nx||null});
+ const PATH=[['Start guide','start-here.html',N.start],['Ticket practice','tickets.html',N.tickets],['Arcade','arcade.html',N.arcade],['Clinic and stock watch apps','lab.html',N.apps],['API Lab','api-lab.html',N.api],['SQL','sql-lab.html#learn',N.sqlLearn]];
+ const pc=x=>Math.round(Math.min(1,x.have/x.need)*100);
+ const EXP={"Suggested path": ["The order we suggest: learn the basics, do a ticket, play the arcade, try the practice apps, then the API lab and SQL. Each bar shows how far you are on that step.", "Like training a new barista: shadow first, then learn the till, then the machine, then stock and ordering.", "Like learning a new route: first the rank, then a short trip, then longer routes, then the whole network."], "Learn the basics": ["What testing is, and the habits of a careful tester, before you touch any practice app.", "Learning what a good cup looks like before you pour your first one.", "Learning the road rules before your first passenger."], "Practise on apps": ["Real hands-on testing: tickets from a pretend manager, practice apps with hidden bugs, the arcade, the API lab and SQL.", "Working real shifts behind the counter: orders, the till and the stock book.", "Driving real routes with real passengers, not just studying the map."], "Build exam skills": ["Gets you ready for the ISTQB Foundation exam: syllabus lessons, timed mock exams and the test-design techniques.", "Studying for the barista certificate: the handbook, a timed practical, then technique drills.", "Preparing for the licence test: the rule book, a timed mock test and the manoeuvres."], "Prove it for a job": ["Shows an employer you can do the work: a final test on an unseen app, automation, interview answers, work skills and a portfolio.", "Showing the cafe owner a tasting and a menu you made, not only a certificate.", "Showing the rank manager your trip record and a reference before you get your own route."], "Start here guide": ["A 30-minute guide that explains testing in plain words. It has seven short steps, and each step you finish fills this bar.", "Your first morning: someone walks you round the shop before you serve anyone.", "A walk round the rank: where the queues form and what the signs mean."], "Careful tester toolkit (3 sessions)": ["Checklists, note-taking and eye-training so you notice small problems. It counts three practice sessions.", "Checking every cup the same way: the lid, the temperature, the name on the side.", "The pre-trip check: tyres, lights, fuel, doors."], "Tickets finished": ["Tickets are test jobs from a pretend manager. A ticket counts when you mark it Passed or Failed with your result.", "A written order slip: make exactly this, then tick it off.", "A dispatch note: pick up here, drop off there, and record how the trip went."], "Practice apps passed": ["Eleven small apps with bugs hidden inside. An app counts as passed when you find enough of the bugs without false alarms.", "Taste-testing eleven recipes where someone has deliberately spoiled a few.", "Test-driving eleven minibuses where a few faults have been planted."], "Test arcade (XP)": ["Five quick games that earn points (XP). Reaching 100 XP fills the bar.", "Speed drills at the counter: quick, small and repeated.", "Timed loading drills at the rank: short rounds that build reflexes."], "API lab bugs found": ["The API lab tests the server behind the screens. Eight bugs are planted, and each one you find counts.", "Phoning the kitchen to check an order instead of looking at the plate.", "Radioing the dispatcher to check the route instead of watching the road."], "SQL lessons and cases": ["SQL asks a database questions. You learn it from zero, then solve five data-bug cases (13 parts in all).", "Looking in the stock book: how many oat-milk cartons are left, and when do they expire?", "Reading the trip ledger: which routes earned what today?"], "SQL practice gym": ["44 extra SQL questions from easy to hard, to build speed. Each one you finish fills the bar.", "Making the same drink fifty times until your hands know it.", "Driving the same route again and again until you know every turn."], "Syllabus lessons read": ["64 short lessons that cover the ISTQB Foundation syllabus. Opening and reading a lesson counts it.", "Reading the barista handbook one chapter at a time.", "Reading the rule book one section at a time."], "Mocks at 80% or more": ["Timed 40-question mock exams. A mock counts when you score 80% or more, and the goal is three of them.", "A timed practical: serve 40 customers and get at least 32 right.", "A mock licence test: you need 32 of 40 before the real one."], "Techniques mastered": ["Fourteen test-design techniques, such as boundary values and decision tables. One counts as mastered at 80% over five or more practice questions.", "Tasting at the edges: just under, exactly on and just over the limit.", "Knowing what to check at the edges of a route, like the last stop before the border."], "Final test passed": ["A test on an app you have never seen, with hidden bugs, passed with a good score.", "Running the shop alone for a day with nobody coaching you.", "Driving a new route alone with the examiner in the back seat."], "Automation lab challenges": ["You write real automated test steps. Four challenges count, and each one you complete fills the bar.", "A recipe card so exact that anyone makes the same cup.", "A route card so exact that any driver follows it the same way."], "Interview answers": ["You practise answering 20 common tester interview questions in your own words.", "Rehearsing how you will describe your cafe to an investor.", "Rehearsing what you will say to the rank manager when you ask for a route."], "Work-skills lessons": ["27 lessons on what testers do at work: browser tools, Git, Agile and test documents. Finish a lesson to fill the bar.", "How the whole shop runs: opening, orders, the stock count and closing.", "How the whole rank runs: queues, marshals, fares and safety."], "Portfolio exported": ["Your portfolio turns your real work into one document for employers. Exporting it completes this bar.", "A menu card with photos of what you can make.", "A logbook of your routes to show a new owner."]};
+ const ALIAS={"Start guide": "Start here guide", "Ticket practice": "Tickets finished", "Arcade": "Test arcade (XP)", "Clinic and stock watch apps": "Practice apps passed", "API Lab": "API lab bugs found", "SQL": "SQL lessons and cases"};
+ const BULB='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/></svg>';
+ const LENS=[['coffee','Coffee shop'],['taxi','Taxi rank']];
+ let lens='coffee';try{lens=localStorage.getItem('uatlab-lens')||'coffee'}catch(e){}
+ const slug=t=>String(t).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+ const expKey=n=>{const b=String(n).replace(/^\d+\.\s*/,'');return EXP[b]?b:(ALIAS[b]||b)};
+ function chart(s,big){
+  const val=x=>s.fmt?s.fmt(x):Math.round(x.p*100)+'%';
+  const rows=s.items.map(x=>`<li><a href="${esc(x.href)}" data-tip="${esc(x.n)}: ${x.have} of ${x.need} (${Math.round(x.p*100)}%)" aria-label="${esc(x.n)}: ${x.have} of ${x.need}, ${Math.round(x.p*100)} percent"><span class="bar"><span class="f" style="width:${Math.round(x.p*100)}%"></span><span class="t">${esc(x.n)}</span></span></a><span class="v">${esc(val(x))}</span></li>`).join('');
+  const grid='<div class="gl" aria-hidden="true">'+[0,25,50,75,100].map(k=>`<i style="left:${k}%"></i>`).join('')+'</div>';
+  const axis='<div class="ax" aria-hidden="true">'+[0,25,50,75,100].map(k=>`<span style="left:${k}%">${k}%</span>`).join('')+'</div>';
+  const tbl=`<details class="tb"><summary>Show as a table</summary><table><caption class="mute" style="text-align:left;padding:4px 0">${esc(s.name)}: progress per part</caption><thead><tr><th>Part</th><th>Done</th><th>Percent</th></tr></thead><tbody>${s.items.map(x=>`<tr><td>${esc(x.n)}</td><td>${x.have} of ${x.need}</td><td>${Math.round(x.p*100)}%</td></tr>`).join('')}</tbody></table></details>`;
+  const ft=`<div class="ft"><b>${s.done} of ${s.items.length} parts complete, ${s.pct}% overall</b><span>${s.next?'Next up: '+esc(s.next.n):'Every part of this stage is done.'}</span></div>`;
+  return `<section class="cc${big?' big':''}${s.span?' span':''}" aria-labelledby="h-${s.id}"><h3 id="h-${s.id}">${esc(s.name)}</h3><p class="d">${esc(s.desc)}</p><div class="plot${s.fmt?' wide':''}${s.simple?' simple':''}">${s.simple?'':grid}<ul class="ch" role="list">${rows}</ul>${s.simple?'':axis}</div>${ft}${big||s.noGo?'':`<a class="go" href="#${s.id}">Open ${esc(s.name)}</a>`}${tbl}</section>`}
+ /* the suggested path is a graph too: each step against its own total */
+ const PSTAGE={id:'path',name:'Suggested path',desc:'Map your learning with the suggested path.',span:true,noGo:true,fmt:x=>x.have+' of '+x.need,items:PATH.map(([n,h,x],i)=>({n:(i+1)+'. '+n,have:x.have,need:x.need,href:h,p:Math.min(1,x.have/x.need)}))};
+ PSTAGE.done=PSTAGE.items.filter(x=>x.p>=1).length;PSTAGE.pct=Math.round(PSTAGE.items.reduce((a,x)=>a+x.p,0)/PSTAGE.items.length*100);PSTAGE.next=PSTAGE.items.find(x=>x.p<1)||null;
+ let opsMode='graphs';try{opsMode=localStorage.getItem('uatlab-ops')==='cards'?'cards':'graphs'}catch(e){}
+ function ops(){const sw=`<div class="opsw" role="group" aria-label="Choose a layout"><span class="mute">Layout</span><button type="button" data-ops="cards" aria-pressed="${opsMode==='cards'}">Cards</button><button type="button" data-ops="graphs" aria-pressed="${opsMode==='graphs'}">Graphs</button></div>`;
+  const head=`<h1>Lab operations</h1><p class="lede">Map your learning with the suggested path.</p>${sw}`;
+  if(opsMode==='cards')return head+`<ol class="path">${PATH.map(([n,h,x],i)=>{const p=x.have/x.need;return `<li><a class="${p>=1?'done':p>0?'part':'none'}" href="${esc(h)}"><span class="n">${i+1}</span><b>${esc(n)}</b><small>${x.have} of ${x.need}</small></a></li>`}).join('')}</ol><div class="cards">${SEC.map(s=>chart(Object.assign({},s,{simple:true}),false)).join('')}</div>`;
+  return head+`<div class="cards">${[PSTAGE].concat(SEC).map(s=>chart(s,false)).join('')}</div>`}
+ function sec(s){return `<div id="dash"></div>`}
+ function openTickets(){let st={};try{st=JSON.parse(localStorage.getItem('uat-tickets-v1'))||{}}catch(e){}return (window.TICKETS||[]).filter(t=>!['Passed','Failed'].includes((st[t.key]||{}).status)).sort((a,b)=>String(a.due).localeCompare(String(b.due))||a.key.localeCompare(b.key))}
+ const NAV=[['ops','Lab operations','']].concat(SEC.map((s,i)=>[s.id,s.name,String(i+1)]));
+ function route(){const h=(location.hash||'#ops').slice(1);const id=NAV.some(n=>n[0]===h)?h:'ops';
+  $('sb').innerHTML=NAV.map(([k,t,n])=>`<a href="#${k}"${k===id?' aria-current="page"':''}>${n?'<i>'+n+'</i>':''}${esc(t)}</a>`).join('');
+  const s=SEC.find(x=>x.id===id);
+  $('v').innerHTML=`<div class="pick"><label class="mute" for="pk">Section</label><select id="pk" aria-label="Choose a section">${NAV.map(([k,t])=>`<option value="${k}"${k===id?' selected':''}>${esc(t)}</option>`).join('')}</select></div>`+(s?sec(s):ops());
+  $('pk').addEventListener('change',e=>{location.hash='#'+e.target.value});
+  if(s)UATDASH.render($('dash'),s,{tickets:openTickets});
+  document.title=(s?s.name:'Lab operations')+' | UAT Lab'}
+ window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0)});route();
+ document.addEventListener('click',e=>{const o=e.target.closest('[data-ops]');if(!o)return;opsMode=o.dataset.ops;try{localStorage.setItem('uatlab-ops',opsMode)}catch(x){}route()});
+ /* retractable sidebar: remembered on this device */
+ const lab=document.querySelector('.lab'),sbt=$('sbt');
+ const setSB=open=>{lab.classList.toggle('closed',!open);sbt.setAttribute('aria-expanded',open);sbt.setAttribute('aria-label',open?'Hide sidebar':'Show sidebar');try{localStorage.setItem('uatlab-sidebar',open?'open':'closed')}catch(e){}};
+ let was='open';try{was=localStorage.getItem('uatlab-sidebar')||'open'}catch(e){}
+ setSB(was!=='closed');sbt.addEventListener('click',()=>setSB(lab.classList.contains('closed')));
+ /* ONE help bulb next to the search bar: explains what you are looking at, in plain words, then as a scenario */
+ function explainHTML(){const id=(location.hash||'#ops').slice(1);const s=SEC.find(x=>x.id===id);
+  const e=(k)=>EXP[k]||null,i=lens==='taxi'?2:1;
+  const block=(t,en)=>en?`<div class="xi"><p class="k">${esc(t)}</p><p>${esc(en[0])}</p><p class="k sc">Scenario: ${lens==='taxi'?'taxi rank':'coffee shop'}</p><p class="sc-t">${esc(en[i])}</p></div>`:'';
+  const head=s?s.name:'Suggested path';
+  const parts=(s?s.items:PSTAGE.items).map(x=>block(x.n.replace(/^\\d+\\.\\s*/,''),e(expKey(x.n)))).join('');
+  return `<div class="xh"><b>Explain this page</b><button type="button" id="xclose" class="xc" aria-label="Close explanation">Close</button></div><div class="lens" role="group" aria-label="Choose a scenario">${LENS.map(([k,t])=>`<button type="button" data-lens="${k}" aria-pressed="${k===lens}">${t}</button>`).join('')}</div>${block(head,e(head))}<p class="k xs">Each part</p>${parts}`}
+ let pop=null,bulbBtns=[];
+ function closePop(){if(pop){pop.hidden=true}bulbBtns.forEach(b=>b.setAttribute('aria-expanded','false'))}
+ function openPop(from){if(!pop){pop=document.createElement('div');pop.id='xpop';pop.setAttribute('role','dialog');pop.setAttribute('aria-label','Explain this page');document.body.appendChild(pop)}
+  pop.innerHTML=explainHTML();pop.hidden=false;bulbBtns.forEach(b=>b.setAttribute('aria-expanded','true'));const c=pop.querySelector('#xclose');if(c)c.focus({preventScroll:true})}
+ function addBulb(){
+  const tgt=[document.querySelector('#mm .mm-s'),document.getElementById('sbbar')];
+  tgt.forEach((el,i)=>{if(!el||el.querySelector('.helpbulb'))return;const b=document.createElement('button');b.type='button';b.className='helpbulb';b.setAttribute('aria-expanded','false');b.setAttribute('aria-controls','xpop');b.setAttribute('aria-label','Explain this page');b.title='Explain this page';b.innerHTML=BULB;
+   if(i===0){el.parentNode.insertBefore(b,el.nextSibling)}else{const row=el.querySelector('.sb-s');if(row){row.classList.add('hasbulb');row.appendChild(b)}else el.appendChild(b)}bulbBtns.push(b)})}
+ document.addEventListener('click',e=>{
+  const hb=e.target.closest('.helpbulb');if(hb){if(pop&&!pop.hidden)closePop();else openPop(hb);return}
+  if(e.target.closest('#xclose')){closePop();const f=bulbBtns.find(b=>b.offsetParent);if(f)f.focus();return}
+  const lb=e.target.closest('[data-lens]');
+  if(lb){lens=lb.dataset.lens;try{localStorage.setItem('uatlab-lens',lens)}catch(x){}if(pop&&!pop.hidden){const y=pop.scrollTop;pop.innerHTML=explainHTML();pop.scrollTop=y;const nb=pop.querySelector('[data-lens="'+lens+'"]');if(nb)nb.focus({preventScroll:true})}return}
+  if(pop&&!pop.hidden&&!e.target.closest('#xpop'))closePop()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&pop&&!pop.hidden){closePop();const f=bulbBtns.find(b=>b.offsetParent);if(f)f.focus()}});
+ window.addEventListener('hashchange',()=>{if(pop&&!pop.hidden)pop.innerHTML=explainHTML()});
+ if(document.readyState==='complete')addBulb();else window.addEventListener('load',addBulb);
+ /* tooltip: hover, keyboard focus and touch all show the exact numbers */
+ const tip=$('tip');
+ function show(a){const r=a.getBoundingClientRect();tip.textContent=a.getAttribute('data-tip');tip.hidden=false;const w=tip.offsetWidth;tip.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px';tip.style.top=Math.max(8,r.top-tip.offsetHeight-6)+'px'}
+ document.addEventListener('mouseover',e=>{const a=e.target.closest('[data-tip]');if(a)show(a)});
+ document.addEventListener('mouseout',e=>{if(e.target.closest('[data-tip]'))tip.hidden=true});
+ document.addEventListener('focusin',e=>{const a=e.target.closest&&e.target.closest('[data-tip]');if(a)show(a)});
+ document.addEventListener('focusout',()=>{tip.hidden=true});
+ document.addEventListener('touchstart',e=>{const a=e.target.closest('[data-tip]');if(a){show(a);setTimeout(()=>{tip.hidden=true},1600)}},{passive:true});
+ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

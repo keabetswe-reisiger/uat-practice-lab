@@ -66,7 +66,16 @@
   if(a)a.innerHTML=`<div class="td-h"><h2><em>Today</em>&nbsp; ${new Date().toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long'})}</h2></div><div class="td-g">${cards().map(c=>`<div class="td-c"><div class="td-k">${c.k}</div><div class="td-t">${c.t}</div><div class="td-d">${c.d}</div>${c.p?`<div class="td-p"><span>${c.p.have} of ${c.p.need} ${c.p.w} finished</span><div class="td-bar"><i style="width:${Math.round(100*c.p.have/Math.max(1,c.p.need))}%"></i></div></div>`:''}<a class="go" href="${c.h}">${c.a}</a></div>`).join('')}</div>`;
   if(m)m.innerHTML=mapHTML()}
  document.addEventListener('click',e=>{const l=e.target.closest('a[href="#backup"]');if(l){e.preventDefault();e.stopImmediatePropagation();const b=document.getElementById('us-b');if(b)b.click()}});
- window.TODAY={N,cards,nextTicket,render,mapHTML};
+ /* Activity log: remembers WHEN progress changed, so charts over time are real.
+    Each time this file runs (home page, UAT Lab) it compares today's numbers with the last snapshot and records the difference
+    with today's date. Progress made between two visits is dated to the next visit. The first run only takes the starting snapshot. */
+ const LOGK='uatlog-v1';let LOG;try{LOG=JSON.parse(localStorage.getItem(LOGK))||{}}catch{LOG={}}
+ LOG.snap=LOG.snap||{};LOG.ev=LOG.ev||[];
+ (function(){const now=Date.now();if(!LOG.since)LOG.since=now;const first=!Object.keys(LOG.snap).length;
+  Object.entries(N).forEach(([k,v])=>{const prev=LOG.snap[k];if(!first&&prev!=null&&v.have!==prev)LOG.ev.push({t:now,k,d:v.have-prev});LOG.snap[k]=v.have});
+  if(LOG.ev.length>3000)LOG.ev=LOG.ev.slice(-3000);
+  try{localStorage.setItem(LOGK,JSON.stringify(LOG))}catch{}})();
+ window.TODAY={N,cards,nextTicket,render,mapHTML,STAGES,log:()=>LOG};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
 })();
 /* put the learning map in the sidebar on wide screens, back under "Today" on phones */
