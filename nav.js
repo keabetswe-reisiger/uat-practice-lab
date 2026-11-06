@@ -79,7 +79,7 @@
  const here=location.pathname.split('/').pop()||'index.html';
  const isCur=h=>{const [p,hs]=h.split('#');const [f,q]=p.split('?');if(f!==here)return false;if(q&&!location.search.includes(q))return false;if(hs)return location.hash==='#'+hs;return !(ALL.some(x=>x[0]!==h&&x[0].split('#')[0].split('?')[0]===f&&x[0].includes('#')&&location.hash==='#'+x[0].split('#')[1]))};
  const bar=document.createElement('div');bar.id='sbbar';
- bar.innerHTML='<button type="button" data-sb="open" aria-haspopup="dialog" aria-label="Open the sidebar"><span class="sb-ham" aria-hidden="true"><i></i><i></i><i></i></span>Menu</button><span class="sb-t"></span>';
+ bar.innerHTML='<button type="button" data-sb="open" aria-haspopup="dialog" aria-label="Open the sidebar"><span class="sb-ham" aria-hidden="true"><i></i><i></i><i></i></span></button><span class="sb-t"></span>';
  const setT=()=>{bar.querySelector('.sb-t').textContent=(document.title||'').replace(/\s*[-|:].*$/,'')||'UAT Practice Lab'};setT();
  const st=document.createElement('style');st.textContent=`#sbbar{display:none}@media(max-width:700px){#mm,#bn{display:none!important}#sbbar{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:9989;background:#fff;border-bottom:1px solid #d5dae2;padding:4px 10px 4px 8px}#sbbar button{min-height:48px;display:inline-flex;align-items:center;gap:10px;padding:0 14px;font-weight:700}.sb-ham{display:inline-flex;flex-direction:column;gap:4px}.sb-ham i{display:block;width:18px;height:2px;border-radius:2px;background:#16202f}#sbbar .sb-t{flex:1;min-width:0;font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#16202f}}
 .sb-l{list-style:none;margin:0;padding:0}.sb-l li{margin:0}.sb-l a{display:flex;align-items:center;min-height:52px;padding:0 12px;border-radius:10px;color:#16202f;text-decoration:none;font-weight:600;font-size:16px}.sb-l a[aria-current=page]{background:#c9a66e;color:#1d1608;font-weight:800}.sb-l a:active{background:#f3f4f6}
@@ -98,7 +98,7 @@
  const editView=()=>`<div class="sb-e"><p class="sb-n">Tick the pages you want in your sidebar.</p>${SEC.map(([s,it],i)=>`<fieldset><legend>${esc(s)}</legend>${it.map(([h,t])=>`<label><input type="checkbox" value="${esc(h)}" ${chosen.includes(h)?'checked':''}>${esc(t)}</label>`).join('')}</fieldset>`).join('')}<div class="sb-row"><button type="button" class="pri" data-sb="save">Save sidebar</button><button type="button" data-sb="cancel">Cancel</button></div><div class="sb-row"><button type="button" data-sb="all">Tick all</button><button type="button" data-sb="none">Clear all</button><button type="button" data-sb="reset">Reset to default</button></div></div>`;
  const paint=()=>{const b=document.querySelector('.sh-b'),t=document.querySelector('.sh-t'),d=document.querySelector('.sh-d');if(!b)return;b.innerHTML=mode==='edit'?editView():listView();if(mode!=='edit')fillMap();if(t)t.textContent=mode==='edit'?'Choose your pages':'Menu';if(d)d.textContent=mode==='edit'?'You decide which pages appear in My pages.':'Tap a heading to open it.';b.scrollTop=0;const f=b.querySelector(mode==='edit'?'input':'summary');f&&f.focus()};
  const ensure=()=>window.SHEET?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='sheet.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
- const open=()=>ensure().then(()=>{mode='list';SHEET.open({side:'left',title:'Menu',desc:'Tap a heading to open it.',html:listView()});fillMap();setTimeout(()=>{const b=document.querySelector('.sh-b');if(b)b.scrollTop=0},0)}).catch(()=>{location.href='index.html'});
+ const open=()=>ensure().then(()=>{mode='list';SHEET.open({side:'left',title:'',desc:'Tap a heading to open it.',html:listView()});fillMap();setTimeout(()=>{const b=document.querySelector('.sh-b');if(b)b.scrollTop=0},0)}).catch(()=>{location.href='index.html'});
  const read=()=>[...document.querySelectorAll('.sb-e input[type=checkbox]')].filter(c=>c.checked).map(c=>c.value);
  document.addEventListener('click',e=>{const b=e.target.closest('[data-sb]');if(!b)return;const a=b.dataset.sb;
   if(a==='open'){open();return}
@@ -131,4 +131,27 @@
  nav.addEventListener('keydown',e=>{if(e.key==='Escape'&&!p.hidden){open(false);t.focus()}else if((e.key==='ArrowDown'||e.key==='ArrowUp')&&!p.hidden){const a=[...p.querySelectorAll('a')];const i=a.indexOf(document.activeElement);const j=e.key==='ArrowDown'?(i+1)%a.length:(i-1+a.length)%a.length;a[j].focus();e.preventDefault()}});}
  build();
  window.addEventListener('hashchange',build);
+})();
+
+/* Accessibility: give every unlabelled form control an accessible name (adjacent label, first option, id). */
+(function(){
+ function name(e){
+  if(e.type==='file')return 'Choose backup file';
+  var p=e.previousElementSibling;
+  if(p&&p.tagName==='LABEL'&&p.textContent.trim())return p.textContent.trim();
+  var l=e.parentElement&&e.parentElement.querySelector(':scope > label, :scope > .lbl, :scope > b');
+  if(l&&l.textContent.trim()&&l.textContent.trim().length<60)return l.textContent.trim();
+  if(e.tagName==='SELECT'&&e.options[0])return e.options[0].text.trim()||'Choose an option';
+  var t=(e.name||e.id||'').replace(/[-_]+/g,' ').trim();
+  return t?t.charAt(0).toUpperCase()+t.slice(1):'Input';
+ }
+ function fix(){
+  document.querySelectorAll('input:not([type=hidden]):not([type=checkbox]):not([type=radio]),select,textarea').forEach(function(e){
+   if(e.getAttribute('aria-label')||e.getAttribute('aria-labelledby')||e.title||e.placeholder||(e.id&&document.querySelector('label[for="'+e.id+'"]'))||e.closest('label'))return;
+   e.setAttribute('aria-label',name(e));
+  });
+ }
+ var t;function later(){clearTimeout(t);t=setTimeout(fix,150)}
+ fix();document.addEventListener('DOMContentLoaded',fix);
+ new MutationObserver(later).observe(document.documentElement,{childList:true,subtree:true});
 })();
