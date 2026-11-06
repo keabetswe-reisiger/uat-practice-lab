@@ -47,7 +47,7 @@
  @media print{#mm{display:none}}`;
  document.head.appendChild(css);
  const hd=document.querySelector('header');(hd&&hd.parentNode===document.body?hd.after(bar):document.body.prepend(bar));
-  const setH=()=>{const sb=document.getElementById('sbbar');document.documentElement.style.setProperty('--mmh',(bar.offsetHeight||(sb?sb.offsetHeight:0))+'px')};setH();window.addEventListener('resize',setH);if(window.ResizeObserver)new ResizeObserver(setH).observe(bar);
+  const setH=()=>{const sb=document.getElementById('sbbar');document.documentElement.style.setProperty('--mmh',(bar.offsetHeight||0)+'px')};setH();window.addEventListener('resize',setH);if(window.ResizeObserver)new ResizeObserver(setH).observe(bar);
  const panels=()=>[...bar.querySelectorAll('.mm-p')],trig=()=>[...bar.querySelectorAll('button.mm-t')];
  const closeAll=()=>{panels().forEach(p=>p.classList.remove('on'));trig().forEach(b=>b.setAttribute('aria-expanded','false'))};
  const open=b=>{closeAll();trig().forEach(x=>{if(x!==b)x.dataset.pin=''});b.setAttribute('aria-expanded','true');document.getElementById(b.getAttribute('aria-controls')).classList.add('on')};
@@ -66,50 +66,21 @@
  document.head.appendChild(st);document.body.appendChild(bn);
  bn.addEventListener('click',e=>{const b=e.target.closest('[data-bn=menu]');if(!b)return;e.stopPropagation();const t=document.querySelector('#mm .mm-t');if(t){window.scrollTo({top:0});t.click()}})})();
 
-/* phone sidebar: on phones the pages live in a slide-in sidebar, and you choose what is in it */
+/* phone bar: there is no sidebar on phones. A slim top bar with Home, a "Go to a page" dropdown and a search box. */
 (function(){const D=window.__mmData;const mm=document.getElementById('mm');if(!D||!mm)return;
- const KEY='sidebar-v1';
  const EXTRA=[['index.html','Home'],['lab.html','All practice apps'],['tickets.html','Tickets'],['readiness.html','Readiness'],['portfolio.html','Portfolio'],['outside.html','Practice outside the app'],['workplace.html','Work skills']];
  const seen=new Set();const SEC=D.map(([s,it])=>[s,it.map(x=>[x[0],x[1]]).concat(s==='Exam & career'?EXTRA.slice(5):s==='Getting started'?[EXTRA[0],EXTRA[2]]:s==='Practice apps'?[EXTRA[1]]:[])]).map(([s,it])=>[s,it.filter(x=>{if(seen.has(x[0]))return false;seen.add(x[0]);return true})]).filter(s=>s[1].length);
- const ALL=[].concat(...SEC.map(s=>s[1]));const known=new Set(ALL.map(x=>x[0]));
- const DEF=['index.html','lab.html','exam.html','tickets.html','testcase.html','autolab.html','sql-lab.html#learn','readiness.html','portfolio.html'].filter(h=>known.has(h));
- const load=()=>{try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.items))return s.items.filter(h=>known.has(h))}catch{}return DEF.slice()};
- let chosen=load();const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({items:chosen,ts:Date.now()}))}catch{}};
+ const ALL=[].concat(...SEC.map(s=>s[1]));
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const here=location.pathname.split('/').pop()||'index.html';
  const isCur=h=>{const [p,hs]=h.split('#');const [f,q]=p.split('?');if(f!==here)return false;if(q&&!location.search.includes(q))return false;if(hs)return location.hash==='#'+hs;return !(ALL.some(x=>x[0]!==h&&x[0].split('#')[0].split('?')[0]===f&&x[0].includes('#')&&location.hash==='#'+x[0].split('#')[1]))};
  const bar=document.createElement('div');bar.id='sbbar';
- bar.innerHTML='<button type="button" data-sb="open" aria-haspopup="dialog" aria-label="Open the sidebar"><span class="sb-ham" aria-hidden="true"><i></i><i></i><i></i></span></button><span class="sb-t"></span>';
- const setT=()=>{bar.querySelector('.sb-t').textContent=(document.title||'').replace(/\s*[-|:].*$/,'')||'UAT Practice Lab'};setT();
- const st=document.createElement('style');st.textContent=`#sbbar{display:none}@media(max-width:700px){#mm,#bn{display:none!important}#sbbar{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:9989;background:#fff;border-bottom:1px solid #d5dae2;padding:4px 10px 4px 8px}#sbbar button{min-height:48px;display:inline-flex;align-items:center;gap:10px;padding:0 14px;font-weight:700}.sb-ham{display:inline-flex;flex-direction:column;gap:4px}.sb-ham i{display:block;width:18px;height:2px;border-radius:2px;background:#16202f}#sbbar .sb-t{flex:1;min-width:0;font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#16202f}}
-.sb-l{list-style:none;margin:0;padding:0}.sb-l li{margin:0}.sb-l a{display:flex;align-items:center;min-height:52px;padding:0 12px;border-radius:10px;color:#16202f;text-decoration:none;font-weight:600;font-size:16px}.sb-l a[aria-current=page]{background:#c9a66e;color:#1d1608;font-weight:800}.sb-l a:active{background:#f3f4f6}
-.sb-e fieldset{border:0;padding:0;margin:0 0 10px}.sb-e legend{font:600 12px 'Geist Mono',ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:#4a5568;padding:8px 0 2px}.sb-e label{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 6px;font-size:16px;font-weight:600}.sb-e input[type=checkbox]{width:24px;height:24px;flex:none;accent-color:#7a5a1e}
-.sb-a{border-bottom:1px solid #e5e8ee}.sb-a>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:56px;padding:0 6px;font-weight:800;font-size:17px;color:#16202f;cursor:pointer;list-style:none}.sb-a>summary::-webkit-details-marker{display:none}.sb-a>summary small{margin-left:auto;font-weight:500;font-size:13px;color:#4a5568}.sb-a>summary::after{content:"";width:9px;height:9px;border-right:2px solid #16202f;border-bottom:2px solid #16202f;transform:rotate(45deg);margin:-4px 4px 0 6px;flex:none}.sb-a[open]>summary::after{transform:rotate(-135deg);margin-top:4px}.sb-ab{padding:0 0 10px}.sb-mapw .map{display:block}.sb-mapw .st{margin:0 0 12px}.sb-mapw .st h3{font-size:14px;margin:6px 0}.sb-mapw .nd{display:block;margin:6px 0}
-.sb-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}.sb-row button{flex:1 1 130px;min-height:48px}.sb-n{color:#4a5568;font-size:14.5px;margin:8px 0}`;
+ bar.innerHTML=`<div class="sb-r1"><a class="sb-home" href="index.html">UAT Practice Lab</a><select id="sb-go" aria-label="Go to a page"><option value="">Go to a page</option>${SEC.map(([s,it])=>`<optgroup label="${esc(s)}">${it.map(([h,t])=>`<option value="${esc(h)}"${isCur(h)?' selected':''}>${esc(t)}</option>`).join('')}</optgroup>`).join('')}</select></div><div class="sb-s"><input id="sb-q" type="search" placeholder="Search pages" aria-label="Search pages" autocomplete="off"><ul id="sb-res" class="sb-l" hidden></ul></div>`;
+ const st=document.createElement('style');st.textContent=`#sbbar{display:none}@media(max-width:700px){#mm,#bn{display:none!important}#sbbar{display:block;background:#fff;border-bottom:1px solid #d5dae2;padding:6px 12px 8px}.sb-r1{display:flex;align-items:center;gap:10px}.sb-home{font-weight:800;font-size:15px;color:#16202f;text-decoration:none;min-height:48px;display:flex;align-items:center;white-space:nowrap}#sb-go{flex:1;min-width:0;min-height:48px;font-size:16px}#sbbar #sb-q{height:48px;min-height:48px}}
+.sb-l{list-style:none;margin:0;padding:0}.sb-l li{margin:0}`;
  document.head.appendChild(st);mm.after(bar);
- let mode='list';
- const PATH=[['start-here.html','1 · Start here guide'],['coffee.html','2 · Coffee ordering app'],['tickets.html','3 · Your first ticket'],['arcade.html','4 · Test arcade, a little each day'],['clinic-practice.html','5 · Clinic app'],['stockwatch-practice.html','5 · StockWatch app'],['api-lab.html','6 · API lab'],['sql-lab.html#learn','7 · SQL data detective']];
- const OPEN=new Set(['path']);
- const acc=(id,title,body,note)=>`<details class="sb-a" data-id="${id}"${OPEN.has(id)?' open':''}><summary>${esc(title)}${note?`<small>${esc(note)}</small>`:''}</summary><div class="sb-ab">${body}</div></details>`;
- const links=its=>`<ul class="sb-l">${its.map(([h,t])=>`<li><a href="${h}"${isCur(h)?' aria-current="page"':''}>${esc(t)}</a></li>`).join('')}</ul>`;
- const listView=()=>{const mine=ALL.filter(x=>chosen.includes(x[0]));
-  return `<div class="sb-s"><input id="sb-q" type="search" placeholder="Search pages" aria-label="Search pages" autocomplete="off"><ul id="sb-res" class="sb-l" hidden></ul></div><nav aria-label="Sidebar menu" id="sb-nav">`+acc('path','/01  Suggested path',links(PATH),'start here')+acc('map','Map your learning','<div id="sb-map"><p class="sb-n">Loading your map...</p></div>','your progress')+acc('mine','My pages',(mine.length?links(mine):'<p class="sb-n">Nothing is chosen yet.</p>')+`<div class="sb-row"><button type="button" class="pri" data-sb="edit">Choose what shows here</button></div><p class="sb-n">${mine.length} of ${ALL.length} pages. Only you see this, saved on this phone.</p>`,'you choose')+SEC.map(([s,it])=>acc('s-'+s.toLowerCase().replace(/[^a-z]+/g,'-'),s,links(it),it.length+(it.length===1?' page':' pages'))).join('')+`</nav>`};
- const fillMap=()=>{const el=document.getElementById('sb-map');if(!el)return;const go=()=>{el.innerHTML=window.TODAY&&TODAY.mapHTML?`<div class="sb-mapw">${TODAY.mapHTML()}</div>`:'<p class="sb-n">The map is not available right now.</p>'};if(window.TODAY&&TODAY.mapHTML)go();else{const s=document.createElement('script');s.src='today.js';s.onload=go;s.onerror=go;document.head.appendChild(s)}};
- const editView=()=>`<div class="sb-e"><p class="sb-n">Tick the pages you want in your sidebar.</p>${SEC.map(([s,it],i)=>`<fieldset><legend>${esc(s)}</legend>${it.map(([h,t])=>`<label><input type="checkbox" value="${esc(h)}" ${chosen.includes(h)?'checked':''}>${esc(t)}</label>`).join('')}</fieldset>`).join('')}<div class="sb-row"><button type="button" class="pri" data-sb="save">Save sidebar</button><button type="button" data-sb="cancel">Cancel</button></div><div class="sb-row"><button type="button" data-sb="all">Tick all</button><button type="button" data-sb="none">Clear all</button><button type="button" data-sb="reset">Reset to default</button></div></div>`;
- const paint=()=>{const b=document.querySelector('.sh-b'),t=document.querySelector('.sh-t'),d=document.querySelector('.sh-d');if(!b)return;b.innerHTML=mode==='edit'?editView():listView();if(mode!=='edit')fillMap();if(t)t.textContent=mode==='edit'?'Choose your pages':'Menu';if(d)d.textContent=mode==='edit'?'You decide which pages appear in My pages.':'Tap a heading to open it.';b.scrollTop=0;const f=b.querySelector(mode==='edit'?'input':'summary');f&&f.focus()};
- const ensure=()=>window.SHEET?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='sheet.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
- const open=()=>ensure().then(()=>{mode='list';SHEET.open({side:'left',title:'',desc:'Tap a heading to open it.',html:listView()});fillMap();setTimeout(()=>{const b=document.querySelector('.sh-b');if(b)b.scrollTop=0},0)}).catch(()=>{location.href='index.html'});
- const read=()=>[...document.querySelectorAll('.sb-e input[type=checkbox]')].filter(c=>c.checked).map(c=>c.value);
- document.addEventListener('click',e=>{const b=e.target.closest('[data-sb]');if(!b)return;const a=b.dataset.sb;
-  if(a==='open'){open();return}
-  if(!b.closest('.sh'))return;
-  if(a==='edit'){mode='edit';paint()}
-  else if(a==='save'){chosen=ALL.map(x=>x[0]).filter(h=>read().includes(h));save();mode='list';paint()}
-  else if(a==='cancel'){mode='list';paint()}
-  else if(a==='all'||a==='none'){document.querySelectorAll('.sb-e input[type=checkbox]').forEach(c=>c.checked=a==='all')}
-  else if(a==='reset'){document.querySelectorAll('.sb-e input[type=checkbox]').forEach(c=>c.checked=DEF.includes(c.value))}});
- window.addEventListener('hashchange',setT);
- window.__sidebar={all:()=>ALL.map(x=>x[0]),chosen:()=>chosen.slice(),def:DEF.slice()};
+ bar.querySelector('#sb-go').addEventListener('change',e=>{if(e.target.value)location.href=e.target.value});
+ window.__phonebar={all:()=>ALL.map(x=>x[0])};
 })();
 
 /* breadcrumbs: Home > section > this page. The section is a dropdown of its other pages; on phones it shows as "..." */
@@ -156,7 +127,7 @@
  new MutationObserver(later).observe(document.documentElement,{childList:true,subtree:true});
 })();
 
-/* Search: one index of every page (title + description), used by the top bar and the phone sidebar. */
+/* Search: one index of every page (title + description), used by the top bar and the phone bar. */
 (function(){
  var EX=[['index.html','Home','Today, your next ticket and progress.'],['lab.html','All practice apps','Pick any of the practice apps.'],['tickets.html','Tickets','Test jobs from your manager.'],['readiness.html','Readiness','Check you are ready for the exam and the job.'],['portfolio.html','Test portfolio','Keep proof of the testing you did.'],['outside.html','Practice outside the app','Real web apps to practise on.'],['workplace.html','Work skills','Skills you need in a real test team.']];
  var idx;
