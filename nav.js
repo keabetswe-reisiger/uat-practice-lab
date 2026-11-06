@@ -70,7 +70,7 @@
 (function(){const D=window.__mmData;const mm=document.getElementById('mm');if(!D||!mm)return;
  const KEY='sidebar-v1';
  const EXTRA=[['index.html','Home'],['lab.html','All practice apps'],['tickets.html','Tickets'],['readiness.html','Readiness'],['portfolio.html','Portfolio'],['outside.html','Practice outside the app'],['workplace.html','Work skills']];
- const seen=new Set();const SEC=[['Quick links',EXTRA]].concat(D.map(([s,it])=>[s,it.map(x=>[x[0],x[1]])])).map(([s,it])=>[s,it.filter(x=>{if(seen.has(x[0]))return false;seen.add(x[0]);return true})]).filter(s=>s[1].length);
+ const seen=new Set();const SEC=D.map(([s,it])=>[s,it.map(x=>[x[0],x[1]]).concat(s==='Exam & career'?EXTRA.slice(5):s==='Getting started'?[EXTRA[0],EXTRA[2]]:s==='Practice apps'?[EXTRA[1]]:[])]).map(([s,it])=>[s,it.filter(x=>{if(seen.has(x[0]))return false;seen.add(x[0]);return true})]).filter(s=>s[1].length);
  const ALL=[].concat(...SEC.map(s=>s[1]));const known=new Set(ALL.map(x=>x[0]));
  const DEF=['index.html','lab.html','exam.html','tickets.html','testcase.html','autolab.html','sql-lab.html#learn','readiness.html','portfolio.html'].filter(h=>known.has(h));
  const load=()=>{try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.items))return s.items.filter(h=>known.has(h))}catch{}return DEF.slice()};
