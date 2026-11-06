@@ -25,7 +25,7 @@
   <li class="mm-i"><button class="mm-t" aria-expanded="false" aria-controls="mm-p4">Exam &amp; career</button><div class="mm-p" id="mm-p4"><ul class="mm-grid">${exam.map(x=>item(...x)).join('')}</ul></div></li>
   <li class="mm-i"><button class="mm-t" aria-expanded="false" aria-controls="mm-p5">My work</button><div class="mm-p" id="mm-p5"><ul class="mm-ico">
     <li><a href="tickets.html">${I.dash}To do</a></li><li><a href="tickets.html">${I.alert}In progress<em>${counts.prog}</em></a></li><li><a href="tickets.html">${I.ok}Passed<em>${counts.done}</em></a></li><li><a href="tickets.html">${I.x}Failed<em>${counts.fail}</em></a></li></ul></div></li>
-  <li class="mm-i"><a class="mm-t mm-link" href="index.html">Home</a></li></ul></div>`;
+  <li class="mm-i"><a class="mm-t mm-link" href="index.html">Home</a></li></ul><div class="mm-s"><input id="mm-q" type="search" placeholder="Search pages" aria-label="Search pages" autocomplete="off"><ul id="mm-res" hidden></ul></div></div>`;
  const css=document.createElement('style');css.textContent=`
  #mm{position:sticky;top:0;z-index:60;border-bottom:1px solid #d5dae2;background:#ffffff;font-family:Manrope,system-ui,sans-serif}
  #mm .mm-in{display:flex;align-items:center;gap:18px;padding:6px clamp(16px,3vw,64px);flex-wrap:wrap}
@@ -93,7 +93,7 @@
  const acc=(id,title,body,note)=>`<details class="sb-a" data-id="${id}"${OPEN.has(id)?' open':''}><summary>${esc(title)}${note?`<small>${esc(note)}</small>`:''}</summary><div class="sb-ab">${body}</div></details>`;
  const links=its=>`<ul class="sb-l">${its.map(([h,t])=>`<li><a href="${h}"${isCur(h)?' aria-current="page"':''}>${esc(t)}</a></li>`).join('')}</ul>`;
  const listView=()=>{const mine=ALL.filter(x=>chosen.includes(x[0]));
-  return `<nav aria-label="Sidebar menu">`+acc('path','/01  Suggested path',links(PATH),'start here')+acc('map','Map your learning','<div id="sb-map"><p class="sb-n">Loading your map...</p></div>','your progress')+acc('mine','My pages',(mine.length?links(mine):'<p class="sb-n">Nothing is chosen yet.</p>')+`<div class="sb-row"><button type="button" class="pri" data-sb="edit">Choose what shows here</button></div><p class="sb-n">${mine.length} of ${ALL.length} pages. Only you see this, saved on this phone.</p>`,'you choose')+SEC.map(([s,it])=>acc('s-'+s.toLowerCase().replace(/[^a-z]+/g,'-'),s,links(it),it.length+(it.length===1?' page':' pages'))).join('')+`</nav>`};
+  return `<div class="sb-s"><input id="sb-q" type="search" placeholder="Search pages" aria-label="Search pages" autocomplete="off"><ul id="sb-res" class="sb-l" hidden></ul></div><nav aria-label="Sidebar menu" id="sb-nav">`+acc('path','/01  Suggested path',links(PATH),'start here')+acc('map','Map your learning','<div id="sb-map"><p class="sb-n">Loading your map...</p></div>','your progress')+acc('mine','My pages',(mine.length?links(mine):'<p class="sb-n">Nothing is chosen yet.</p>')+`<div class="sb-row"><button type="button" class="pri" data-sb="edit">Choose what shows here</button></div><p class="sb-n">${mine.length} of ${ALL.length} pages. Only you see this, saved on this phone.</p>`,'you choose')+SEC.map(([s,it])=>acc('s-'+s.toLowerCase().replace(/[^a-z]+/g,'-'),s,links(it),it.length+(it.length===1?' page':' pages'))).join('')+`</nav>`};
  const fillMap=()=>{const el=document.getElementById('sb-map');if(!el)return;const go=()=>{el.innerHTML=window.TODAY&&TODAY.mapHTML?`<div class="sb-mapw">${TODAY.mapHTML()}</div>`:'<p class="sb-n">The map is not available right now.</p>'};if(window.TODAY&&TODAY.mapHTML)go();else{const s=document.createElement('script');s.src='today.js';s.onload=go;s.onerror=go;document.head.appendChild(s)}};
  const editView=()=>`<div class="sb-e"><p class="sb-n">Tick the pages you want in your sidebar.</p>${SEC.map(([s,it],i)=>`<fieldset><legend>${esc(s)}</legend>${it.map(([h,t])=>`<label><input type="checkbox" value="${esc(h)}" ${chosen.includes(h)?'checked':''}>${esc(t)}</label>`).join('')}</fieldset>`).join('')}<div class="sb-row"><button type="button" class="pri" data-sb="save">Save sidebar</button><button type="button" data-sb="cancel">Cancel</button></div><div class="sb-row"><button type="button" data-sb="all">Tick all</button><button type="button" data-sb="none">Clear all</button><button type="button" data-sb="reset">Reset to default</button></div></div>`;
  const paint=()=>{const b=document.querySelector('.sh-b'),t=document.querySelector('.sh-t'),d=document.querySelector('.sh-d');if(!b)return;b.innerHTML=mode==='edit'?editView():listView();if(mode!=='edit')fillMap();if(t)t.textContent=mode==='edit'?'Choose your pages':'Menu';if(d)d.textContent=mode==='edit'?'You decide which pages appear in My pages.':'Tap a heading to open it.';b.scrollTop=0;const f=b.querySelector(mode==='edit'?'input':'summary');f&&f.focus()};
@@ -154,4 +154,31 @@
  var t;function later(){clearTimeout(t);t=setTimeout(fix,150)}
  fix();document.addEventListener('DOMContentLoaded',fix);
  new MutationObserver(later).observe(document.documentElement,{childList:true,subtree:true});
+})();
+
+/* Search: one index of every page (title + description), used by the top bar and the phone sidebar. */
+(function(){
+ var EX=[['index.html','Home','Today, your next ticket and progress.'],['lab.html','All practice apps','Pick any of the practice apps.'],['tickets.html','Tickets','Test jobs from your manager.'],['readiness.html','Readiness','Check you are ready for the exam and the job.'],['portfolio.html','Test portfolio','Keep proof of the testing you did.'],['outside.html','Practice outside the app','Real web apps to practise on.'],['workplace.html','Work skills','Skills you need in a real test team.']];
+ var idx;
+ function build(){if(idx)return idx;var seen={};idx=[];(window.__mmData||[]).forEach(function(g){g[1].forEach(function(x){if(!seen[x[0]]){seen[x[0]]=1;idx.push({h:x[0],t:x[1],d:x[2]||'',s:g[0]})}})});EX.forEach(function(x){if(!seen[x[0]]){seen[x[0]]=1;idx.push({h:x[0],t:x[1],d:x[2],s:''})}});return idx}
+ function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+ function find(q){var w=q.toLowerCase().split(/\s+/).filter(Boolean);if(!w.length)return[];
+  return build().map(function(p){var t=p.t.toLowerCase(),d=(p.d+' '+p.s).toLowerCase(),sc=0;
+   for(var i=0;i<w.length;i++){if(t.indexOf(w[i])>-1)sc+=t.indexOf(w[i])===0?4:3;else if(d.indexOf(w[i])>-1)sc+=1;else return null}
+   return{p:p,sc:sc}}).filter(Boolean).sort(function(a,b){return b.sc-a.sc}).slice(0,8).map(function(x){return x.p})}
+ function render(list,q){return list.length?list.map(function(p){return '<li><a href="'+esc(p.h)+'"><b>'+esc(p.t)+'</b><span>'+esc(p.d)+'</span></a></li>'}).join(''):'<li class="sr-none">No page matches “'+esc(q)+'”. Try another word.</li>'}
+ function wire(inp,res,nav){var q=inp.value.trim();
+  if(!q){res.hidden=true;res.innerHTML='';if(nav)nav.hidden=false;return}
+  res.innerHTML=render(find(q),q);res.hidden=false;if(nav)nav.hidden=true}
+ document.addEventListener('input',function(e){var t=e.target;
+  if(t.id==='mm-q')wire(t,document.getElementById('mm-res'));
+  else if(t.id==='sb-q')wire(t,document.getElementById('sb-res'),document.getElementById('sb-nav'))});
+ document.addEventListener('keydown',function(e){var t=e.target;if(t.id!=='mm-q'&&t.id!=='sb-q')return;
+  var r=document.getElementById(t.id==='mm-q'?'mm-res':'sb-res');
+  if(e.key==='Enter'){var a=r&&r.querySelector('a');if(a)location.href=a.getAttribute('href')}
+  else if(e.key==='Escape'){t.value='';t.dispatchEvent(new Event('input',{bubbles:true}))}
+  else if(e.key==='ArrowDown'&&r){var f=r.querySelector('a');if(f){f.focus();e.preventDefault()}}});
+ document.addEventListener('click',function(e){var q=document.getElementById('mm-q');if(q&&q.value&&!e.target.closest('.mm-s')){q.value='';q.dispatchEvent(new Event('input',{bubbles:true}))}});
+ var st=document.createElement('style');st.textContent='#mm .mm-s{position:relative;margin-left:auto}#mm .mm-s input{width:190px;max-width:40vw;min-height:36px;border:1px solid #d5dae2;border-radius:8px;padding:0 10px;font:500 14px Manrope,system-ui,sans-serif;color:#16202f;background:#fff}#mm-res{position:absolute;right:0;top:42px;width:340px;max-width:92vw;background:#fff;border:1px solid #d5dae2;border-radius:12px;box-shadow:0 12px 32px rgba(22,32,47,.14);padding:6px;z-index:70;list-style:none;margin:0}#mm-res[hidden],#sb-res[hidden]{display:none}#mm-res a,#sb-res a{display:flex;flex-direction:column;gap:2px;padding:9px 10px;border-radius:8px;color:#16202f;text-decoration:none}#mm-res a:hover,#mm-res a:focus,#sb-res a:focus{background:#f3f4f6}#mm-res b,#sb-res b{font-weight:800;font-size:14.5px}#mm-res span,#sb-res span{color:#4a5568;font-size:13px}.sr-none{padding:10px;color:#4a5568;font-size:14px}.sb-s{padding:4px 0 10px}.sb-s input{width:100%;min-height:48px;border:1px solid #c5ccd6;border-radius:10px;padding:0 14px;font-size:16px;color:#16202f;background:#fff;box-sizing:border-box}#sb-res a{min-height:52px;justify-content:center;padding:6px 12px}#sb-res a b{font-size:16px}';
+ document.head.appendChild(st);
 })();

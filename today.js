@@ -41,7 +41,7 @@
   const lastBk=localStorage.getItem('uatbackup-last');const hasProgress=Object.values(N).some(x=>x.have>0);const old=!lastBk||(Date.now()-new Date(lastBk).getTime())>7*864e5;
   if(hasProgress&&old)c.push({k:'Backup',t:lastBk?'Time for a new backup':'Back up your progress',d:lastBk?'Your last backup is over a week old.':'Save a copy of your progress to a file. It takes ten seconds and protects weeks of work.',a:'Open backup',h:'#backup'});
   const pct=Math.round(Object.values(N).reduce((a,x)=>a+Math.min(1,x.have/x.need),0)/Object.keys(N).length*100);
-  c.push({k:'Overall',t:pct+'% of the learning map',d:'See the whole path below, or check the exam and job gates.',a:'Readiness check',h:'readiness.html'});return c}
+  c.push({k:'Overall',t:pct+'% of the learning map',d:'See the whole path, or check the exam and job gates.',a:'Readiness check',h:'readiness.html'});return c}
  /* ----- the map ----- */
  const STAGES=[
   ['1. Learn the basics',[['Start here guide',N.start,'start-here.html'],['Careful tester toolkit (3 sessions)',N.careful,'careful.html']]],
