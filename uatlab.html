@@ -19,6 +19,10 @@
 .pick{display:none}@media(max-width:700px){.tgl{display:none}}
 @media(max-width:700px){#us-b{position:static!important;display:block;margin:12px auto 28px}.lab{grid-template-columns:minmax(0,1fr);padding-top:12px}.stage-c{min-width:0}.side{display:none}.pick{display:block;margin-bottom:12px}.pick select{width:100%;min-height:52px;font-size:16px;font-weight:700}}
 .lab main h1{font-size:clamp(30px,4.5vw,46px)!important;line-height:1.1;margin:0 0 6px}.lede{color:var(--mute);margin:0 0 22px;font-size:clamp(17px,2vw,21px)}
+.path{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+.path a{display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;column-gap:12px;row-gap:2px;min-height:88px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink);background:#fff}.path .n{grid-row:1/3;font-size:28px;text-align:center}.path b{font-size:clamp(17px,1.8vw,21px)}.path small{grid-column:2;font-size:14.5px}
+.path a:hover{border-color:#b08d57}.path .n{font-family:'Geist Mono',ui-monospace,monospace;font-weight:700;color:var(--brand)}.path b{font-weight:700}.path small{color:var(--mute);white-space:nowrap}
+.path .done{border-left:4px solid #11663f}.path .part{border-left:4px solid #b08d57}.path .none{border-left:4px solid #d5dae2}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:18px}.cc.span{grid-column:1/-1}
 .cc{border:1px solid var(--line);border-radius:16px;background:#fff;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .cc h3{margin:0;font-size:clamp(20px,2.2vw,26px);color:var(--ink)!important}.cc .d{color:var(--mute);font-size:15.5px;margin:0}
@@ -44,6 +48,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;p
 #xpop .xh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;font-size:17px}.xc{min-height:44px;padding:0 14px;border:1px solid #b8c0cc;border-radius:10px;background:#fff;font:600 14.5px inherit;font-family:inherit;cursor:pointer}
 #xpop .xi{border-top:1px solid #eef0f4;padding:8px 0}#xpop p{margin:0 0 6px;font-size:15.5px;line-height:1.55}#xpop .k{font:600 11.5px 'Geist Mono',ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:6px 0 2px}#xpop .k.xs{margin-top:12px}
 @media(max-width:700px){#xpop{top:auto;bottom:0;left:0;right:0;width:auto;max-height:78vh;border-radius:16px 16px 0 0}}
+.opsw{display:inline-flex;align-items:center;gap:8px;margin:0 0 16px}.opsw button{min-height:44px;padding:0 16px;border:1px solid #b8c0cc;background:#fff;color:var(--ink);font-weight:600;font-size:15px;font-family:inherit;cursor:pointer;border-radius:10px}.opsw button[aria-pressed=true]{background:#c9a66e;color:#1d1608;border-color:#b38e52;font-weight:800}
 .plot.simple .ch{gap:8px}
 </style><!--BRAND--><link rel="stylesheet" href="brand.css">
 </head><body>
@@ -70,8 +75,23 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;p
  let lens='coffee';try{lens=localStorage.getItem('uatlab-lens')||'coffee'}catch(e){}
  const slug=t=>String(t).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
  const expKey=n=>{const b=String(n).replace(/^\d+\.\s*/,'');return EXP[b]?b:(ALIAS[b]||b)};
+ function chart(s,big){
+  const val=x=>s.fmt?s.fmt(x):Math.round(x.p*100)+'%';
+  const rows=s.items.map(x=>`<li><a href="${esc(x.href)}" data-tip="${esc(x.n)}: ${x.have} of ${x.need} (${Math.round(x.p*100)}%)" aria-label="${esc(x.n)}: ${x.have} of ${x.need}, ${Math.round(x.p*100)} percent"><span class="bar"><span class="f" style="width:${Math.round(x.p*100)}%"></span><span class="t">${esc(x.n)}</span></span></a><span class="v">${esc(val(x))}</span></li>`).join('');
+  const grid='<div class="gl" aria-hidden="true">'+[0,25,50,75,100].map(k=>`<i style="left:${k}%"></i>`).join('')+'</div>';
+  const axis='<div class="ax" aria-hidden="true">'+[0,25,50,75,100].map(k=>`<span style="left:${k}%">${k}%</span>`).join('')+'</div>';
+  const tbl=`<details class="tb"><summary>Show as a table</summary><table><caption class="mute" style="text-align:left;padding:4px 0">${esc(s.name)}: progress per part</caption><thead><tr><th>Part</th><th>Done</th><th>Percent</th></tr></thead><tbody>${s.items.map(x=>`<tr><td>${esc(x.n)}</td><td>${x.have} of ${x.need}</td><td>${Math.round(x.p*100)}%</td></tr>`).join('')}</tbody></table></details>`;
+  const ft=`<div class="ft"><b>${s.done} of ${s.items.length} parts complete, ${s.pct}% overall</b><span>${s.next?'Next up: '+esc(s.next.n):'Every part of this stage is done.'}</span></div>`;
+  return `<section class="cc${big?' big':''}${s.span?' span':''}" aria-labelledby="h-${s.id}"><h3 id="h-${s.id}">${esc(s.name)}</h3><p class="d">${esc(s.desc)}</p><div class="plot${s.fmt?' wide':''}${s.simple?' simple':''}">${s.simple?'':grid}<ul class="ch" role="list">${rows}</ul>${s.simple?'':axis}</div>${ft}${big||s.noGo?'':`<a class="go" href="#${s.id}">Open ${esc(s.name)}</a>`}${tbl}</section>`}
+ /* the suggested path is a graph too: each step against its own total */
+ const PSTAGE={id:'path',name:'Suggested path',desc:'Map your learning with the suggested path.',span:true,noGo:true,fmt:x=>x.have+' of '+x.need,items:PATH.map(([n,h,x],i)=>({n:(i+1)+'. '+n,have:x.have,need:x.need,href:h,p:Math.min(1,x.have/x.need)}))};
+ PSTAGE.done=PSTAGE.items.filter(x=>x.p>=1).length;PSTAGE.pct=Math.round(PSTAGE.items.reduce((a,x)=>a+x.p,0)/PSTAGE.items.length*100);PSTAGE.next=PSTAGE.items.find(x=>x.p<1)||null;
  const OPSTAGE={id:'ops',name:'Lab operations',desc:'Map your learning with the suggested path.',items:PATH.map(([n,hr,x],i)=>({n:n,key:Object.keys(N).find(k=>N[k]===x),have:x.have,need:x.need,href:hr}))};
- function ops(){return `<div id="dash"></div>`}
+ let opsMode='graphs';try{opsMode=localStorage.getItem('uatlab-ops')==='cards'?'cards':'graphs'}catch(e){}
+ function ops(){const sw=`<div class="opsw" role="group" aria-label="Choose a layout"><button type="button" data-ops="cards" aria-pressed="${opsMode==='cards'}">Cards</button><button type="button" data-ops="graphs" aria-pressed="${opsMode==='graphs'}">Graphs</button></div>`;
+  const head=`<h1>Lab operations</h1><p class="lede">Map your learning with the suggested path.</p>${sw}`;
+  if(opsMode==='cards')return head+`<ol class="path">${PATH.map(([n,h,x],i)=>{const p=x.have/x.need;return `<li><a class="${p>=1?'done':p>0?'part':'none'}" href="${esc(h)}"><span class="n">${i+1}</span><b>${esc(n)}</b><small>${x.have} of ${x.need}</small></a></li>`}).join('')}</ol><div class="cards">${SEC.map(s=>chart(Object.assign({},s,{simple:true}),false)).join('')}</div>`;
+  return sw+`<div id="dash"></div>`}
  function sec(s){return `<div id="dash"></div>`}
  function openTickets(){let st={};try{st=JSON.parse(localStorage.getItem('uat-tickets-v1'))||{}}catch(e){}return (window.TICKETS||[]).filter(t=>!['Passed','Failed'].includes((st[t.key]||{}).status)).sort((a,b)=>String(a.due).localeCompare(String(b.due))||a.key.localeCompare(b.key))}
  const NAV=[['ops','Lab operations','']].concat(SEC.map((s,i)=>[s.id,s.name,String(i+1)]));
@@ -80,9 +100,10 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;p
   const s=SEC.find(x=>x.id===id);
   $('v').innerHTML=`<div class="pick"><label class="mute" for="pk">Section</label><select id="pk" aria-label="Choose a section">${NAV.map(([k,t])=>`<option value="${k}"${k===id?' selected':''}>${esc(t)}</option>`).join('')}</select></div>`+(s?sec(s):ops());
   $('pk').addEventListener('change',e=>{location.hash='#'+e.target.value});
-  UATDASH.render($('dash'),s||OPSTAGE,{tickets:openTickets});
+  if(s)UATDASH.render($('dash'),s,{tickets:openTickets});else if(opsMode==='graphs')UATDASH.render($('dash'),OPSTAGE,{});
   document.title=(s?s.name:'Lab operations')+' | UAT Lab'}
  window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0)});route();
+ document.addEventListener('click',e=>{const o=e.target.closest('[data-ops]');if(!o)return;opsMode=o.dataset.ops;try{localStorage.setItem('uatlab-ops',opsMode)}catch(x){}route()});
  /* retractable sidebar: remembered on this device */
  const lab=document.querySelector('.lab'),sbt=$('sbt');
  const setSB=open=>{lab.classList.toggle('closed',!open);sbt.setAttribute('aria-expanded',open);sbt.setAttribute('aria-label',open?'Hide sidebar':'Show sidebar');try{localStorage.setItem('uatlab-sidebar',open?'open':'closed')}catch(e){}};
@@ -93,7 +114,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;p
   const e=(k)=>EXP[k]||null,i=lens==='taxi'?2:1;
   const block=(t,en)=>en?`<div class="xi"><p class="k">${esc(t)}</p><p>${esc(en[0])}</p><p class="k sc">Scenario: ${lens==='taxi'?'taxi rank':'coffee shop'}</p><p class="sc-t">${esc(en[i])}</p></div>`:'';
   const head=s?s.name:'Suggested path';
-  const parts=(s?s.items:OPSTAGE.items).map(x=>block(x.n.replace(/^\\d+\\.\\s*/,''),e(expKey(x.n)))).join('');
+  const parts=(s?s.items:PSTAGE.items).map(x=>block(x.n.replace(/^\\d+\\.\\s*/,''),e(expKey(x.n)))).join('');
   return `<div class="xh"><b>Explain this page</b><button type="button" id="xclose" class="xc" aria-label="Close explanation">Close</button></div><div class="lens" role="group" aria-label="Choose a scenario">${LENS.map(([k,t])=>`<button type="button" data-lens="${k}" aria-pressed="${k===lens}">${t}</button>`).join('')}</div>${block(head,e(head))}<p class="k xs">Each part</p>${parts}`}
  let pop=null,bulbBtns=[];
  function closePop(){if(pop){pop.hidden=true}bulbBtns.forEach(b=>b.setAttribute('aria-expanded','false'))}
