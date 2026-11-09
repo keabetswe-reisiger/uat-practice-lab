@@ -16,6 +16,7 @@
   target:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".6"/></svg>',
   days:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
   warn:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4 3 20h18z"/><path d="M12 10v4.5M12 17.5v.01"/></svg>',
+  run:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
   list:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>'};
 
  /* ---------- sample history (only when the preview switch is on) ---------- */
@@ -39,18 +40,18 @@
   const months=[];for(let i=11;i>=0;i--){const d=new Date(new Date().getFullYear(),new Date().getMonth()-i,1);months.push(mkey(d))}
   const last6=months.slice(-6);
 
-  host.innerHTML=`<section class="db-head"><div><h1>${esc(stage.name)}</h1><p class="lede">${esc(stage.name)} dashboard. ${esc(stage.desc)}</p><p class="db-badge" id="db-badge" hidden>Sample data: not your real history</p></div>
+  host.innerHTML=`<section class="db-head"><div><h1>${esc(stage.name)}</h1><p class="lede">${esc(stage.desc)}</p><p class="db-badge" id="db-badge" hidden>Sample data: not your real history</p></div>
    <div class="db-filters" role="group" aria-label="Dashboard filters">
     <div class="seg" role="group" aria-label="Period"><button type="button" data-p="month" aria-pressed="true">Monthly</button><button type="button" data-p="ytd" aria-pressed="false">Year to date</button></div>
     <label class="sel"><span>Month</span><select id="db-m" aria-label="Month">${months.slice().reverse().map(k=>`<option value="${k}">${mLabel(k)}</option>`).join('')}</select></label>
-    <label class="sel"><span>Type</span><select id="db-t" aria-label="Type"><option value="all">All types</option>${real.map(p=>`<option value="${esc(p.key)}">${esc(p.n)}</option>`).join('')}</select></label>
+    <label class="sel"><span>Part</span><select id="db-t" aria-label="Part"><option value="all">All parts</option>${real.map(p=>`<option value="${esc(p.key)}">${esc(p.n)}</option>`).join('')}</select></label>
    </div></section>
    <div class="db-sw"><label class="sw"><input type="checkbox" id="db-s" role="switch"><span>Preview with sample data</span></label><span class="mute" id="db-note"></span></div>
    <div class="db-cards" id="db-cards"></div>
-   <section class="db-card"><div class="db-ct"><div><h3>Assessment Trends</h3><p class="d">Overall progress at the end of each month</p></div><label class="sel"><span class="sr">Type</span><select id="db-tt" aria-label="Trend type"><option value="all">All types</option>${real.map(p=>`<option value="${esc(p.key)}">${esc(p.n)}</option>`).join('')}</select></label></div><div class="db-plot" id="db-trend"></div><p class="mute" id="db-trend-n"></p></section>
-   <div class="db-two"><section class="db-card"><div class="db-ct"><div><h3>${ICON.done}<span>Progress by part</span></h3><p class="d">How much of each part is done</p></div></div><div class="db-plot" id="db-bars1"></div></section>
-   <section class="db-card"><div class="db-ct"><div><h3>${ICON.warn}<span>Left to do by part</span></h3><p class="d">What is still open in each part</p></div></div><div class="db-plot" id="db-bars2"></div></section></div>
-   <section class="db-card"><div class="db-ct"><div><h3>Monthly Performance</h3><p class="d">Completed each month against the target pace (finish in 6 months)</p></div><label class="sel"><span class="sr">Part</span><select id="db-pt" aria-label="Performance part"><option value="all">All parts</option>${real.map(p=>`<option value="${esc(p.key)}">${esc(p.n)}</option>`).join('')}</select></label></div><div class="db-plot" id="db-perf"></div></section>
+   <section class="db-card"><div class="db-ct"><div><h3>Assessment Trends</h3><p class="d">Overall progress at the end of each month</p></div><label class="sel"><span class="sr">Part</span><select id="db-tt" aria-label="Trend part"><option value="all">All parts</option>${real.map(p=>`<option value="${esc(p.key)}">${esc(p.n)}</option>`).join('')}</select></label></div><div class="db-plot" id="db-trend"></div><p class="mute" id="db-trend-n"></p></section>
+   <div class="db-two"><section class="db-card"><div class="db-ct"><div><h3>${ICON.done}<span>Items Done by Part</span></h3><p class="d">Done so far (dark gold) against the target (light gold)</p></div></div><div class="db-plot" id="db-bars1"></div></section>
+   <section class="db-card"><div class="db-ct"><div><h3>${ICON.warn}<span>Remaining by Part</span></h3><p class="d">How many items are still open in each part</p></div></div><div class="db-plot" id="db-bars2"></div></section></div>
+   <section class="db-card"><div class="db-ct"><div><h3>Part Performance</h3><p class="d">Percent complete for each part</p></div><label class="sel"><span class="sr">Show</span><select id="db-pt" aria-label="Show parts"><option value="all">All</option><option value="complete">Complete</option><option value="progress">In progress</option><option value="none">Not started</option></select></label></div><div class="db-plot" id="db-perf"></div></section>
    <div class="db-two"><section class="db-card"><h3>Upcoming</h3><ul class="db-list" id="db-up"></ul></section><section class="db-card"><div class="db-ct"><h3>Recent</h3><button type="button" class="db-va" id="db-all" aria-expanded="false">View All</button></div><ul class="db-list" id="db-rec"></ul></section></div>`;
   const $=id=>host.querySelector('#'+id);
 
@@ -62,14 +63,18 @@
   function cards(){const D=data(),P=selParts(D);const keys=new Set(P.map(p=>p.key));
    const per=S.period==='ytd'?'this year':'in '+mLabel(S.month);
    const evs=D.ev.filter(e=>keys.has(e.k)&&inRange(e));
-   const gain=k=>evs.filter(e=>e.k===k&&e.d>0).reduce((a,e)=>a+e.d,0);
-   const tot=P.reduce((a,p)=>a+Math.min(p.need,p.have),0),need=P.reduce((a,p)=>a+p.need,0);
+   const doneN=evs.filter(e=>e.d>0).reduce((a,e)=>a+e.d,0);
+   const complete=P.filter(p=>p.have>=p.need).length,under=P.filter(p=>p.have>0&&p.have<p.need).length;
+   const remain=P.reduce((a,p)=>a+Math.max(0,p.need-p.have),0);
    const pct=P.length?Math.round(P.reduce((a,p)=>a+Math.min(1,p.have/p.need),0)/P.length*100):0;
-   const days=new Set(evs.filter(e=>e.d>0).map(e=>dkey(e.t))).size;
-   const c=P.map(p=>({i:ICON.done,t:p.n,v:p.have+' of '+p.need,s:'+'+gain(p.key)+' '+per,h:p.href}));
-   c.push({i:ICON.target,t:'Overall',v:pct+'%',s:tot+' of '+need+' items done'});
-   c.push({i:ICON.days,t:'Active days',v:String(days),s:per+(D.sample||(D.since&&mStart(S.month)>=D.since-86400000*31)?'':' (history starts '+new Date(D.since).toLocaleDateString('en-ZA',{day:'numeric',month:'short'})+')')});
-   $('db-cards').innerHTML=c.map(x=>{const tag=x.h?'a':'div';return `<${tag} class="db-sc"${x.h?` href="${esc(x.h)}"`:''}><span class="ic">${x.i}</span><span class="tx"><span class="k">${esc(x.t)}</span><b>${esc(x.v)}</b><span class="s">${esc(x.s)}</span></span></${tag}>`}).join('')}
+   const next=P.find(p=>p.have<p.need);
+   const hist=(D.sample||(D.since&&mStart(S.month)>=D.since-86400000*31))?'':' (history starts '+new Date(D.since).toLocaleDateString('en-ZA',{day:'numeric',month:'short'})+')';
+   const c=[{i:ICON.done,t:'Parts Completed',v:complete+' / '+P.length,s:'parts finished'},
+    {i:ICON.list,t:'Items Remaining',v:String(remain),s:'still to do'},
+    {i:ICON.run,t:'Parts Underway',v:String(under),s:'started, not finished'},
+    {i:ICON.days,t:S.period==='ytd'?'Done This Year':'Done This Month',v:String(doneN),s:'items finished '+per+hist},
+    {i:ICON.target,t:'Overall Progress',v:pct+'%',s:next?'Next: '+next.n:'Everything here is done',cls:'last'}];
+   $('db-cards').innerHTML=c.map(x=>`<div class="db-sc${x.cls?' '+x.cls:''}"><span class="ic">${x.i}</span><span class="tx"><span class="k">${esc(x.t)}</span><b>${esc(x.v)}</b><span class="s">${esc(x.s)}</span></span></div>`).join('')}
 
   /* ---------- tiny SVG charts ---------- */
   const nice=m=>{if(m<=0)return 4;const p=Math.pow(10,Math.floor(Math.log10(m)));const f=m/p;const n=f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10;const top=n*p;return top<4&&top%1?Math.ceil(top):top};
@@ -77,7 +82,7 @@
    const ticks=[0,1,2,3,4].map(i=>ymax*i/4);
    let g='';ticks.forEach(t=>{const y=mt+ih-(t/ymax)*ih;g+=`<line x1="${ml}" x2="${w-mr}" y1="${y}" y2="${y}" stroke="#d5dae2" stroke-dasharray="4 4"/><text x="${ml-6}" y="${y+4}" text-anchor="end" font-size="12" fill="#4a5568">${esc(fmt(t))}</text>`});
    const n=labels.length,gw=iw/n;
-   labels.forEach((l,i)=>{const cx=ml+gw*i+gw/2,y=mt+ih+16;g+=slant?`<text transform="translate(${cx},${y}) rotate(-35)" text-anchor="end" font-size="12" fill="#4a5568">${esc(l.length>17?l.slice(0,16)+'\u2026':l)}</text>`:`<text x="${cx}" y="${y}" text-anchor="middle" font-size="12" fill="#4a5568">${esc(l)}</text>`});
+   labels.forEach((l,i)=>{const cx=ml+gw*i+gw/2,y=mt+ih+16;g+=slant?`<text transform="translate(${cx},${y}) rotate(-35)" text-anchor="end" font-size="12" fill="#4a5568">${esc(l.length>17?l.slice(0,16)+'\u2026':l)}</text>`:`<text x="${cx}" y="${y}" text-anchor="middle" font-size="12" fill="#4a5568">${esc(l.length>Math.floor((gw-6)/6.4)?l.slice(0,Math.max(3,Math.floor((gw-6)/6.4)-1))+'\u2026':l)}</text>`});
    return{w,ml,mr,mt,ih,iw,gw,n,g,y:v=>mt+ih-(Math.max(0,v)/ymax)*ih}}
   function legend(items){return `<div class="db-lg">${items.map(([c,t])=>`<span><i style="background:${c}"></i>${esc(t)}</span>`).join('')}</div>`}
   function bars(el,h,labels,series,opts){opts=opts||{};const all=series.flatMap(s=>s.vals.map(v=>v||0));const ymax=opts.ymax||nice(Math.max(...all,1));
@@ -101,15 +106,16 @@
    const vals=last6.map(m=>{const end=mEnd(m);if(end>Date.now()+31*864e5)return null;if(end<=D.since&&!D.sample)return null;
     const useNow=end>Date.now();return P.length?P.reduce((a,p)=>a+(useNow?Math.min(1,p.have/p.need):haveAt(p,D,end)/p.need),0)/P.length*100:0});
    const has=vals.filter(v=>v!=null).length;
-   line($('db-trend'),240,last6.map(m=>MS[Number(m.slice(5))-1]),vals,S.trend==='all'?'All types':(real.find(p=>p.key===S.trend)||{}).n,{aria:'Overall progress at the end of each month'});
+   line($('db-trend'),240,last6.map(m=>MS[Number(m.slice(5))-1]),vals,S.trend==='all'?'All parts':(real.find(p=>p.key===S.trend)||{}).n,{aria:'Overall progress at the end of each month'});
    $('db-trend-n').textContent=has>1?(D.sample?'Sample history.':'Dated from '+new Date(D.since).toLocaleDateString('en-ZA',{day:'numeric',month:'long',year:'numeric'})+', the first time UAT Lab was opened.'):'Your trend line appears here as you make progress. History starts the first time you open UAT Lab ('+new Date(D.since).toLocaleDateString('en-ZA',{day:'numeric',month:'long'})+'), so there is only one point so far.'}
-  function barsBoth(){const D=data(),P=D.parts;const sl=window.innerWidth<700||P.length>4;
-   bars($('db-bars1'),260,P.map(p=>p.n),[{name:'Done %',color:'#b08d57',vals:P.map(p=>Math.round(Math.min(1,p.have/p.need)*100))}],{slant:sl,ymax:100,fmt:v=>Math.round(v)+'%',tipfmt:v=>v+'%',aria:'Percent done in each part'});
-   bars($('db-bars2'),260,P.map(p=>p.n),[{name:'Left to do',color:'#b8c0cc',vals:P.map(p=>Math.max(0,p.need-p.have))}],{slant:sl,aria:'Items left in each part'})}
-  function perf(){const D=data(),P=S.perf==='all'?D.parts:D.parts.filter(p=>p.key===S.perf),keys=new Set(P.map(p=>p.key));
-   const done=last6.map(m=>D.ev.filter(e=>keys.has(e.k)&&e.d>0&&e.t>=mStart(m)&&e.t<mEnd(m)).reduce((a,e)=>a+e.d,0));
-   const tgt=Math.round(P.reduce((a,p)=>a+p.need,0)/6*10)/10;
-   bars($('db-perf'),300,last6.map(m=>MN[Number(m.slice(5))-1]+' '+m.slice(0,4)),[{name:'Completed',color:'#b08d57',vals:done},{name:'Target pace',color:'#cfd4dc',vals:last6.map(()=>tgt)}],{slant:true,aria:'Completed each month against the target pace'})}
+  const slantFor=(el,n)=>window.innerWidth<700||((Math.max(260,el.clientWidth||320)-50)/Math.max(1,n))<100;
+  function barsBoth(){const D=data(),P=D.parts,sl=slantFor($('db-bars1'),P.length),nm=P.map(p=>p.n);
+   bars($('db-bars1'),260,nm,[{name:'Done',color:'#8a6a32',vals:P.map(p=>Math.min(p.have,p.need))},{name:'Target',color:'#e3cfa8',vals:P.map(p=>p.need)}],{slant:sl,aria:'Items done against the target in each part'});
+   bars($('db-bars2'),260,nm,[{name:'Remaining',color:'#b08d57',vals:P.map(p=>Math.max(0,p.need-p.have))}],{slant:sl,aria:'Items remaining in each part'})}
+  function perf(){const D=data(),f=S.perf,el=$('db-perf');
+   const P=D.parts.filter(p=>f==='all'||(f==='complete'&&p.have>=p.need)||(f==='progress'&&p.have>0&&p.have<p.need)||(f==='none'&&p.have===0));
+   if(!P.length){el.innerHTML='<p class="mute" style="padding:12px 0">No parts match this filter yet.</p>';return}
+   bars(el,300,P.map(p=>p.n),[{name:'Complete',color:'#b08d57',vals:P.map(p=>Math.round(Math.min(1,p.have/p.need)*100))}],{slant:slantFor(el,P.length),ymax:100,fmt:v=>Math.round(v)+'%',tipfmt:v=>v+'%',aria:'Percent complete for each part'})}
 
   /* ---------- lists ---------- */
   function lists(){const D=data();const open=D.parts.filter(p=>p.have<p.need);
@@ -141,7 +147,7 @@
  .seg{display:inline-flex;border:1px solid #b8c0cc;border-radius:10px;overflow:hidden}.seg button{min-height:44px;padding:0 14px;border:0;background:#fff;font:600 14.5px inherit;font-family:inherit;color:var(--ink);cursor:pointer}.seg button[aria-pressed=true]{background:#c9a66e;color:#1d1608;font-weight:800}
  .sel{display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--mute);font-weight:600}.sel select{min-height:44px;font-size:15px;border:1px solid #b8c0cc;border-radius:10px;padding:0 10px;background:#fff;color:var(--ink);max-width:220px}.sr{position:absolute;left:-9999px}
  .db-sw{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 12px}.sw{display:inline-flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;font-weight:600}.sw input{width:22px;height:22px;accent-color:#16202f}
- .db-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px;margin-bottom:12px}
+ .db-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:12px}@media(min-width:1100px){.db-cards{grid-template-columns:repeat(5,minmax(0,1fr))}}@media(max-width:700px){.db-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.db-sc.last{grid-column:1/-1}}
  .db-sc{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff;color:var(--ink);text-decoration:none;min-width:0}a.db-sc:hover{border-color:#16202f}
  .db-sc .ic{flex:none;width:40px;height:40px;border-radius:10px;background:#f1f3f6;display:inline-flex;align-items:center;justify-content:center;color:#16202f}
  .db-sc .tx{display:flex;flex-direction:column;min-width:0}.db-sc .k{font-size:13px;color:var(--mute);font-weight:600}.db-sc b{font-size:26px;line-height:1.15}.db-sc .s{font-size:13px;color:var(--mute)}
@@ -152,7 +158,7 @@
  .db-lg{display:flex;gap:16px;flex-wrap:wrap;margin-top:6px;font-size:13.5px;color:var(--ink)}.db-lg i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
  .db-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}.db-list li{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid #eef0f4}.db-list li a{display:flex;color:var(--ink);text-decoration:none;min-height:44px;align-items:center;width:100%}.db-list .ln{display:flex;flex-direction:column}.db-list .mk{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;flex:none;margin-top:2px}.db-list .ok .mk{background:#11663f;color:#fff}.db-list .bad .mk{background:#b42318;color:#fff}.db-list .empty{color:var(--mute);border:0}
  .db-va{min-height:44px;padding:0 14px;border:1px solid #b8c0cc;border-radius:10px;background:#fff;font-weight:600;font-family:inherit;font-size:14.5px;cursor:pointer}.db-va[hidden]{display:none}
- @media(max-width:700px){.db-head,.db-card{padding:14px}.db-filters{width:100%}.db-filters .seg{width:100%}.db-filters .seg button{flex:1}.db-filters .sel{flex:1 1 140px}.db-filters .sel select{max-width:none;width:100%}}`;
+ @media(max-width:700px){.db-ct{flex-direction:column;align-items:stretch}.db-ct .sel select{max-width:none;width:100%}.sel select,.seg button{font-size:16px}.db-card h3{font-size:18px}.db-head,.db-card{padding:14px}.db-filters{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}.db-filters .seg{width:100%}.db-filters .seg button{flex:1;padding:0 6px}.db-filters .sel:last-child{grid-column:1/-1}.db-filters .sel select{max-width:none;width:100%}}`;
  document.head.appendChild(css);
  window.UATDASH={render};
 })();
