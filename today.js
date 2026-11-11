@@ -2,6 +2,7 @@
    Everything is read from the progress this browser already stores (and syncs), so nothing here needs its own save. */
 (function(){
  const rd=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}};
+ const FARMIDS=['herd','feed','fert','irrig','spray','crop','books','wages','market','cold','stall','grant','equip']; /* Farm practice apps are counted in their own stage, not in 'Practice apps passed' */
  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const todayStr=()=>new Date().toISOString().slice(0,10);
  const T=window.TICKETS||[];const TS=rd('uat-tickets-v1'),EX=rd('exam-v1'),AR=rd('arcade-v1'),SQ=rd('sqllab-v1'),AP=rd('apilab-v1'),CA=rd('careful-v1'),SH=rd('start-here-v1'),TE=rd('tech-v1'),CP=rd('capstone-v1'),IV=rd('interview-v1'),WP=rd('workplace-v1'),PF=rd('portfolio-v1'),LA=rd('labapps-v1'),LM=rd('labmarks-v1'),AL=rd('autolab-v1');
@@ -9,7 +10,7 @@
  /* ----- numbers ----- */
  const N={
   tickets:{have:T.filter(t=>['Passed','Failed'].includes(status(t.key))).length,need:T.length||37},
-  apps:{have:Object.values(LA.best||{}).filter(b=>b&&b.pass).length+Object.values(LM.p||{}).filter(x=>x&&x.best&&x.best.pass).length,need:11},
+  apps:{have:Object.entries(LA.best||{}).filter(([k,b])=>!FARMIDS.includes(k)&&b&&b.pass).length+Object.values(LM.p||{}).filter(x=>x&&x.best&&x.best.pass).length,need:12},
   auto:{have:Math.min(Object.keys(AL.done||{}).length,4),need:4},
   arcade:{have:Math.min(AR.xp||0,100),need:100},
   api:{have:Object.keys(AP.found||{}).length,need:8},
@@ -69,7 +70,7 @@
  /* Activity log: remembers WHEN progress changed, so charts over time are real.
     Each time this file runs (home page, UAT Lab) it compares today's numbers with the last snapshot and records the difference
     with today's date. Progress made between two visits is dated to the next visit. The first run only takes the starting snapshot. */
- const DSV=rd('ds-v1');const DSN={};Object.entries(DSV.sum||{}).forEach(([k,v])=>{if(v&&typeof v.have==='number')DSN[k]={have:v.have,need:v.need}});
+ const DSN={};['ds-v1','sqa-v1'].forEach(key=>Object.entries(rd(key).sum||{}).forEach(([k,v])=>{if(v&&typeof v.have==='number')DSN[k]={have:v.have,need:v.need}}));
  const LOGK='uatlog-v1';let LOG;try{LOG=JSON.parse(localStorage.getItem(LOGK))||{}}catch{LOG={}}
  LOG.snap=LOG.snap||{};LOG.ev=LOG.ev||[];
  (function(){const now=Date.now();if(!LOG.since)LOG.since=now;const first=!Object.keys(LOG.snap).length;

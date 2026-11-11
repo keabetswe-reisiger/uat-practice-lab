@@ -24,6 +24,8 @@ button:disabled{opacity:.5;cursor:default}
 .opt:hover{border-color:var(--blue)}.opt input{margin-top:5px}
 .screen{background:#fff;color:#16202f;border:2px solid #cbd2dc;border-radius:10px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:14px;margin:8px 0}
 .spec{border-left:4px solid var(--accent);padding:6px 12px;background:#b08d5714;border-radius:6px}
+.opt.mk-wrong{border:2px solid #c0392b;background:#c0392b14}.opt.mk-right{border:2px solid #16794a;background:#16794a14}.opt.mk-missed{border:2px dashed #16794a}
+.mk{margin-left:auto;font-size:12.5px;font-weight:700;white-space:nowrap;padding-left:8px}.mk-wrong .mk{color:#a82d20}.mk-right .mk,.mk-missed .mk{color:#0f6a3f}
 .res{border-radius:10px;padding:10px 12px;margin-top:10px}.res.ok{background:#16794a1f}.res.no{background:#c0392b1f}.res.part{background:#b7791f1f}
 .cof{border-left:3px solid var(--accent);padding:4px 10px;margin-top:8px;background:#b08d5714;border-radius:4px;font-size:14.5px}
 input[type=text],textarea,select{font:inherit;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 10px}
@@ -61,7 +63,7 @@ function gBoundary(r){
   html:`<div class="spec">${rule}</div>`+cand.map(v=>`<label class="opt"><input type="checkbox" value="${v}"> ${v}</label>`).join(''),
   submit(st){const ch=[...st.querySelectorAll('input:checked')].map(x=>+x.value);if(!ch.length)return null;const hit=ch.filter(v=>correct.includes(v)).length,bad=ch.length-hit;
    const pts=Math.max(0,hit*10-bad*5),max=correct.length*10;const miss=correct.filter(v=>!ch.includes(v));
-   return{pts,max,html:`<b>Edge values: ${[...correct].sort((a,b)=>a-b).join(', ')}.</b> You found ${hit}/${correct.length}${bad?`, with ${bad} value(s) that are not edges (they cost a test slot but don’t probe the boundary)`:''}${miss.length?`. Missed: ${miss.join(', ')}`:''}.<br>${why}`+COFF('If a cup holds 250 ml, you test 249, 250 and 251, not 100 and 400. Bugs live at the lip of the cup.')}}}}
+   return{pts,max,right:v=>correct.includes(+v),html:`<b>Edge values: ${[...correct].sort((a,b)=>a-b).join(', ')}.</b> You found ${hit}/${correct.length}${bad?`, with ${bad} value(s) that are not edges (they cost a test slot but don’t probe the boundary)`:''}${miss.length?`. Missed: ${miss.join(', ')}`:''}.<br>${why}`+COFF('If a cup holds 250 ml, you test 249, 250 and 251, not 100 and 400. Bugs live at the lip of the cup.')}}}}
 
 /* ======================= GAME 2: BUG SPOTTER (spec vs screen) ======================= */
 const SPOT=[
@@ -80,7 +82,7 @@ const SPOT=[
 function gSpot(r){const q=pick(r,SPOT);const idx=shuffle(r,q.o.map((_,i)=>i));
  return{title:'Bug Spotter',intro:'Compare the <b>spec</b> with the <b>screen</b>. What is wrong, if anything?',
   html:`<div class="spec"><b>Spec:</b> ${q.spec}</div><div class="screen">${q.screen}</div>`+idx.map(i=>`<label class="opt"><input type="radio" name="o" value="${i}"> ${q.o[i]}</label>`).join(''),
-  submit(st){const c=st.querySelector('input:checked');if(!c)return null;const ok=+c.value===q.a;return{pts:ok?20:0,max:20,ok,html:(ok?'<b>Correct.</b> ':'<b>Not quite.</b> The answer was: '+q.o[q.a]+'. ')+q.w+COFF('You order a flat white, so you check the cup: shot count, milk, and the till total. Spec first, screen second.')}}}}
+  submit(st){const c=st.querySelector('input:checked');if(!c)return null;const ok=+c.value===q.a;return{pts:ok?20:0,max:20,ok,right:v=>+v===q.a,html:(ok?'<b>Correct.</b> ':'<b>Not quite.</b> The answer was: '+q.o[q.a]+'. ')+q.w+COFF('You order a flat white, so you check the cup: shot count, milk, and the till total. Spec first, screen second.')}}}}
 
 /* ======================= GAME 3: DEFECT REPORT WORKSHOP (scored rubric) ======================= */
 const DEF=[
@@ -126,7 +128,7 @@ const SEV=[
  ['Passwords are shown in plain text in the URL.','Critical','Security breach.'],['The loading spinner is slow on first open (4 seconds).','Minor','Annoying; clarify a requirement first.']];
 function gSev(r){const q=pick(r,SEV);return{title:'Severity Call',intro:'How serious is this defect? <b>Critical</b> = blocks go-live or exposes data/money · <b>Major</b> = important feature wrong · <b>Minor</b> = small or cosmetic.',
  html:`<div class="spec">${q[0]}</div>`+['Critical','Major','Minor'].map(s=>`<label class="opt"><input type="radio" name="o" value="${s}"> ${s}</label>`).join(''),
- submit(st){const c=st.querySelector('input:checked');if(!c)return null;const ok=c.value===q[1];return{pts:ok?20:c.value!=='Minor'&&q[1]!=='Minor'?8:0,max:20,ok,html:`<b>${ok?'Correct':'The best call is '+q[1]}.</b> ${q[2]}`+COFF('Burnt coffee is Critical; a crooked lid is Minor. Severity = how much it hurts the customer, not how annoying it was for you.')}}}}
+ submit(st){const c=st.querySelector('input:checked');if(!c)return null;const ok=c.value===q[1];return{pts:ok?20:c.value!=='Minor'&&q[1]!=='Minor'?8:0,max:20,ok,right:v=>v===q[1],html:`<b>${ok?'Correct':'The best call is '+q[1]}.</b> ${q[2]}`+COFF('Burnt coffee is Critical; a crooked lid is Minor. Severity = how much it hurts the customer, not how annoying it was for you.')}}}}
 
 const GAMES={boundary:{f:gBoundary,i:'',n:'Boundary Blitz',d:'Pick the sharpest test values. Random numbers every round.'},spot:{f:gSpot,i:'',n:'Bug Spotter',d:'Spec vs screen: find the defect, or spot the false alarm.'},defect:{f:gDefect,i:'',n:'Defect Workshop',d:'Write a report and get scored on how useful it is.'},risk:{f:gRisk,i:'',n:'Risk Ranker',d:'Limited time: decide what to test first.'},sev:{f:gSev,i:'',n:'Severity Call',d:'Critical, Major or Minor? Learn to judge impact.'}};
 
@@ -153,6 +155,8 @@ function next(){
 function check(){const q=run.cur,r=q.submit($('st'));if(!r){$('out').innerHTML='<div class="res part">Choose or complete your answer first.</div>';return}
  run.pts+=r.pts;run.max+=r.max;run.res.push(r.pts===r.max);const cls=r.pts>=r.max*.8?'ok':r.pts>0?'part':'no';
  $('out').innerHTML=`<div class="res ${cls}"><b>+${r.pts} / ${r.max}</b><br>${r.html}</div>`;
+ if(r.right)$('st').querySelectorAll('label.opt').forEach(l=>{const i=l.querySelector('input');if(!i)return;const good=r.right(i.value),mark=(c,t)=>{l.classList.add(c);l.insertAdjacentHTML('beforeend','<span class="mk">'+t+'</span>')};
+  if(i.checked)good?mark('mk-right','✓ Correct'):mark('mk-wrong','✗ Wrong');else if(good)mark('mk-missed','✓ Right answer')});
  $('st').querySelectorAll('input,textarea,select,button').forEach(x=>x.disabled=true);
  $('chk').outerHTML=`<button class="pri" id="nxt">${run.i+1>=run.q.length?'See results':'Next →'}</button>`}
 function finish(){const g=run.q.map(x=>x.g);[...new Set(g)].forEach(k=>S.played[k]=(S.played[k]||0)+1);

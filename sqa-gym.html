@@ -1,0 +1,31 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Practice gym | SQL Academy | UAT Lab</title><meta name="theme-color" content="#11203b"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="sqa.css"><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND--></head><body>
+<main><h2 class="pt">Practice gym</h2><div id="intro"></div>
+<div class="card"><div class="row"><label>Database <select id="fdb"></select></label><label>Topic <select id="ftopic"></select></label><label>Level <select id="flevel"></select></label><label>Show <select id="fstat"><option value="">All</option><option value="todo">Not solved yet</option><option value="done">Solved</option></select></label><span class="sp"></span><button id="rand">Surprise me</button></div><div class="bar" style="margin-top:8px"><i id="pbar" style="width:0"></i></div><div class="mute" id="pmsg"></div></div>
+<div class="layout"><aside class="side" id="side" aria-label="Question list"></aside><div id="q"></div></div></main>
+<script src="sql-wasm.js"></script><script src="sqa-dbs.js"></script><script src="sqa-gym-coffee.js"></script><script src="sqa-gym-farm.js"></script><script src="sqa-gym-hr.js"></script><script src="sqa-gym-library.js"></script><script src="sqa-core.js"></script>
+<script>
+SA.frame('sqa-gym.html');const $=SA.$,esc=SA.esc,G=window.GYM;
+$('intro').innerHTML=SA.startHere({plain:'Over 220 questions, each marked by the computer. You write any query you like. The page runs it on a fresh copy of the data, runs the reference answer too, and compares the two results. Different spelling is fine; a different result is not.',coffee:'Like a barista practising on a quiet afternoon: same orders, many drills, and a manager who checks every cup against the recipe.',example:'-- Question: show the name of products priced over 35\nSELECT name FROM products WHERE price > 35',exampleNote:'Your query only has to give the same rows and the same columns. Column names and spacing do not matter.',steps:['Choose a database and a level, or press Surprise me.','Read the question: it names the columns you must show and any order.','Type your query and press Check my answer.','If you are stuck, open the hint first. Only then show a model answer.'],glossary:[['Result set','The table of rows a query returns.'],['Reference answer','The model query your answer is compared with.'],['Ordered','Some questions also check row order; the question says so.'],['Fresh copy','Every run starts from the original data, so changes never carry over.']]});
+const dbs=Object.keys(DBS),topics=[...new Set(G.map(g=>g.topic))].sort(),levels=['Easy','Medium','Hard'];
+$('fdb').innerHTML='<option value="">All databases</option>'+dbs.map(d=>'<option value="'+d+'">'+DBS[d].title+'</option>').join('');
+$('ftopic').innerHTML='<option value="">All topics</option>'+topics.map(t=>'<option>'+t+'</option>').join('');
+$('flevel').innerHTML='<option value="">All levels</option>'+levels.map(t=>'<option>'+t+'</option>').join('');
+let cur=location.hash.slice(1)||'';const ok=id=>(SA.get('gym',id)||{}).ok;
+const list=()=>G.filter(g=>(!$('fdb').value||g.db===$('fdb').value)&&(!$('ftopic').value||g.topic===$('ftopic').value)&&(!$('flevel').value||g.level===$('flevel').value)&&(!$('fstat').value||($('fstat').value==='done')===!!ok(g.id)));
+function side(){const L=list();const solved=SA.count('gym');$('pbar').style.width=(100*solved/G.length)+'%';$('pmsg').textContent=solved+' of '+G.length+' solved. Showing '+L.length+' question(s).';
+ $('side').innerHTML=L.length?L.map(g=>'<button class="'+(g.id===cur?'on ':'')+(ok(g.id)?'done':'')+'" data-id="'+g.id+'">'+esc(g.title)+' <span class="tag '+g.level+'">'+g.level+'</span></button>').join(''):'<div class="mute" style="padding:8px">No questions match these filters.</div>'}
+function show(){const g=G.find(x=>x.id===cur);if(!g){$('q').innerHTML='<div class="card">Pick a question from the list.</div>';return}
+ const st=SA.get('gym',g.id)||{ok:false,tries:0};
+ $('q').innerHTML='<div class="card"><div class="row"><h2 style="margin:0">'+esc(g.title)+'</h2><span class="tag '+g.level+'">'+g.level+'</span><span class="tag">'+g.topic+'</span><span class="tag">'+DBS[g.db].title+'</span></div><p>'+g.prompt+'</p>'+(g.ordered?'<p class="mute">The order of the rows matters here.</p>':'')+(g.check?'<p class="mute">This question changes data. Your statement is checked by looking at the data afterwards.</p>':'')+'<details class="g"><summary>Tables in this database</summary><div id="sch">Loading...</div></details><div id="ed"></div><div class="row" style="margin-top:8px"><button id="hint">Hint</button><button id="ans">Show a model answer</button><span class="sp"></span><button id="nx" class="pri">Next unsolved</button></div><div id="hh"></div></div>';
+ SA.schemaHTML(g.db).then(h=>{if($('sch'))$('sch').innerHTML=h});
+ SA.editor($('ed'),{db:g.db,sql:'',q:{db:g.db,sol:g.sol,check:g.check,ordered:g.ordered},onCheck:r=>{st.tries=(st.tries||0)+1;if(r.ok)st.ok=true;SA.set('gym',g.id,st);side()}});
+ $('hint').onclick=()=>{$('hh').innerHTML='<div class="msg info"><b>Hint:</b> '+g.hint+'</div>'};
+ $('ans').onclick=()=>{if(!st.tries&&!confirm('Try first? Seeing the answer straight away teaches much less. Show it anyway?'))return;$('hh').innerHTML='<div class="msg info"><b>One model answer:</b><pre class="code">'+esc(g.sol)+'</pre></div>'};
+ $('nx').onclick=()=>{const L=list().filter(x=>!ok(x.id)&&x.id!==cur);go((L[0]||list()[0]||g).id)}}
+function go(id){cur=id;location.hash=id;side();show()}
+$('side').addEventListener('click',e=>{const b=e.target.closest('button[data-id]');if(b)go(b.dataset.id)});
+['fdb','ftopic','flevel','fstat'].forEach(i=>$(i).onchange=side);
+$('rand').onclick=()=>{const L=list().filter(x=>!ok(x.id));const P=L.length?L:list();if(P.length)go(P[Math.floor(Math.random()*P.length)].id)};
+SA.ready().then(()=>{if(!G.find(x=>x.id===cur))cur=(G.find(x=>!ok(x.id))||G[0]).id;side();show()});
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

@@ -1,0 +1,84 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Cheatsheet | SQL Academy | UAT Lab</title><meta name="theme-color" content="#11203b"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="sqa.css"><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND--><style>@media print{header,.noprint{display:none}}</style></head><body>
+<main><h2 class="pt">Cheatsheet</h2><div id="intro"></div>
+<div class="card"><h2 style="margin-top:0">The shape of a query</h2><pre class="code">SELECT   columns or calculations
+FROM     table
+JOIN     other_table ON matching_condition
+WHERE    row filter
+GROUP BY grouping columns
+HAVING   group filter
+ORDER BY sort columns
+LIMIT    how_many;</pre><p class="mute">You write it in this order. The database works it out as FROM, JOIN, WHERE, GROUP BY, HAVING, SELECT, ORDER BY, LIMIT. That is why a SELECT alias cannot be used in WHERE.</p></div>
+<div class="grid">
+<div class="card"><h3 style="margin-top:0">Filtering</h3><pre class="code">WHERE a = 1 AND b &lt;&gt; 2
+WHERE x BETWEEN 1 AND 5      -- inclusive
+WHERE city IN ('A', 'B')
+WHERE name LIKE 'S%'         -- starts with S
+WHERE city IS NULL           -- never = NULL
+WHERE NOT (a = 1 OR b = 2)</pre></div>
+<div class="card"><h3 style="margin-top:0">Summaries</h3><pre class="code">COUNT(*)  COUNT(col)  COUNT(DISTINCT col)
+SUM(x)  AVG(x)  MIN(x)  MAX(x)
+SELECT g, COUNT(*) FROM t
+GROUP BY g HAVING COUNT(*) &gt; 5;
+round(100.0 * a / b, 1)      -- percentage</pre></div>
+<div class="card"><h3 style="margin-top:0">Joins</h3><pre class="code">INNER JOIN  matches only
+LEFT JOIN   all left rows + matches
+-- find the unmatched:
+FROM a LEFT JOIN b ON b.a_id = a.id
+WHERE b.id IS NULL
+CROSS JOIN  every pairing
+-- self join: two aliases of one table</pre></div>
+<div class="card"><h3 style="margin-top:0">Subqueries and sets</h3><pre class="code">WHERE x &gt; (SELECT AVG(x) FROM t)
+WHERE id IN (SELECT id FROM u)
+WHERE EXISTS (SELECT 1 FROM u WHERE u.t_id = t.id)
+q1 UNION q2        -- no repeats
+q1 UNION ALL q2    -- keep all
+q1 INTERSECT q2   q1 EXCEPT q2</pre></div>
+<div class="card"><h3 style="margin-top:0">CTEs</h3><pre class="code">WITH step1 AS (
+  SELECT ... ),
+step2 AS (
+  SELECT ... FROM step1 )
+SELECT * FROM step2;
+WITH RECURSIVE t(n) AS (
+  SELECT 1 UNION ALL SELECT n + 1 FROM t WHERE n &lt; 5)
+SELECT n FROM t;</pre></div>
+<div class="card"><h3 style="margin-top:0">Window functions</h3><pre class="code">SUM(x) OVER (ORDER BY d)             -- running total
+ROW_NUMBER() OVER (PARTITION BY g ORDER BY x DESC)
+RANK()  DENSE_RANK()  NTILE(4)
+LAG(x) OVER (ORDER BY d)   LEAD(x) ...
+AVG(x) OVER (ORDER BY d
+  ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)</pre></div>
+<div class="card"><h3 style="margin-top:0">Dates (SQLite)</h3><pre class="code">date('2026-03-01', '+7 days')
+strftime('%Y-%m', d)      -- 2026-03
+strftime('%w', d)         -- weekday 0=Sunday
+julianday(a) - julianday(b)  -- days between
+-- store dates as YYYY-MM-DD</pre></div>
+<div class="card"><h3 style="margin-top:0">Text and numbers</h3><pre class="code">upper(x) lower(x) length(x) trim(x)
+substr(x, start, count)  replace(x, a, b)
+a || ' ' || b              -- join text
+COALESCE(x, 'default')
+CASE WHEN x &lt; 10 THEN 'low' ELSE 'high' END
+CAST(x AS INTEGER)  round(x, 2)</pre></div>
+<div class="card"><h3 style="margin-top:0">Changing data</h3><pre class="code">INSERT INTO t(a, b) VALUES (1, 'x');
+UPDATE t SET a = a + 1 WHERE id = 5;
+DELETE FROM t WHERE id = 5;
+BEGIN; ... COMMIT;   -- or ROLLBACK;
+-- run the WHERE as a SELECT first</pre></div>
+<div class="card"><h3 style="margin-top:0">Tables and rules</h3><pre class="code">CREATE TABLE t(
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  age INTEGER CHECK (age &gt;= 0),
+  owner_id INTEGER REFERENCES owners(id));
+CREATE VIEW v AS SELECT ...;
+CREATE INDEX idx ON t(col);</pre></div>
+<div class="card"><h3 style="margin-top:0">Speed</h3><pre class="code">EXPLAIN QUERY PLAN SELECT ...;
+-- SCAN = reads every row, SEARCH = uses an index
+-- Avoid a function on the column in WHERE
+-- Use a range: d &gt;= '2026-03-01' AND d &lt; '2026-04-01'
+-- Select only the columns you need</pre></div>
+</div>
+<div class="card"><h2 style="margin-top:0">Dialect differences</h2><div class="res"><table><tr><th>Task</th><th>SQLite / PostgreSQL / MySQL</th><th>SQL Server</th><th>Oracle</th></tr><tr><td>First 5 rows</td><td><code>LIMIT 5</code></td><td><code>SELECT TOP 5</code></td><td><code>FETCH FIRST 5 ROWS ONLY</code></td></tr><tr><td>Join text</td><td><code>||</code> (MySQL: CONCAT)</td><td><code>+</code> or CONCAT</td><td><code>||</code></td></tr><tr><td>Today</td><td>date('now') / CURRENT_DATE</td><td>GETDATE()</td><td>SYSDATE</td></tr><tr><td>Auto id</td><td>AUTOINCREMENT / SERIAL / AUTO_INCREMENT</td><td>IDENTITY</td><td>IDENTITY or sequences</td></tr><tr><td>Subtract sets</td><td>EXCEPT</td><td>EXCEPT</td><td>MINUS</td></tr></table></div><p class="mute">Always check your own database's manual for the exact function names.</p></div>
+<div class="card"><h2 style="margin-top:0">Ten classic mistakes</h2><ol><li>Writing <code>= NULL</code> instead of <code>IS NULL</code>.</li><li>Using WHERE for an aggregate condition (use HAVING).</li><li>Forgetting ON in a join, which makes a cross join.</li><li>Filtering the right table in WHERE after a LEFT JOIN.</li><li>Summing after a join to a many table (fan-out).</li><li>Integer division giving 3 instead of 3.5.</li><li>NOT IN with a NULL in the list.</li><li>LIMIT without ORDER BY.</li><li>UPDATE or DELETE without a WHERE.</li><li>Wrapping an indexed column in a function.</li></ol></div>
+<div class="card noprint"><button class="pri" onclick="window.print()">Print this page</button></div></main>
+<script src="sqa-core.js"></script>
+<script>SA.frame('sqa-cheatsheet.html');document.getElementById('intro').innerHTML=SA.startHere({plain:'One page that holds the SQL you will use most. Keep it open while you practise, and print it if you like.',coffee:'Like the laminated recipe card behind the counter: you know how to make the drink, the card just stops you forgetting the exact amounts.',example:'SELECT category, COUNT(*) AS n\nFROM products\nGROUP BY category;',exampleNote:'Read it as: for each category, count the products.',steps:['Find the box for the thing you need to do.','Copy the pattern into the Practice gym editor.','Change the table and column names.','Run it and check the result makes sense.'],glossary:[['Pattern','A reusable shape of a query.'],['Alias','A temporary name given with AS.'],['Half-open range','Start included, end excluded, such as d &gt;= a AND d &lt; b.'],['Dialect','A database\'s own flavour of SQL.']]});</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

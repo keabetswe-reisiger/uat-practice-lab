@@ -3,7 +3,7 @@
    - Newest change per item wins. Needs a GitHub token with ONLY the "gist" permission, pasted once per device.
    - Only this app's own progress keys are synced (see ONLY). Anything else on the same web address, like other apps, is never uploaded or overwritten. */
 (function(){
- const CFG='uatsync-cfg',META='uatsync-meta',FILE='uat-lab-progress.json',ONLY=/^(uat-tickets-v1|uat-lab-v1|testing-types-v1|stockwatch-practice-v1|start-here-v1|sqllab-v1|clinic-practice-v1|careful-v1|arcade-v1|apilab-v1|exam-v1|tech-v1|capstone-v1|interview-v1|workplace-v1|portfolio-v1|phonehome-v1|labmarks-v1|labapps-v1|coach-v1|analogy-v1|appbugs-v1|autolab-v1|tcase-v1|sidebar-v1|ds-v1)$/,SKIP={test:k=>!ONLY.test(k)};
+ const CFG='uatsync-cfg',META='uatsync-meta',FILE='uat-lab-progress.json',ONLY=/^(uat-tickets-v1|uat-lab-v1|testing-types-v1|stockwatch-practice-v1|start-here-v1|sqllab-v1|clinic-practice-v1|careful-v1|arcade-v1|apilab-v1|exam-v1|tech-v1|capstone-v1|interview-v1|workplace-v1|portfolio-v1|phonehome-v1|labmarks-v1|labapps-v1|coach-v1|analogy-v1|appbugs-v1|autolab-v1|tcase-v1|sidebar-v1|ds-v1|sqa-v1)$/,SKIP={test:k=>!ONLY.test(k)};
  const ls=window.localStorage;const orig=Storage.prototype.setItem;
  const rd=k=>{try{return ls.getItem(k)}catch{return null}};
  let meta={};try{meta=JSON.parse(rd(META)||'{}')}catch{}
