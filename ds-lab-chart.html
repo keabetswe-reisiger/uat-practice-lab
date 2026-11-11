@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Data science charting lab</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="ds.css"><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Data science</h1><span class="sp"></span><a href="ds-home.html">Modules</a><a href="ds-exam.html">Exam practice</a><a href="ds-career.html">Career</a><a href="ds-research.html">Research</a><a href="uatlab.html#ds">UAT Lab</a></header>
+<main><p class="crumbs2">Part of <a href="ds-module.html?m=8">Module 8: Visualisation and storytelling</a>. Solving 5 tasks counts the lab as done for the module.</p>
+
+<h2 class="pg">Charting lab</h2>
+<p class="lead">Build real charts from coffee-shop data. Choose the chart type and the fields, give it a title and labels, and the tasks tick off when your chart answers the question properly.</p>
+<div class="two lab">
+<div>
+<div class="card"><h2>Chart settings</h2>
+<div class="row"><label for="ds">Data</label><select id="ds"><option value="sales">Sales lines (140 rows)</option><option value="daily">Daily weather and cups (45 days)</option></select>
+<label for="type">Chart type</label><select id="type"><option value="bar">Bar</option><option value="line">Line</option><option value="scatter">Scatter</option><option value="hist">Histogram</option></select></div>
+<div class="row" style="margin-top:8px"><label for="fx">X field</label><select id="fx"></select><label for="fy">Y field</label><select id="fy"></select><label for="agg">Add up with</label><select id="agg"><option value="sum">Sum</option><option value="mean">Average</option><option value="count">Count</option></select></div>
+<div class="row" style="margin-top:8px"><label for="bins">Bins</label><input id="bins" type="number" min="2" max="12" value="5" style="width:80px"><label><input type="checkbox" id="zero" checked> Start the value axis at zero</label></div>
+<div class="row" style="margin-top:8px"><label for="title">Title</label><input id="title" type="text" style="width:100%;max-width:420px" placeholder="What does the chart show?"></div>
+<div class="row" style="margin-top:8px"><label for="xl">X label</label><input id="xl" type="text" style="width:190px"><label for="yl">Y label</label><input id="yl" type="text" style="width:190px"></div></div>
+<div class="card"><h2>Your chart</h2><div id="chart"></div></div>
+</div>
+<div id="tasks"></div>
+</div>
+<script src="ds-mods.js"></script><script src="ds-core.js"></script><script src="ds-datasets.js"></script><script src="ds-labcore.js"></script>
+<script>
+const L=window.LAB,D=DS_DATA,$=id=>document.getElementById(id);
+const FIELDS={sales:{cat:['drink','day','branch'],num:['qty','price','id']},daily:{cat:['weekday','rain'],num:['temp_c','iced_cups','hot_cups','day']}};
+const DAYS=D.DAYS;
+function cfg(){return{ds:$('ds').value,type:$('type').value,x:$('fx').value,y:$('fy').value,agg:$('agg').value,bins:Math.max(2,Math.min(12,parseInt($('bins').value)||5)),zero:$('zero').checked,title:$('title').value.trim(),xl:$('xl').value.trim(),yl:$('yl').value.trim()}}
+function fillFields(){const f=FIELDS[$('ds').value];const all=f.cat.concat(f.num);const keepx=$('fx').value,keepy=$('fy').value;$('fx').innerHTML=all.map(a=>'<option>'+a+'</option>').join('');$('fy').innerHTML=f.num.map(a=>'<option>'+a+'</option>').join('');if(all.includes(keepx))$('fx').value=keepx;if(f.num.includes(keepy))$('fy').value=keepy}
+function series(c){const rows=D[c.ds];
+ if(c.type==='scatter')return{pts:rows.map(r=>[+r[c.x],+r[c.y]]).filter(p=>Number.isFinite(p[0])&&Number.isFinite(p[1]))};
+ if(c.type==='hist'){const v=rows.map(r=>+r[c.x]).filter(Number.isFinite);const lo=Math.min(...v),hi=Math.max(...v),w=(hi-lo)/c.bins||1;const b=Array.from({length:c.bins},(_, i)=>({lab:L.fmt(lo+i*w,1)+' to '+L.fmt(lo+(i+1)*w,1),n:0}));v.forEach(x=>{let i=Math.floor((x-lo)/w);if(i>=c.bins)i=c.bins-1;b[i].n++});return{cats:b.map(x=>x.lab),vals:b.map(x=>x.n)}}
+ const g={};rows.forEach(r=>{const k=String(r[c.x]);(g[k]=g[k]||[]).push(+r[c.y])});let keys=Object.keys(g);
+ if(DAYS.includes(keys[0])||keys.every(k=>DAYS.includes(k)))keys.sort((a,b)=>DAYS.indexOf(a)-DAYS.indexOf(b));else if(keys.every(k=>Number.isFinite(+k)))keys.sort((a,b)=>a-b);else keys.sort();
+ const val=a=>c.agg==='sum'?L.sum(a):c.agg==='mean'?L.mean(a):a.length;return{cats:keys,vals:keys.map(k=>val(g[k]))}}
+function svg(c,s,w,h,opt){opt=opt||{};const W=w||640,H=h||340,m={l:60,r:16,t:36,b:64};const iw=W-m.l-m.r,ih=H-m.t-m.b;let o='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+L.esc(c.title||'chart')+'" style="background:#fff;border:1px solid #d5dae2;border-radius:8px">';
+ o+='<text x="'+W/2+'" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#16202f">'+L.esc(c.title)+'</text>';
+ let ymin,ymax,xs;
+ if(c.type==='scatter'){const px=s.pts.map(p=>p[0]),py=s.pts.map(p=>p[1]);const x0=Math.min(...px),x1=Math.max(...px);ymin=c.zero?0:Math.min(...py);ymax=Math.max(...py);const sx=v=>m.l+(v-x0)/((x1-x0)||1)*iw,sy=v=>m.t+ih-(v-ymin)/((ymax-ymin)||1)*ih;
+  for(let i=0;i<=4;i++){const v=ymin+(ymax-ymin)*i/4;o+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+sy(v)+'" y2="'+sy(v)+'" stroke="#e5e8ee"/><text x="'+(m.l-6)+'" y="'+(sy(v)+4)+'" text-anchor="end" font-size="11" fill="#4a5568">'+L.fmt(v,0)+'</text>';const xv=x0+(x1-x0)*i/4;o+='<text x="'+sx(xv)+'" y="'+(H-m.b+16)+'" text-anchor="middle" font-size="11" fill="#4a5568">'+L.fmt(xv,0)+'</text>'}
+  s.pts.forEach(p=>{o+='<circle cx="'+sx(p[0])+'" cy="'+sy(p[1])+'" r="4" fill="#b38e52" fill-opacity=".75"/>'})}
+ else{const vals=s.vals;ymax=Math.max(...vals);ymin=c.zero||c.type==='hist'?0:Math.min(...vals)*0.9;if(opt.ymin!=null)ymin=opt.ymin;const n=s.cats.length,bw=iw/n;const sy=v=>m.t+ih-(v-ymin)/((ymax-ymin)||1)*ih;
+  for(let i=0;i<=4;i++){const v=ymin+(ymax-ymin)*i/4;o+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+sy(v)+'" y2="'+sy(v)+'" stroke="#e5e8ee"/><text x="'+(m.l-6)+'" y="'+(sy(v)+4)+'" text-anchor="end" font-size="11" fill="#4a5568">'+L.fmt(v,c.agg==='mean'?1:0)+'</text>'}
+  if(c.type==='line'){o+='<polyline fill="none" stroke="#7a5a1e" stroke-width="2.5" points="'+vals.map((v,i)=>(m.l+bw*(i+.5))+','+sy(v)).join(' ')+'"/>'+vals.map((v,i)=>'<circle cx="'+(m.l+bw*(i+.5))+'" cy="'+sy(v)+'" r="3.5" fill="#7a5a1e"/>').join('')}
+  else vals.forEach((v,i)=>{const x=m.l+bw*i+bw*.12;const y=sy(Math.max(v,ymin));o+='<rect x="'+x+'" y="'+y+'" width="'+bw*.76+'" height="'+Math.max(0,m.t+ih-y)+'" fill="#b38e52"/>'});
+  s.cats.forEach((k,i)=>{const x=m.l+bw*(i+.5);o+='<text x="'+x+'" y="'+(H-m.b+16)+'" text-anchor="middle" font-size="11" fill="#4a5568" '+(n>6?'transform="rotate(-30 '+x+' '+(H-m.b+16)+')"':'')+'>'+L.esc(k.length>14?k.slice(0,13)+'.':k)+'</text>'})}
+ o+='<line x1="'+m.l+'" x2="'+m.l+'" y1="'+m.t+'" y2="'+(m.t+ih)+'" stroke="#16202f"/><line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+(m.t+ih)+'" y2="'+(m.t+ih)+'" stroke="#16202f"/>';
+ o+='<text x="'+(m.l+iw/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="12" fill="#16202f">'+L.esc(c.xl)+'</text><text transform="rotate(-90 14 '+(m.t+ih/2)+')" x="14" y="'+(m.t+ih/2)+'" text-anchor="middle" font-size="12" fill="#16202f">'+L.esc(c.yl)+'</text>';
+ return o+'</svg>'}
+function draw(){const c=cfg();$('fy').disabled=(c.type==='hist');$('agg').disabled=(c.type==='scatter'||c.type==='hist');$('bins').disabled=c.type!=='hist';$('chart').innerHTML=svg(c,series(c));if(T)T.refresh()}
+['ds','type','fx','fy','agg','bins','zero','title','xl','yl'].forEach(id=>$(id).addEventListener(id==='title'||id==='xl'||id==='yl'||id==='bins'?'input':'change',()=>{if(id==='ds')fillFields();draw()}));
+const labelled=c=>c.title.length>3&&c.xl.length>0&&c.yl.length>0;
+const salesBy=(f)=>{const g={};D.sales.forEach(r=>g[r[f]]=(g[r[f]]||0)+r.qty);return g};
+const topKey=g=>Object.keys(g).sort((a,b)=>g[b]-g[a])[0];
+const temps=D.daily.map(r=>r.temp_c);
+const bad=svg({type:'bar',title:'Cups sold by drink (looks huge?)',xl:'Drink',yl:'Cups',zero:false,agg:'sum'},{cats:['A','B'],vals:[310,320]},420,220,{ymin:300});
+const tasks=[
+ {id:'t1',title:'Bar chart of cups by drink',help:'Compare the drinks. Use the Sales lines data, X field drink, Y field qty, add up with Sum, keep the axis at zero, and add a title and both labels.',hint:'Chart type Bar. X field: drink. Y field: qty. Sum. Type a title such as "Cups sold by drink", an X label "Drink" and a Y label "Cups".',auto:()=>{const c=cfg();return c.ds==='sales'&&c.type==='bar'&&c.x==='drink'&&c.y==='qty'&&c.agg==='sum'&&c.zero&&labelled(c)}},
+ {id:'t2',title:'Line chart of cups by weekday',help:'Show how cups change across the week. Sales lines, line chart, X day, Y qty, Sum, with a title and labels.',hint:'Chart type Line. X field: day. Y field: qty. Sum. The days are placed in week order for you.',auto:()=>{const c=cfg();return c.ds==='sales'&&c.type==='line'&&c.x==='day'&&c.y==='qty'&&c.agg==='sum'&&labelled(c)}},
+ {id:'t3',title:'Scatter plot of temperature and iced cups',help:'Does hot weather sell more iced coffee? Use the Daily data, scatter, X temp_c, Y iced_cups, with a title and labels.',hint:'Choose the Daily weather data first, then chart type Scatter, X temp_c and Y iced_cups.',auto:()=>{const c=cfg();return c.ds==='daily'&&c.type==='scatter'&&c.x==='temp_c'&&c.y==='iced_cups'&&labelled(c)}},
+ {id:'t4',title:'Histogram of the quantity per order line',help:'See how big a typical order line is. Sales lines, histogram, X qty, at least 3 bins, title and labels.',hint:'Chart type Histogram, X field qty. A histogram counts how many rows fall in each range.',auto:()=>{const c=cfg();return c.ds==='sales'&&c.type==='hist'&&c.x==='qty'&&c.bins>=3&&labelled(c)}},
+ {id:'t5',title:'Which drink sold the most cups?',help:'Use your bar chart or the data. Type the drink name.',hint:'Build the bar chart in task 1 and read the tallest bar.',ask:{label:'Drink',expected:()=>topKey(salesBy('drink')),text:true}},
+ {id:'t6',title:'How wide is the temperature range?',help:'Highest daily temperature minus lowest, in degrees Celsius, from the Daily data.',hint:'Look at the left and right ends of the scatter plot, or the X axis labels.',ask:{label:'Degrees',expected:()=>Math.max(...temps)-Math.min(...temps)}},
+ {id:'t7',title:'Spot the misleading chart',help:'<div style="max-width:420px">'+bad+'</div>The value axis starts at 300 and the two bars are 310 and 320. Is this chart honest? Type yes or no.',hint:'The bars differ by about 3%. If the axis started at zero they would look almost the same.',ask:{label:'Honest?',expected:()=>'no',text:true}}
+];
+let T=null;fillFields();$('fx').value='drink';$('fy').value='qty';
+T=L.tasks($('tasks'),'chart',tasks);draw();
+</script></main>
+<script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

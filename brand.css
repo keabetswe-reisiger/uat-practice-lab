@@ -175,3 +175,6 @@ select:invalid{color:#4a5568}
 button.ok:hover:not(:disabled),button.no:hover:not(:disabled),button.hold:hover:not(:disabled),button.act.ok:hover:not(:disabled),button.act.no:hover:not(:disabled),button.act.hold:hover:not(:disabled){color:#fff!important}
 button.ok:hover:not(:disabled){background:#0d5333!important;border-color:#0d5333!important}button.no:hover:not(:disabled){background:#8f1c12!important;border-color:#8f1c12!important}button.hold:hover:not(:disabled){background:#6b4600!important;border-color:#6b4600!important}
 body.sh-lock #us-b{display:none!important}
+
+/* difficulty level badges (lab) */
+.tag.lvlb{font-weight:700;margin-left:6px}.tag.lvl-easy{background:#dff3e6!important;color:#0b4a2d!important}.tag.lvl-medium{background:#fbefd2!important;color:#6b4a00!important}.tag.lvl-hard{background:#f8dcd7!important;color:#8a1f13!important}

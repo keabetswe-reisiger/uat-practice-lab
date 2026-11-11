@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Data science career and income</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="ds.css"><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Data science</h1><span class="sp"></span><a href="ds-home.html">Modules</a><a href="ds-exam.html">Exam practice</a><a href="ds-career.html">Career</a><a href="ds-research.html">Research</a><a href="uatlab.html#ds">UAT Lab</a></header>
+<main>
+<h2 class="pg">Career and income</h2>
+<p class="lead">How to turn the lessons into a job, freelance work or a small income stream. The advice here comes from published guides and is general. Salary and earnings figures vary a lot between sources, so use them as rough ranges only. The Research page lists what was checked and what was not.</p>
+
+<h2>Roles you can aim for</h2>
+<div class="card"><div class="tw"><table><thead><tr><th>Role</th><th>What you do</th><th>Core skills</th><th>Start with</th></tr></thead><tbody>
+<tr><td><b>Data analyst</b></td><td>Answer business questions from existing data, build reports and dashboards.</td><td>SQL, spreadsheets, charts, basic statistics</td><td><a href="ds-module.html?m=3#b10">SQL lessons</a> and the <a href="ds-lab-pivot.html">Pivot lab</a></td></tr>
+<tr><td><b>Data scientist</b></td><td>Use statistics and models to explain and predict.</td><td>Python, statistics, machine learning, communication</td><td><a href="ds-module.html?m=6#i02">pandas lessons</a> and <a href="ds-lab-stats.html">Statistics lab</a></td></tr>
+<tr><td><b>Data engineer</b></td><td>Build the pipelines that move and prepare data.</td><td>SQL, Python, databases, automation</td><td><a href="ds-module.html?m=12#a10">Pipelines lesson</a></td></tr>
+<tr><td><b>Machine learning engineer</b></td><td>Put models into products and keep them running. Often starts from software engineering.</td><td>Software engineering, ML, deployment</td><td><a href="ds-module.html?m=10#a01">Machine learning lessons</a></td></tr>
+<tr><td><b>BI developer</b></td><td>Build dashboards and data models for managers.</td><td>SQL, a dashboard tool, design</td><td><a href="ds-lab-chart.html">Charting lab</a></td></tr></tbody></table></div>
+<p class="mute">Roles overlap and titles differ between companies. Many people start as analysts and move towards modelling or engineering.</p></div>
+
+<h2>How to get real experience</h2>
+<div class="card"><ol>
+<li>Work through the modules in order, pass each checkpoint at 80%, and repeat the lab tasks until the answers feel routine.</li>
+<li>Use your own coffee business data. Real data you understand beats a downloaded dataset you do not.</li>
+<li>Complete two small projects from the list below and write each up in plain English with one chart and one recommendation.</li>
+<li>Publish the write-ups where an employer can see them, such as a free code-hosting page or a personal site.</li>
+<li>Take the mock exam regularly until you score 80% or more twice in a row.</li>
+<li>Apply for analyst or junior roles, internships and learnerships. Offer a small paid or unpaid project for a local business to gain a reference.</li></ol></div>
+
+<h2>Portfolio project ideas</h2>
+<div class="grid" id="projects"></div>
+
+<h2>Interview questions to practise</h2>
+<div id="iq"></div>
+
+<h2>Passive income: an honest view</h2>
+<div class="card"><p><b>There is no such thing as effort-free income.</b> The numbers below come from marketing-style blogs and anecdotes, so they show the shape of the opportunity, not a promise. Medians matter more than the headline numbers.</p>
+<div class="tw"><table><thead><tr><th>Route</th><th>What it involves</th><th>What sources suggest</th><th>Main caveat</th></tr></thead><tbody>
+<tr><td>Online course</td><td>Record and publish a course on a learning platform.</td><td>One guide reports a median instructor income under $500 a year, and about $100 to $500 a month for a new course after several months.</td><td>The data science course market is crowded. You need a clear niche, such as data for small shops in South Africa.</td></tr>
+<tr><td>Templates</td><td>Dashboard or spreadsheet templates sold on a marketplace.</td><td>Guides cite from tens to a couple of thousand pounds or dollars a month for well-run shops after 3 to 12 months of steady work.</td><td>Top figures are the best cases. The median seller earns far less.</td></tr>
+<tr><td>Datasets and reports</td><td>Clean, documented datasets or niche market reports.</td><td>No reliable earnings figures were found.</td><td>Only worth it if the data is truly yours to sell, legal to share and not personal information.</td></tr>
+<tr><td>Freelance projects</td><td>Paid analysis, dashboards or SQL help.</td><td>No reliable rate survey was found in the research.</td><td>This is active work, not passive. It is the usual way to earn first and learn what people pay for.</td></tr>
+<tr><td>Writing and tutorials</td><td>Blog, newsletter or video tutorials that build an audience.</td><td>Slow to start. Sources describe months of effort before income.</td><td>Success depends on audience and consistency.</td></tr></tbody></table></div>
+<p><b>A sensible order:</b> learn the skills, build a portfolio, earn through a job or freelance work, and only then package what you know into a product. Selling SQL or data skills as a product works best when you have already solved the same problem for paying clients.</p>
+<p class="mute">SQL and data science skills can also support a coffee business directly: better stock ordering, pricing and staffing. That return is real even before any product income.</p></div>
+
+<h2>Money and the South African market</h2>
+<div class="card"><p>Published South African salary figures conflict widely. One source gives a junior data scientist around R30 000 a month and another around R574 000 a year, and a salary aggregator gave a far lower annual figure from only 101 reports. Treat all of them as unverified. Check current adverts for the roles you want and ask people working in them. Knowing the Protection of Personal Information Act (POPIA) is repeatedly described as a plus for data roles, though no survey data was found to prove that.</p></div>
+
+<script src="ds-mods.js"></script><script src="ds-core.js"></script>
+<script>
+const P=[['Weekly sales forecast for a coffee shop','Clean 12 months of till data, plot trends, forecast the next 4 weeks and say how wrong you might be.','Time series, regression'],
+['Which drinks make money?','Join sales with ingredient costs, find margin per drink and recommend a menu change.','SQL joins, pivots'],
+['Does rain change what people order?','Compare rainy and dry days with a proper test and a plain-English conclusion.','Hypothesis testing'],
+['Customer groups from loyalty data','Cluster customers by visit time and spend, name each group and suggest an offer.','Clustering'],
+['Refund and error audit','Find unusual refunds and duplicate orders and design checks that would catch them.','Cleaning, outliers'],
+['Dashboard for a manager','One page with the five numbers a manager needs each Monday morning.','Visualisation'],
+['Predict who will return','Build a simple model, check precision and recall, and explain its limits and fairness.','Classification, ethics'],
+['Pricing experiment','Design an A/B test for a new pastry combo with sample size and stop rules decided in advance.','A/B testing']];
+document.getElementById('projects').innerHTML=P.map(p=>'<div class="card"><h3 style="margin:0 0 4px">'+p[0]+'</h3><div>'+p[1]+'</div><div class="mute" style="margin-top:6px">Skills: '+p[2]+'</div></div>').join('');
+const I=[['What is the difference between a mean and a median, and when would you use each?','The mean is the sum divided by the count. The median is the middle value. Use the median when the data is skewed or has outliers, such as incomes or tips.'],
+['Explain a p-value to a manager.','If the change really did nothing, how often would we see a result at least this big by chance? A small p-value means that would be rare, so the change probably did something. It does not tell us how big or how useful the change is.'],
+['What is overfitting and how do you detect it?','The model learns noise in the training data and fails on new data. Detect it by a large gap between training and test scores, and guard against it with a proper split, cross-validation and simpler models or regularisation.'],
+['Your model is 99% accurate on fraud. Is that good?','Not necessarily. If only 1% of cases are fraud, a model that never flags anything is 99% accurate. Look at precision, recall and the confusion matrix.'],
+['How do you handle missing data?','First find out why it is missing. Then drop, fill with a sensible value or model it, add a flag, and record the choice, because each option changes the results.'],
+['What is the difference between WHERE and HAVING?','WHERE filters rows before grouping. HAVING filters groups after aggregation.'],
+['What is the difference between INNER JOIN and LEFT JOIN?','INNER keeps only matching rows. LEFT keeps every row from the left table and fills NULL where there is no match.'],
+['What is data leakage?','Using information in training that would not be available at prediction time, which makes results look better than they will be in practice.'],
+['What is the difference between correlation and causation?','Correlation means two things move together. Causation means one produces the change in the other. A hidden third factor or chance can create correlation without causation. Randomised experiments are the strongest test.'],
+['Describe a project where your analysis changed a decision.','Use a clear structure: the question, the data, what you did, what you found, what was decided and what happened next. Use one of your portfolio projects.'],
+['How would you explain a model to a non-technical owner?','Start with the answer and the action, give an everyday analogy, say how sure you are, and leave the method details for an appendix.'],
+['How do you make your analysis reproducible?','Keep raw data unchanged, write cleaning and modelling as scripts, track changes with version control, record package versions and set random seeds.'],
+['What would you check before trusting a dataset?','Where it came from, how it was collected, missing values, duplicates, odd values, units, time period and whether it represents the people or events you care about.'],
+['What is a confidence interval?','A range of plausible values for a population number. A 95% interval comes from a method that captures the true value in about 95% of repeated studies.'],
+['How do you choose a chart?','Start from the question. Bars to compare categories, lines for time, scatter plots for two numbers, histograms for one distribution, with honest axes and clear labels.']];
+document.getElementById('iq').innerHTML=I.map((x,i)=>'<details class="card"><summary style="min-height:44px;display:flex;align-items:center;cursor:pointer"><b>'+(i+1)+'. '+DS.esc(x[0])+'</b></summary><div style="padding:6px 0">'+DS.esc(x[1])+'</div></details>').join('');
+</script></main>
+<script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

@@ -1,0 +1,64 @@
+/* base rules shared with the other UAT Lab pages */
+
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:0 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:10px;font-weight:600}
+button.pri{background:var(--blue);border-color:var(--blue);color:#fff}button:disabled{opacity:.5}
+.cof{border-left:3px solid var(--accent);padding:4px 10px;margin:8px 0;background:#b08d5714;border-radius:4px;font-size:15px}
+.tip{border-left:3px solid var(--blue);padding:4px 10px;margin:8px 0;background:#2563eb14;border-radius:4px;font-size:15px}
+.bar{height:9px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}.big{font-size:32px;font-weight:800;line-height:1.1}
+
+/* ds.css: layout for the Data science pages of UAT Lab. brand.css is loaded after this file and sets colours and type. */
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.6 system-ui,sans-serif;overflow-x:hidden}
+main{max-width:1040px;margin:0 auto;padding:18px 16px 56px}
+h1.pg,h2.pg{font-size:28px;margin:8px 0 4px}.lead{color:#4a5568;margin:0 0 16px;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{padding:14px 16px;margin:0 0 12px}.card h2,.card h3{margin:0 0 6px}
+a.c{display:block;padding:14px 16px;text-decoration:none;color:inherit;min-height:44px}
+a.c b{display:block;margin-bottom:4px}a.c small{display:block}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;margin:0 4px 4px 0}
+button,.btn,input,select,textarea{font:inherit;min-height:44px}
+input,select,textarea{font-size:16px;padding:8px 10px;max-width:100%}
+button,.btn{padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;text-decoration:none;justify-content:center}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar{height:10px;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%}
+.lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4a5568;margin:14px 0 4px}
+.plain{border-left:3px solid #b38e52;padding-left:12px}
+.cof{padding:10px 12px;border-radius:6px}
+.ex{border:1px dashed #b8c0cc;padding:10px 12px;border-radius:8px;background:#f6f7f9}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;margin:6px 0;min-height:44px}
+.opt.right{background:#11663f1a!important;border-color:#11663f!important}.opt.wrong{background:#b423181a!important;border-color:#b42318!important}
+.why{padding:8px 12px;border-radius:6px;margin:6px 0;background:#f6f7f9}
+.two{display:grid;grid-template-columns:260px 1fr;gap:16px}.two>*{min-width:0}
+.side{position:sticky;top:64px;align-self:start;max-height:calc(100vh - 80px);overflow:auto}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 10px;border-radius:8px;text-decoration:none;font-size:14px;gap:8px}
+.side a.here{background:#c9a66e33;font-weight:700}.side .done::after{content:"done";margin-left:auto;font-size:11px;color:#11663f}
+table{border-collapse:collapse;max-width:100%}th,td{border:1px solid #d5dae2;padding:6px 10px;text-align:left}
+.tw{overflow-x:auto;max-width:100%}
+.msg{padding:8px 12px;border-radius:8px;margin:8px 0}.msg.ok{background:#11663f1a}.msg.no{background:#b423181a}.msg.info{background:#c9a66e24}
+svg{max-width:100%;height:auto}
+.two.lab{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+@media(max-width:900px){.two.lab{grid-template-columns:1fr}}
+@media(max-width:760px){.two{grid-template-columns:1fr}.side{position:static;max-height:none}h1.pg,h2.pg{font-size:23px}}
+/* modules */
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;padding:0;margin:0;list-style:none}
+.mods a.c{height:100%;border-left:5px solid #b8c0cc}.mods a.c.part{border-left-color:#b38e52}.mods a.c.full{border-left-color:#11663f}
+.mods .num{font:600 12px 'Geist Mono',ui-monospace,monospace;letter-spacing:.1em;color:#7a5a1e}
+.mods .bar{margin:8px 0 4px;background:#e5e8ee}.mods .bar i{background:#b38e52}.mods .full .bar i{background:#11663f}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.steps .tag{background:#eef1f5;border:1px solid #d5dae2}
+.steps .tag.ok{background:#11663f1a;border-color:#11663f;color:#0b4a2d}
+.lsn{border:1px solid #d5dae2;border-radius:12px;margin:10px 0;background:#fff}.lsn>summary{min-height:48px;display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;font-weight:700}
+.lsn[open]>summary{border-bottom:1px solid #d5dae2}.lsn .in{padding:6px 16px 14px}
+.lsn.done>summary::after{content:"done";margin-left:auto;font-size:12px;color:#11663f;font-weight:600}
+.exr{border:1px solid #d5dae2;border-radius:12px;padding:12px 14px;margin:10px 0;background:#fff}.exr.done{border-color:#11663f}
+.dtab{max-height:230px;overflow:auto;border:1px solid #d5dae2;border-radius:8px;margin:8px 0}.dtab table{width:100%;font-size:13.5px}.dtab th{position:sticky;top:0;background:#f1f3f6}
+.crumbs2{font-size:14px;margin:0 0 8px}.crumbs2 a{color:#7a5a1e}
+.kv{display:flex;flex-wrap:wrap;gap:6px 18px;margin:6px 0;font-size:14.5px}.kv b{font-weight:700}
+@media(max-width:600px){.dtab{max-height:200px}}
+h2.sec{margin:20px 0 8px;font-size:20px}h2.pg{font-size:26px;margin:8px 0 4px}

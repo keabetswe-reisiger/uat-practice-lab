@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Data science pivot lab</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="ds.css"><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Data science</h1><span class="sp"></span><a href="ds-home.html">Modules</a><a href="ds-exam.html">Exam practice</a><a href="ds-career.html">Career</a><a href="ds-research.html">Research</a><a href="uatlab.html#ds">UAT Lab</a></header>
+<main><p class="crumbs2">Part of <a href="ds-module.html?m=2">Module 2: Spreadsheets and data basics</a>. Solving 5 tasks counts the lab as done for the module.</p>
+
+<h2 class="pg">Pivot lab</h2>
+<p class="lead">Summarise 140 coffee-shop order lines the way a spreadsheet pivot table does. Choose the rows, the columns and what to add up, then answer questions from the grid.</p>
+<div class="two lab">
+<div>
+<div class="card"><h2>Pivot settings</h2>
+<div class="row"><label for="pr">Rows</label><select id="pr"><option>drink</option><option>day</option><option>branch</option></select>
+<label for="pc">Columns</label><select id="pc"><option value="">(none)</option><option>day</option><option>branch</option><option>drink</option></select></div>
+<div class="row" style="margin-top:8px"><label for="pv">Values</label><select id="pv"><option value="qty">Cups (qty)</option><option value="revenue">Revenue (qty times price)</option><option value="rows">Order lines</option></select>
+<label for="pa">Summarise with</label><select id="pa"><option value="sum">Sum</option><option value="mean">Average</option><option value="count">Count</option></select></div></div>
+<div class="card"><h2>Pivot table</h2><div id="grid"></div></div>
+<div class="card"><h2>First rows of the data</h2><div id="raw"></div></div>
+</div>
+<div id="tasks"></div>
+</div>
+<script src="ds-mods.js"></script><script src="ds-core.js"></script><script src="ds-datasets.js"></script><script src="ds-labcore.js"></script>
+<script>
+const L=window.LAB,D=DS_DATA,$=id=>document.getElementById(id);
+const DAYS=D.DAYS;const val=(r,v)=>v==='qty'?r.qty:v==='revenue'?r.qty*r.price:1;
+const order=(k,f)=>f==='day'?DAYS.filter(d=>k.includes(d)):k.slice().sort();
+const agg=(a,m)=>!a.length?null:m==='sum'?L.sum(a):m==='mean'?L.mean(a):a.length;
+function pivot(rf,cf,v,m){const rows=D.sales;const rk=order([...new Set(rows.map(r=>r[rf]))],rf);const ck=cf?order([...new Set(rows.map(r=>r[cf]))],cf):['All'];
+ const cell=(rkv,ckv)=>agg(rows.filter(r=>(rkv==null||r[rf]===rkv)&&(!cf||ckv==null||r[cf]===ckv)).map(r=>val(r,v)),m);
+ return{rk,ck,cell,rows:rk.map(a=>({a,c:ck.map(b=>cell(a,cf?b:null)),t:cell(a,null)})),ct:ck.map(b=>cell(null,cf?b:null)),gt:cell(null,null)}}
+const cur=()=>({rf:$('pr').value,cf:$('pc').value,v:$('pv').value,m:$('pa').value});
+function draw(){const c=cur();const p=pivot(c.rf,c.cf,c.v,c.m);const f=x=>x==null?'':L.fmt(x,c.m==='mean'?2:c.v==='revenue'?0:0);
+ let h='<div class="tw"><table id="pt"><thead><tr><th>'+c.rf+'</th>'+(c.cf?p.ck.map(k=>'<th>'+k+'</th>').join('')+'<th>Total</th>':'<th>'+({sum:'Sum',mean:'Average',count:'Count'})[c.m]+' of '+c.v+'</th>')+'</tr></thead><tbody>';
+ p.rows.forEach(r=>{h+='<tr><th>'+r.a+'</th>'+(c.cf?r.c.map(x=>'<td>'+f(x)+'</td>').join('')+'<td><b>'+f(r.t)+'</b></td>':'<td>'+f(r.t)+'</td>')+'</tr>'});
+ h+='<tr><th>Grand total</th>'+(c.cf?p.ct.map(x=>'<td><b>'+f(x)+'</b></td>').join('')+'<td id="gt"><b>'+f(p.gt)+'</b></td>':'<td id="gt"><b>'+f(p.gt)+'</b></td>')+'</tr></tbody></table></div>';
+ $('grid').innerHTML=h;$('raw').innerHTML=L.table(D.sales,['id','day','branch','drink','qty','price'],{limit:8});if(T)T.refresh()}
+['pr','pc','pv','pa'].forEach(id=>$(id).addEventListener('change',draw));
+const sumBy=(f,v,filter)=>{const g={};D.sales.filter(filter||(()=>true)).forEach(r=>g[r[f]]=(g[r[f]]||0)+val(r,v));return g};
+const topKey=g=>Object.keys(g).sort((a,b)=>g[b]-g[a])[0];
+const tasks=[
+ {id:'t1',title:'Cups by drink and day',help:'Rows drink, columns day, values cups, summarised with Sum.',hint:'Set Rows to drink, Columns to day, Values to Cups and Summarise with to Sum.',auto:()=>{const c=cur();return c.rf==='drink'&&c.cf==='day'&&c.v==='qty'&&c.m==='sum'}},
+ {id:'t2',title:'Total cups sold',help:'What is the grand total of cups across all 140 order lines?',hint:'Use the pivot from task 1 and read the Grand total cell.',ask:{label:'Cups',expected:()=>D.sales.reduce((a,r)=>a+r.qty,0)}},
+ {id:'t3',title:'Which drink sold the most on Saturday?',help:'Look down the Sat column of your pivot and type the drink name.',hint:'Compare the numbers in the Sat column.',ask:{label:'Drink',expected:()=>topKey(sumBy('drink','qty',r=>r.day==='Sat')),text:true}},
+ {id:'t4',title:'Revenue from flat whites',help:'Revenue is cups times price. Rows drink, no columns, values Revenue, Sum. Type the rand amount for flat white.',hint:'Set Columns to (none) and Values to Revenue, then read the flat white row.',ask:{label:'Rand',expected:()=>sumBy('drink','revenue')['flat white']}},
+ {id:'t5',title:'Revenue by branch',help:'Rows branch, no columns, values Revenue, Sum.',hint:'Change Rows to branch and Columns to (none).',auto:()=>{const c=cur();return c.rf==='branch'&&c.cf===''&&c.v==='revenue'&&c.m==='sum'}},
+ {id:'t6',title:'Which branch earns the most?',help:'Use the pivot from task 5 and type the branch name.',hint:'Read the largest number in the revenue column.',ask:{label:'Branch',expected:()=>topKey(sumBy('branch','revenue')),text:true}},
+ {id:'t7',title:'Average cups per order line on Fridays',help:'Rows day, no columns, values Cups, Average. Type the Friday value with two decimals.',hint:'Choose Average in "Summarise with" and read the Fri row.',ask:{label:'Average',expected:()=>{const a=D.sales.filter(r=>r.day==='Fri').map(r=>r.qty);return L.mean(a)},tol:0.011}},
+ {id:'t8',title:'Count the order lines',help:'Rows day, no columns, values Order lines, Count. How many order lines are there in all?',hint:'The grand total of the count is the number of rows in the data.',ask:{label:'Lines',expected:()=>D.sales.length}},
+ {id:'t9',title:'Check the grand total',help:'Revenue in rand for the whole business. Rows branch, values Revenue, Sum, then read the Grand total.',hint:'The grand total must equal the sum of qty times price over every row.',ask:{label:'Rand',expected:()=>D.sales.reduce((a,r)=>a+r.qty*r.price,0)}}
+];
+let T=null;T=L.tasks($('tasks'),'pivot',tasks);draw();
+</script></main>
+<script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

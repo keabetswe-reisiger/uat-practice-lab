@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Data science cleaning lab</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="ds.css"><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Data science</h1><span class="sp"></span><a href="ds-home.html">Modules</a><a href="ds-exam.html">Exam practice</a><a href="ds-career.html">Career</a><a href="ds-research.html">Research</a><a href="uatlab.html#ds">UAT Lab</a></header>
+<main><p class="crumbs2">Part of <a href="ds-module.html?m=7">Module 7: Cleaning and exploring data</a>. Solving 5 tasks counts the lab as done for the module.</p>
+
+<h2 class="pg">Data cleaning lab</h2>
+<p class="lead">A messy order table from a pretend coffee business. Fix the problems one at a time with the buttons, watch the summary change, and answer the questions. Your original table is never lost: press Start again at any time.</p>
+<div class="two lab">
+<div>
+<div class="card"><h2>Fix the data</h2><div class="row" id="ops"></div><div class="mute" id="log" style="margin-top:8px"></div></div>
+<div class="card"><h2>What the table looks like now</h2><div id="sum"></div></div>
+<div class="card"><h2>Rows</h2><div id="tbl"></div></div>
+</div>
+<div id="tasks"></div>
+</div>
+<script src="ds-mods.js"></script><script src="ds-core.js"></script><script src="ds-datasets.js"></script><script src="ds-labcore.js"></script>
+<script>
+const L=window.LAB,raw=DS_DATA.messy;
+const clone=r=>r.map(x=>Object.assign({},x));
+let rows=clone(raw),log=[];
+const norm=s=>String(s).trim().toLowerCase();
+const ops={
+ dedupe:{label:'Remove duplicate orders',fn:r=>{const seen=new Set();return r.filter(x=>{if(seen.has(x.order_id))return false;seen.add(x.order_id);return true})},say:'Removed rows that repeat an order id (kept the first).'},
+ names:{label:'Standardise drink names',fn:r=>r.map(x=>Object.assign({},x,{drink:norm(x.drink)})),say:'Trimmed spaces and made every drink name lower case.'},
+ big:{label:'Fix prices above R500',fn:r=>r.map(x=>Object.assign({},x,{price:x.price!=null&&x.price>500?x.price/100:x.price})),say:'Divided any price above R500 by 100 (a missing decimal point).'},
+ fill:{label:'Fill missing prices',fn:r=>{const by={};r.forEach(x=>{if(x.price!=null&&x.price<=500){(by[norm(x.drink)]=by[norm(x.drink)]||[]).push(x.price)}});return r.map(x=>x.price==null?Object.assign({},x,{price:L.median(by[norm(x.drink)]||[NaN])}):x)},say:'Filled each missing price with the median known price of the same drink.'},
+ refund:{label:'Mark negative quantities as refunds',fn:r=>r.map(x=>x.qty<0?Object.assign({},x,{qty:-x.qty,refund:'yes'}):Object.assign({},x,{refund:x.refund||'no'})),say:'Turned negative quantities into positive ones and flagged them as refunds.'}
+};
+const ref=(()=>{let r=clone(raw);['dedupe','names','big','fill','refund'].forEach(k=>r=ops[k].fn(r));return r})();
+const stats=r=>{const pr=r.map(x=>x.price).filter(v=>v!=null);const ids=r.map(x=>x.order_id);return{rows:r.length,missing:r.filter(x=>x.price==null).length,names:new Set(r.map(x=>x.drink)).size,neg:r.filter(x=>x.qty<0).length,dups:ids.length-new Set(ids).size,max:pr.length?Math.max(...pr):NaN,mean:L.mean(pr),refunds:r.filter(x=>x.refund==='yes').length}};
+function draw(){
+ document.getElementById('ops').innerHTML=Object.keys(ops).map(k=>'<button data-op="'+k+'">'+ops[k].label+'</button>').join('')+'<button data-op="reset" class="no">Start again</button>';
+ document.getElementById('log').textContent=log.length?'Done so far: '+log.join(' ; '):'Nothing changed yet.';
+ const s=stats(rows);
+ document.getElementById('sum').innerHTML='<div class="tw"><table><tbody><tr><th>Rows</th><td id="s_rows">'+s.rows+'</td></tr><tr><th>Missing prices</th><td id="s_missing">'+s.missing+'</td></tr><tr><th>Duplicate order ids</th><td id="s_dups">'+s.dups+'</td></tr><tr><th>Different drink spellings</th><td id="s_names">'+s.names+'</td></tr><tr><th>Negative quantities</th><td id="s_neg">'+s.neg+'</td></tr><tr><th>Highest price (R)</th><td id="s_max">'+L.fmt(s.max)+'</td></tr><tr><th>Mean price (R)</th><td id="s_mean">'+L.fmt(s.mean)+'</td></tr><tr><th>Rows flagged as refunds</th><td id="s_refunds">'+s.refunds+'</td></tr></tbody></table></div>';
+ const cols=['order_id','drink','qty','price','branch'].concat(rows.some(x=>x.refund)?['refund']:[]);
+ document.getElementById('tbl').innerHTML=L.table(rows,cols,{limit:40});
+ if(T)T.refresh();
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-op]');if(!b)return;const k=b.dataset.op;if(k==='reset'){rows=clone(raw);log=[]}else{rows=ops[k].fn(rows);log.push(ops[k].say)}draw()});
+const rs=stats(raw);
+const tasks=[
+ {id:'t1',title:'Count the missing prices',help:'Look at the summary for the original table.',hint:'The summary row "Missing prices" shows the answer before you change anything.',ask:{label:'Missing prices',expected:()=>rs.missing}},
+ {id:'t2',title:'Count the different spellings of drink names',help:'The same drink may be typed in several ways.',hint:'Read the row "Different drink spellings" in the summary before you standardise.',ask:{label:'Spellings',expected:()=>rs.names}},
+ {id:'t3',title:'Remove the duplicate orders',help:'Use the button, then check that duplicate order ids is 0.',hint:'Press "Remove duplicate orders". Rows should fall by the number of duplicates.',auto:()=>{const s=stats(rows);return s.dups===0&&s.rows===30}},
+ {id:'t4',title:'Standardise the drink names',help:'Each drink should have just one spelling.',hint:'Press "Standardise drink names". Spellings should drop to the number of real drinks.',auto:()=>stats(rows).names===new Set(ref.map(x=>x.drink)).size},
+ {id:'t5',title:'Fix the price with a missing decimal point',help:'One coffee costs far too much.',hint:'A price of 3800 was probably typed for 38.00. Use "Fix prices above R500".',auto:()=>{const s=stats(rows);return s.max<=100&&rows.length>0}},
+ {id:'t6',title:'Fill the missing prices',help:'No price should be left empty.',hint:'Fix the big price first, then fill. The median of known prices for the same drink is a sensible fill.',auto:()=>stats(rows).missing===0&&rows.length>0},
+ {id:'t7',title:'Deal with the negative quantities',help:'A sale cannot have a quantity below 1. Here they are refunds.',hint:'Use "Mark negative quantities as refunds" so they are kept but clearly flagged.',auto:()=>stats(rows).neg===0&&stats(rows).refunds>0},
+ {id:'t8',title:'Read the mean price of the cleaned table',help:'Do tasks 3 to 7 first. Then read the mean price from the summary and type it with two decimals.',hint:'It is the "Mean price (R)" row after all five fixes. Round to two decimals.',ask:{label:'Mean price (R)',expected:()=>stats(ref).mean,tol:0.011}},
+ {id:'t9',title:'Count the refunds',help:'How many order lines are refunds in the cleaned table?',hint:'It is the row "Rows flagged as refunds" after you mark the negatives.',ask:{label:'Refunds',expected:()=>stats(ref).refunds}}
+];
+let T=null;
+T=L.tasks(document.getElementById('tasks'),'clean',tasks);
+draw();
+</script></main>
+<script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

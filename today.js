@@ -69,10 +69,11 @@
  /* Activity log: remembers WHEN progress changed, so charts over time are real.
     Each time this file runs (home page, UAT Lab) it compares today's numbers with the last snapshot and records the difference
     with today's date. Progress made between two visits is dated to the next visit. The first run only takes the starting snapshot. */
+ const DSV=rd('ds-v1');const DSN={};Object.entries(DSV.sum||{}).forEach(([k,v])=>{if(v&&typeof v.have==='number')DSN[k]={have:v.have,need:v.need}});
  const LOGK='uatlog-v1';let LOG;try{LOG=JSON.parse(localStorage.getItem(LOGK))||{}}catch{LOG={}}
  LOG.snap=LOG.snap||{};LOG.ev=LOG.ev||[];
  (function(){const now=Date.now();if(!LOG.since)LOG.since=now;const first=!Object.keys(LOG.snap).length;
-  Object.entries(N).forEach(([k,v])=>{const prev=LOG.snap[k];if(!first&&prev!=null&&v.have!==prev)LOG.ev.push({t:now,k,d:v.have-prev});LOG.snap[k]=v.have});
+  Object.entries(Object.assign({},N,DSN)).forEach(([k,v])=>{const prev=LOG.snap[k];if(!first&&prev!=null&&v.have!==prev)LOG.ev.push({t:now,k,d:v.have-prev});LOG.snap[k]=v.have});
   if(LOG.ev.length>3000)LOG.ev=LOG.ev.slice(-3000);
   try{localStorage.setItem(LOGK,JSON.stringify(LOG))}catch{}})();
  window.TODAY={N,cards,nextTicket,render,mapHTML,STAGES,log:()=>LOG};

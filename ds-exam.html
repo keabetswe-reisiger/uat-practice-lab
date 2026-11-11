@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Data science exam practice</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="ds.css"><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Data science</h1><span class="sp"></span><a href="ds-home.html">Modules</a><a href="ds-exam.html">Exam practice</a><a href="ds-career.html">Career</a><a href="ds-research.html">Research</a><a href="uatlab.html#ds">UAT Lab</a></header>
+<main>
+<h2 class="sec">Exam practice</h2>
+<div class="msg info"><b>These are original practice questions</b> written for this app to match the topics data science exams cover. They are not taken from any real exam, so they cannot show you what a particular certificate asks. Also use the official sample material for the exam you choose (see the Research page).</div>
+<div class="row" id="tabs" style="margin:10px 0"></div>
+<div id="view"></div>
+</main>
+<script src="ds-q-1.js"></script><script src="ds-q-2.js"></script><script src="ds-q-3.js"></script><script src="ds-q-new.js"></script><script src="ds-mods.js"></script><script src="ds-core.js"></script><script src="ds-datasets.js"></script><script src="ds-data.js"></script><script>
+const Q=DSQ.bank().map(q=>Object.assign({},q,{mod:DSQ.moduleOf(q)}));const $=id=>document.getElementById(id),esc=DS.esc;
+const title=n=>{const m=DSMODS.find(x=>x.id===n);return 'Module '+n+': '+(m?m.title:'')};
+let tab='practice';let run=null;let timer=null;
+const hist=()=>DS.state().mock||[];
+function tabs(){$('tabs').innerHTML=[['practice','Practise by module'],['mock','40-question mock'],['history','Score history']].map(t=>'<button data-tab="'+t[0]+'" class="'+(tab===t[0]?'on':'')+'" aria-pressed="'+(tab===t[0])+'">'+t[1]+'</button>').join('')}
+function shuf(q,seed){const r=DS.rng(seed);return r.shuf([{t:q.c,ok:true}].concat(q.w.map(t=>({t,ok:false}))))}
+function start(kind,mod,n){const r=DS.rng(Date.now()%1e9+7);let pool=Q.filter(q=>mod==='All'||q.mod===+mod);let pick;
+ if(kind==='mock'){const by={};r.shuf(pool).forEach(q=>(by[q.mod]=by[q.mod]||[]).push(q));pick=[];const ms=r.shuf(Object.keys(by));let i=0;while(pick.length<n&&ms.some(t=>by[t].length)){const t=ms[i%ms.length];if(by[t].length)pick.push(by[t].shift());i++}pick=r.shuf(pick)}
+ else pick=r.shuf(pool).slice(0,n);
+ run={kind,items:pick.map((q,i)=>({q,o:shuf(q,Date.now()%1e9+i*13),a:null})),i:0,done:false,t0:Date.now(),limit:kind==='mock'?60*60:0};
+ clearInterval(timer);if(run.limit)timer=setInterval(()=>{const left=run.limit-Math.floor((Date.now()-run.t0)/1000);const el=$('clock');if(el)el.textContent=fmt(Math.max(0,left));if(left<=0&&!run.done){finish()}},1000);draw()}
+const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+function tally(){const by={};run.items.forEach(x=>{const k=title(x.q.mod);const b=by[k]=by[k]||{ok:0,n:0};b.n++;if(x.a!=null&&x.o[x.a].ok)b.ok++});return by}
+function finish(){if(run.done)return;run.done=true;clearInterval(timer);const ok=run.items.filter(x=>x.a!=null&&x.o[x.a].ok).length;const by=tally();
+ if(run.kind==='mock'){const s=DS.state();s.mock.push({ts:Date.now(),ok,total:run.items.length,pct:Math.round(100*ok/run.items.length),by});DS.save(s)}draw()}
+function draw(){tabs();const v=$('view');
+ if(tab==='history'){const h=hist();v.innerHTML=h.length?'<div class="card"><div class="tw"><table><thead><tr><th>Date</th><th>Score</th><th>Percent</th><th>Weakest module</th></tr></thead><tbody>'+h.slice().reverse().map(x=>{const w=Object.entries(x.by||{}).sort((a,b)=>a[1].ok/a[1].n-b[1].ok/b[1].n)[0];return '<tr><td>'+new Date(x.ts).toLocaleString()+'</td><td>'+x.ok+' / '+x.total+'</td><td>'+x.pct+'%</td><td>'+(w?esc(w[0]):'')+'</td></tr>'}).join('')+'</tbody></table></div></div>':'<div class="card">No mock exams yet. Take the 40-question mock to start your history.</div>';return}
+ if(!run||run.kind!==(tab==='mock'?'mock':'practice')){
+  if(tab==='mock')v.innerHTML='<div class="card"><h3>40-question mock exam</h3><p>40 questions drawn across every module, 60 minutes. The practice target is 80%. This is our own target, not an official standard.</p><button class="pri" data-start="mock">Start the mock</button></div>';
+  else v.innerHTML='<div class="card"><h3>Practise one module</h3><div class="row"><label for="topic">Module</label><select id="topic"><option value="All">All modules</option>'+DSMODS.map(m=>'<option value="'+m.id+'">'+esc(title(m.id))+'</option>').join('')+'</select><label for="count">Questions</label><select id="count"><option>10</option><option>20</option><option>30</option></select><button class="pri" data-start="practice">Start</button></div><div class="mute" style="margin-top:8px">'+Q.length+' questions in the bank across '+DSMODS.length+' modules. You see the explanation straight after each answer.</div></div>';return}
+ if(run.done){const ok=run.items.filter(x=>x.a!=null&&x.o[x.a].ok).length,n=run.items.length;const by=tally();
+  v.innerHTML='<div class="card"><h3>Result: '+ok+' out of '+n+' ('+Math.round(100*ok/n)+'%)</h3>'+(run.kind==='mock'?'<div class="msg '+(ok/n>=0.8?'ok':'info')+'">'+(ok/n>=0.8?'You reached the 80% practice target.':'Below the 80% practice target. Review the modules below.')+'</div>':'')+'<div class="tw"><table><thead><tr><th>Module</th><th>Right</th><th>Percent</th></tr></thead><tbody>'+Object.entries(by).map(([t,b])=>'<tr><td>'+esc(t)+'</td><td>'+b.ok+' / '+b.n+'</td><td>'+Math.round(100*b.ok/b.n)+'%</td></tr>').join('')+'</tbody></table></div><div class="row" style="margin-top:10px"><button data-act="again">Start again</button><button data-act="review">Review my answers</button></div></div><div id="rev"></div>';return}
+ const it=run.items[run.i];const q=it.q;
+ v.innerHTML='<div class="card"><div class="row" style="justify-content:space-between"><span class="tag">'+esc(title(q.mod))+'</span><span class="tag">Question '+(run.i+1)+' of '+run.items.length+'</span>'+(run.limit?'<span class="tag">Time left <span id="clock">'+fmt(Math.max(0,run.limit-Math.floor((Date.now()-run.t0)/1000)))+'</span></span>':'')+'</div><p style="font-size:17px;margin:10px 0"><b>'+esc(q.q)+'</b></p>'+
+  it.o.map((x,oi)=>'<button class="opt '+(run.kind==='practice'&&it.a!=null?(x.ok?'right':(it.a===oi?'wrong':'')):(it.a===oi?'on':''))+'" data-ans="'+oi+'" '+(run.kind==='practice'&&it.a!=null?'disabled':'')+'>'+esc(x.t)+'</button>').join('')+
+  (run.kind==='practice'&&it.a!=null?'<div class="why">'+(it.o[it.a].ok?'Correct. ':'Not quite. ')+esc(q.why)+'</div>':'')+
+  '<div class="row" style="justify-content:space-between;margin-top:10px"><button data-act="prev" '+(run.i===0?'disabled':'')+'>Previous</button>'+(run.i===run.items.length-1?'<button class="pri" data-act="finish">Finish and see the result</button>':'<button data-act="next">Next</button>')+'</div></div>'}
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-tab]');if(t){tab=t.dataset.tab;draw();return}
+ const s=e.target.closest('[data-start]');if(s){if(s.dataset.start==='mock')start('mock','All',40);else start('practice',$('topic').value,parseInt($('count').value));return}
+ const a=e.target.closest('[data-ans]');if(a&&run){run.items[run.i].a=parseInt(a.dataset.ans);draw();return}
+ const c=e.target.closest('[data-act]');if(!c)return;const k=c.dataset.act;
+ if(k==='next')run.i++;else if(k==='prev')run.i--;else if(k==='finish'){const un=run.items.filter(x=>x.a==null).length;if(un&&!confirm(un+' question(s) are unanswered. Finish anyway?'))return;finish();return}
+ else if(k==='again'){run=null;draw();return}
+ else if(k==='review'){$('rev').innerHTML=run.items.map((x,i)=>'<div class="card"><b>'+(i+1)+'. '+esc(x.q.q)+'</b><div>Your answer: '+(x.a==null?'<i>none</i>':esc(x.o[x.a].t))+(x.a!=null&&x.o[x.a].ok?' (correct)':'')+'</div>'+(x.a!=null&&x.o[x.a].ok?'':'<div>Correct answer: '+esc(x.q.c)+'</div>')+'<div class="why">'+esc(x.q.why)+'</div></div>').join('');return}
+ draw()});
+tabs();draw();
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

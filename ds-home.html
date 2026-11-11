@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Data science modules</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="ds.css"><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Data science</h1><span class="sp"></span><a href="ds-home.html">Modules</a><a href="ds-exam.html">Exam practice</a><a href="ds-career.html">Career</a><a href="ds-research.html">Research</a><a href="uatlab.html#ds">UAT Lab</a></header>
+<main>
+<h2 class="sec">Start here</h2>
+<div class="card"><div class="lbl">In plain words</div><div class="plain">This stage teaches data science in twelve modules, in a sensible order. Each module has short lessons, practice on a pretend coffee business, and a ten-question checkpoint that you pass at 80%. Work through them in order, or jump to the one you need. The SQL module uses the SQL lessons that are already in this app.</div>
+<div class="lbl">Coffee analogy</div><div class="cof">Think of it as training a new barista in stages: first how the shop works, then the till, then the machine, then ordering and the numbers, and finally running a shift alone. Each stage ends with a short test before the next one.</div>
+<div class="lbl">Worked example</div><div class="ex">You finish module 1 (4 lessons, 2 exercises, 1 checkpoint = 7 steps). After 2 lessons and 1 exercise you have 3 of 7 steps, so the bar shows 43%. Passing the checkpoint with 8 of 10 is the last step.</div>
+<div class="lbl">Words to know</div><dl style="margin:0"><dt style="font-weight:700">module</dt><dd style="margin:0 0 6px">A group of 3 to 5 lessons on one topic, with practice and a checkpoint.</dd><dt style="font-weight:700">exercise</dt><dd style="margin:0 0 6px">A small question on the practice data, checked by the page.</dd><dt style="font-weight:700">checkpoint</dt><dd style="margin:0 0 6px">Ten questions at the end of a module. 8 correct passes it.</dd></dl>
+<div class="lbl">Try it</div><ol style="margin:0;padding-left:20px"><li>Open module 1 below.</li><li>Read the Start here box, then the first lesson.</li><li>Answer the lesson quiz and see the bar move.</li></ol></div>
+<h2 class="sec">Your progress</h2>
+<div class="card" id="prog"></div>
+<h2 class="sec">The twelve modules</h2>
+<ul class="mods" id="mods"></ul>
+<h2 class="sec">After the modules</h2>
+<div class="grid">
+<a class="c card" href="ds-exam.html"><b>Exam practice</b><small>Over 200 original questions grouped by module, a 40-question mock with a 60 minute clock, and your score history.</small></a>
+<a class="c card" href="ds-career.html"><b>Career and income</b><small>Roles, how to get real experience, portfolio projects, interview questions and an honest view of passive income.</small></a>
+<a class="c card" href="ds-research.html"><b>Research notes</b><small>What was looked up, the sources, and how far each point can be trusted. Read the caveats.</small></a></div>
+<h2 class="sec">How far to trust this</h2>
+<div class="msg info">The lessons and questions are original practice material written for this app. They have not been reviewed by an outside expert, and the questions are not taken from any real exam. Salary, certificate and income figures in the career and research pages are marked as verified, indicative or unverified. Use the official sample material for any certificate you choose.</div>
+</main>
+<script src="ds-lessons-1.js"></script><script src="ds-lessons-2.js"></script><script src="ds-lessons-3.js"></script><script src="ds-lessons-new.js"></script><script src="ds-mods.js"></script><script src="ds-core.js"></script><script src="ds-datasets.js"></script><script src="ds-data.js"></script><script>
+(function(){const $=DS.$,esc=DS.esc;const s=DS.state();
+ const ps=DSMODS.map(m=>({m,p:DS.moduleProgress(m,s),h:Math.round(m.lessons.map(DSL.byId).reduce((a,l)=>a+l.h,0)*2)/2}));
+ const have=ps.reduce((a,x)=>a+x.p.have,0),need=ps.reduce((a,x)=>a+x.p.need,0),done=ps.filter(x=>x.p.have>=x.p.need).length,hrs=ps.reduce((a,x)=>a+x.h,0);
+ const nx=ps.find(x=>x.p.have<x.p.need);
+ $('prog').innerHTML=`<div class="kv"><span><b>${done} of ${ps.length}</b> modules complete</span><span><b>${have} of ${need}</b> steps</span><span>About <b>${hrs} hours</b> of lessons in total</span></div><div class="bar" role="img" aria-label="Overall progress ${have} of ${need} steps"><i style="width:${Math.round(100*have/need)}%"></i></div><p class="mute" style="margin:8px 0 0">${nx?`Next up: <a href="${nx.m.href}">module ${nx.m.id}, ${esc(nx.m.title)}</a>.`:'Every module is complete. Take a mock exam and build a portfolio project.'}</p>`;
+ $('mods').innerHTML=ps.map(({m,p,h})=>{const cls=p.have>=p.need?'full':p.have>0?'part':'';return `<li><a class="c card ${cls}" href="${m.href}"><span class="num">MODULE ${m.id}</span><b>${esc(m.title)}</b><small>${esc(m.desc)}</small><div class="bar" aria-hidden="true"><i style="width:${Math.round(100*p.have/p.need)}%"></i></div><small>${p.have} of ${p.need} steps${p.have>=p.need?', complete':''} · about ${h} hours${m.prereq.length?' · after '+m.prereq.join(', '):''}</small></a></li>`}).join('')})();
+</script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

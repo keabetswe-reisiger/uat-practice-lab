@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Data science statistics lab</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="ds.css"><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Data science</h1><span class="sp"></span><a href="ds-home.html">Modules</a><a href="ds-exam.html">Exam practice</a><a href="ds-career.html">Career</a><a href="ds-research.html">Research</a><a href="uatlab.html#ds">UAT Lab</a></header>
+<main><p class="crumbs2">Part of <a href="ds-module.html?m=4">Module 4: Statistics foundations</a>. Solving 5 tasks counts the lab as done for the module.</p>
+
+<h2 class="pg">Statistics lab</h2>
+<p class="lead">A calculator that shows its workings, and tasks that check your own answers. Work each task out by hand first, then use the calculator to check yourself.</p>
+<div class="two lab">
+<div>
+<div class="card"><h2>Calculator</h2>
+<div class="row"><label for="set">Practice data</label><select id="set"></select></div>
+<div class="mute" id="note" style="margin:6px 0"></div>
+<label for="xs" class="lbl">Your own numbers for X (comma separated)</label><input id="xs" type="text" style="width:100%">
+<label for="ys" class="lbl">Y numbers, optional, for correlation and regression</label><input id="ys" type="text" style="width:100%"></div>
+<div class="card"><h2>Results</h2><div id="out"></div></div>
+</div>
+<div id="tasks"></div>
+</div>
+<script src="ds-mods.js"></script><script src="ds-core.js"></script><script src="ds-datasets.js"></script><script src="ds-labcore.js"></script>
+<script>
+const L=window.LAB,D=DS_DATA,$=id=>document.getElementById(id);
+const extra={sales_qty:{name:'Cups per order line (140 sales rows)',x:D.sales.map(r=>r.qty),note:'Real values from the sales dataset.'},temp_iced:{name:'Temperature and iced cups (45 days)',x:D.daily.map(r=>r.temp_c),y:D.daily.map(r=>r.iced_cups),note:'Does heat sell iced coffee? Look at r.'}};
+const sets=Object.assign({},D.sets,extra);
+$('set').innerHTML=Object.keys(sets).map(k=>'<option value="'+k+'">'+sets[k].name+'</option>').join('');
+const parse=s=>s.split(/[,;\s]+/).map(Number).filter(Number.isFinite);
+function load(){const s=sets[$('set').value];$('xs').value=s.x.join(', ');$('ys').value=(s.y||[]).join(', ');$('note').textContent=s.note;calc()}
+function calc(){const x=parse($('xs').value),y=parse($('ys').value);const f=L.fmt;
+ if(x.length<2){$('out').innerHTML='<div class="msg info">Enter at least two numbers for X.</div>';return}
+ const q=L.quart(x),fe=L.fences(x),o=L.outliers(x),m=L.mean(x);
+ let h='<div class="tw"><table><tbody>'+
+ '<tr><th>Count</th><td id="r_n">'+x.length+'</td></tr><tr><th>Mean</th><td id="r_mean">'+f(m)+'</td></tr><tr><th>Median</th><td id="r_median">'+f(L.median(x))+'</td></tr><tr><th>Mode</th><td>'+L.mode(x).join(', ')+'</td></tr>'+
+ '<tr><th>Range</th><td>'+f(L.range(x))+'</td></tr><tr><th>Sum of squared distances</th><td>'+f(L.ss(x))+'</td></tr><tr><th>Population variance, standard deviation</th><td id="r_sdp">'+f(L.varP(x))+', '+f(L.sdP(x))+'</td></tr><tr><th>Sample variance, standard deviation</th><td id="r_sds">'+f(L.varS(x))+', '+f(L.sdS(x))+'</td></tr>'+
+ '<tr><th>Q1, median, Q3</th><td>'+f(q.q1)+', '+f(q.q2)+', '+f(q.q3)+'</td></tr><tr><th>IQR</th><td id="r_iqr">'+f(fe.iqr)+'</td></tr><tr><th>Outlier fences</th><td>'+f(fe.lo)+' to '+f(fe.hi)+'</td></tr><tr><th>Outliers</th><td id="r_out">'+(o.length?o.join(', '):'none')+'</td></tr>';
+ if(y.length===x.length&&x.length>2){const r=L.reg(x,y);h+='<tr><th>Correlation r</th><td id="r_r">'+f(L.corr(x,y),3)+'</td></tr><tr><th>Slope, intercept</th><td id="r_line">'+f(r.slope,3)+', '+f(r.intercept,3)+'</td></tr><tr><th>R squared</th><td id="r_r2">'+f(r.r2,3)+'</td></tr>'}
+ $('out').innerHTML=h+'</tbody></table></div>'}
+$('set').addEventListener('change',load);$('xs').addEventListener('input',calc);$('ys').addEventListener('input',calc);
+const S=D.sets;
+const tasks=[
+ {id:'t1',title:'The mean of the tips',help:'Daily tips are 40, 45, 50, 55 and 210. Add them up and divide by how many there are.',hint:'The sum is 400 and there are 5 values.',ask:{label:'Mean',expected:()=>L.mean(S.tips.x)}},
+ {id:'t2',title:'The median of the tips',help:'Same five numbers. Which value is in the middle once sorted?',hint:'The sorted list is 40, 45, 50, 55, 210. The middle is the third value.',ask:{label:'Median',expected:()=>L.median(S.tips.x)}},
+ {id:'t3',title:'Population standard deviation',help:'Data 2, 4, 4, 4, 5, 5, 7, 9. The mean is 5. Find each distance from 5, square it, add, divide by 8, then take the square root.',hint:'The squared distances are 9, 1, 1, 1, 0, 0, 4, 16 and they add up to 32.',ask:{label:'Standard deviation',expected:()=>L.sdP(S.spread.x),tol:0.005}},
+ {id:'t4',title:'Sample standard deviation',help:'Same data, but divide the sum of squares by n minus 1, which is 7, before taking the square root. Two decimals.',hint:'32 divided by 7 is 4.571. The square root is about 2.14.',ask:{label:'Sample SD',expected:()=>L.sdS(S.spread.x),tol:0.011}},
+ {id:'t5',title:'Interquartile range',help:'Data 12, 14, 15, 16, 18, 19, 21, 22, 24, 60. Find Q1 and Q3 using the medians of the lower and upper five values.',hint:'Q1 is 15 and Q3 is 22.',ask:{label:'IQR',expected:()=>L.fences(S.quart.x).iqr}},
+ {id:'t6',title:'Count the outliers',help:'Same data. How many values lie outside the fences Q1 minus 1.5 IQR and Q3 plus 1.5 IQR?',hint:'The fences are 4.5 and 32.5. Only one value is outside them.',ask:{label:'Outliers',expected:()=>L.outliers(S.quart.x).length}},
+ {id:'t7',title:'Slope of the best-fit line',help:'Hours open x = 1, 2, 3, 4 and cups y = 3, 5, 6, 10. Slope is the sum of products of distances divided by the sum of squared x distances.',hint:'The sum of products is 11 and the sum of squared x distances is 5.',ask:{label:'Slope',expected:()=>L.reg(S.reg.x,S.reg.y).slope,tol:0.011}},
+ {id:'t8',title:'R squared of that line',help:'The line explains what share of the variation in cups? Two decimals.',hint:'1 minus (sum of squared errors 1.8) divided by (total variation 26).',ask:{label:'R squared',expected:()=>L.reg(S.reg.x,S.reg.y).r2,tol:0.011}},
+ {id:'t9',title:'Correlation coefficient',help:'x = 1, 2, 3, 4, 5 and y = 2, 4, 5, 4, 5. Two decimals.',hint:'r equals 6 divided by the square root of (10 times 6).',ask:{label:'r',expected:()=>L.corr(S.cor.x,S.cor.y),tol:0.011}},
+ {id:'t10',title:'A z-score',help:'Daily cups have mean 50 and standard deviation 8. A day sold 66 cups. How many standard deviations above the mean is it?',hint:'(66 minus 50) divided by 8.',ask:{label:'z',expected:()=>(66-50)/8}},
+ {id:'t11',title:'A standard error',help:'Standard deviation 20 and sample size 100. What is the standard error of the mean?',hint:'Divide 20 by the square root of 100.',ask:{label:'Standard error',expected:()=>20/Math.sqrt(100)}},
+ {id:'t12',title:'The top of a 95% interval',help:'Mean 54 and standard error 2. Upper end of the 95% interval, using 1.96. Two decimals.',hint:'54 plus 1.96 times 2.',ask:{label:'Upper end',expected:()=>54+1.96*2,tol:0.011}},
+ {id:'t13',title:'Does heat sell iced coffee?',help:'Choose "Temperature and iced cups" in the calculator and read r. Is it above 0.9? Type yes or no.',hint:'The calculator shows r to three decimals under Results.',ask:{label:'r above 0.9?',expected:()=>L.corr(extra.temp_iced.x,extra.temp_iced.y)>0.9?'yes':'no',text:true}}
+];
+L.tasks($('tasks'),'stats',tasks);load();
+</script></main>
+<script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>
