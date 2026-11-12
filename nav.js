@@ -1,5 +1,3 @@
-/* Fonts load after the page has finished, so a slow font server can never hold the page up (the system font shows until then). */
-(function(){var u='https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap';function add(){if(document.getElementById('uat-fonts'))return;var l=document.createElement('link');l.id='uat-fonts';l.rel='stylesheet';l.href=u;document.head.appendChild(l)}if(document.readyState==='complete')setTimeout(add,0);else addEventListener('load',function(){setTimeout(add,0)})})();
 /* Top menu (vanilla version of a shadcn-style NavigationMenu): dropdowns with a title + short description per item,
    a two-column grid, and an icon list. Opens on hover or click, closes on Escape / click outside. */
 (()=>{
