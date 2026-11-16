@@ -43,6 +43,70 @@
   return `<div class="lk-dr">${h}</div>`}
  function openDrawer(){closeDrawer();const o=document.createElement('div');o.className='lk-ov';o.id='lk-ov';o.innerHTML=drawerHTML();document.body.appendChild(o)}
  function closeDrawer(){const o=document.getElementById('lk-ov');if(o)o.remove()}
+
+ /* ---------- check the tester's own "Actual result" text against what the app really does ---------- */
+ const OBS={
+  'coffee|B3':['Quantity drops to 0 and then below 0 (it should stop at 1).',/(\b0\b|zero|negative|-\s?1|below|minus|went down|disappear)/i],
+  'coffee|B2':['The lowercase code welcome10 is rejected, so no 10% discount is applied.',/(no discount|not applied|invalid|reject|error|refus|didn.?t|did not|doesn.?t|not accept|not work|failed|nothing)/i],
+  'coffee|B4':['At exactly R100 the delivery fee is still charged (it should be R0.00 and the total R100.00).',/(charged|fee|not free|extra|more than|total.*(above|over|more))/i,/(free|r0\.00).*(correct|as expected)/i],
+  'coffee|B1':['The 9-digit phone number is accepted and the order is placed (it should be refused).',/(accept|allowed|went through|placed|no error|confirmed|success|9 digit|nine)/i,/(refus|rejected|error shown|not accepted)/i],
+  'coffee|B5':['The confirmation total leaves out the delivery fee, so it is lower than the cart total of R50.00.',/(less|lower|without|exclud|missing|differ|not include|doesn.?t include|doesn.?t match|not match|wrong|r\s?4\d|r\s?3\d|r\s?2\d)/i],
+  'clinic-practice|D1':['As Thabo (Doctor) the full manager KPI suite IS shown (it should be hidden).',/(sees|can see|is shown|are shown|displayed|visible|appears|showing|shows|kpi.*(there|present))/i,/(not (shown|visible|displayed)|hidden|cannot see|can.?t see|doesn.?t (see|show))/i],
+  'clinic-practice|D2':['Choosing Weekly shows the monthly figures, not 64 completed / 9 no-shows / 22 min / 5 doctors.',/(month|different|wrong|not 64|not the same|doesn.?t match|not match|other figures|higher)/i],
+  'clinic-practice|F1':['Searching "mokoena" in lowercase finds nobody. Only "Mokoena" with a capital M works.',/(no (result|patient|match)|nobody|nothing|not found|empty|zero|0 (result|patient)|case|capital|no one)/i,/(giving expected|as expected|is working|works|both (found|shown))/i],
+  'clinic-practice|F2':['Thabo also sees patients who are not assigned to him (the list is longer than the three expected).',/(more|other|extra|all (patients|the patients)|also|not assigned|longer|everyone|every patient|6|six)/i],
+  'clinic-practice|S1':['The duplicate booking is accepted and saved (it should be refused).',/(accept|saved|allowed|booked|went through|no error|success|submitted|duplicate)/i,/(refus|blocked|rejected|not allowed)/i],
+  'clinic-practice|S3':['The new booking shows as Confirmed (it should say Pending Review / Unconfirmed).',/(confirmed)/i,/(pending review|unconfirmed)/i],
+  'clinic-practice|R1':['The Upcoming appointments count stays at 3 after the cancel (it should drop to 2).',/(3|three|same|unchanged|not (change|update|drop|reduce)|still)/i],
+  'clinic-practice|R2':['The change log gets no new line after the date is changed.',/(no (new )?(line|entry|log|record)|nothing|not (logged|recorded|added|updated)|missing|empty)/i],
+  'clinic-practice|Q1':['The walk-in is added with a blank patient type (it should be refused).',/(accept|added|saved|allowed|went through|no error|success|blank|empty)/i,/(refus|blocked|rejected|not allowed|error)/i],
+  'stockwatch-practice|E4':['The milk expiring in exactly 3 days is NOT tagged "Expiring soon".',/(no tag|not tag|no (expiring|flag|label)|not (flagged|shown|marked|labelled)|missing|without|nothing)/i],
+  'stockwatch-practice|E3':['Next expiry shows the LATER batch instead of 2026-12-01 (the earliest).',/(later|latest|wrong|different|not 2026-12-01|other date|newer)/i],
+  'stockwatch-practice|R1':['Muffins expiring today are received (they should be refused).',/(accept|received|allowed|went through|no error|success|saved)/i,/(refus|blocked|rejected|not allowed)/i],
+  'stockwatch-practice|R2':['-20 is accepted and the cups go DOWN from 500 (it should be refused).',/(accept|reduc|went down|480|less|allowed|no error|success|decreas)/i,/(refus|blocked|rejected|not allowed|still 500)/i],
+  'stockwatch-practice|L1':['The Low stock count stays at 2 after receiving (it should become 1).',/(2|two|same|unchanged|not (change|update|drop|reduce|refresh)|still)/i],
+  'stockwatch-practice|V5':['The variance % is worked out on the counted qty, so it is not -5.0%.',/(-?\s?5\.\d|not -?5|wrong|different|-?\s?2\.6|counted)/i],
+  'stockwatch-practice|P6':['Lerato (Storeman) CAN see and use the approve option (only the Manager should).',/(can approve|approve (option|button)|sees|can see|visible|shown|allowed|there)/i,/(cannot|can.?t|not (shown|visible|there)|hidden)/i],
+  'stockwatch-practice|W7':['Waste of 12 with no reason is accepted (a reason should be required).',/(accept|allowed|went through|no error|success|saved|recorded|logged)/i,/(refus|blocked|rejected|not allowed|reason required)/i],
+  'stockwatch-practice|W8':['The waste total shows only the last entry (R42.00) instead of R70.00.',/(42|last|only|overwrit|replace|not (add|accumulat)|wrong|r\s?28|less)/i]
+ };
+
+ /* step-by-step correction: what you should SEE after each step, then the model actual result */
+ const STEPS={
+  'coffee|B3':[['Muffin is in the cart with quantity 1.','Quantity shows 0 (then -1 if you click again). Expected: it stays at 1.'],'Quantity goes to 0 / below 0 after clicking minus twice. Expected: stays at 1.'],
+  'coffee|B2':[['Cappuccino is in the cart; total is the full price.','The code is not accepted: an error shows or the total does not change. Expected: 10% off.'],'Entering welcome10 in lowercase gives no 10% discount (code rejected). Expected: 10% discount applied.'],
+  'coffee|B4':[['Espresso is in the cart with quantity 2 (R60).','Cappuccino is added; subtotal is exactly R100.','A delivery fee is still added (not R0.00). Expected: delivery R0.00, total R100.00.'],'Subtotal is exactly R100 but a delivery fee is still charged, so the total is above R100. Expected: delivery R0.00, total R100.00.'],
+  'coffee|B1':[['Cart has one item.','Fields show Thabo and 082123456 (that is only 9 digits).','The order is placed and a confirmation appears. Expected: refused with a phone error.'],'A 9-digit phone number is accepted and the order is placed. Expected: order refused with a phone error.'],
+  'coffee|B5':[['Cart shows Espresso plus delivery, total R50.00.','Name and phone are filled in.','The confirmation total is lower than R50.00 because the delivery fee is missing. Expected: R50.00.'],'Confirmation total is lower than the cart total of R50.00 (delivery fee left out). Expected: R50.00.'],
+  'clinic-practice|D1':[['You are logged in as Thabo (Doctor).','The Dashboard shows the full KPI suite (completed, no-shows, average wait, doctors on duty). Expected: NOT shown to a Doctor.'],'As Thabo the full manager KPI suite is displayed. Expected: hidden from a Doctor.'],
+  'clinic-practice|D2':[['Dashboard is open as Sipho.','Weekly is chosen, but the numbers are the monthly ones, not 64 / 9 / 22 min / 5. Expected: the weekly figures.'],'With Weekly selected the dashboard shows the monthly figures. Expected: Completed 64, no-shows 9, 22 min wait, 5 doctors.'],
+  'clinic-practice|F1':[['The Patients tab is open as Sipho.','You type mokoena in lowercase and the list is EMPTY. Expected: Zanele and Zodwa Mokoena.'],'Searching mokoena in lowercase returns no patients (only Mokoena with a capital M works). Expected: Zanele and Zodwa Mokoena found.'],
+  'clinic-practice|F2':[['You are logged in as Thabo.','The list shows more than 3 patients, including ones not assigned to Thabo. Expected: only Zanele, Gogo Martha Sithole and Zodwa.'],'Thabo sees patients assigned to other doctors as well. Expected: only his three patients.'],
+  'clinic-practice|S1':[['Form filled: Thabo, Zanele Mokoena, Check-up, 2026-11-09.','You add it and submit: it is accepted and saved. Expected: refused, because appointment #101 already exists.'],'The duplicate booking (same patient, type and day as #101) is accepted. Expected: refused.'],
+  'clinic-practice|S3':[['You booked Gogo Martha Sithole, Check-up, 2026-11-13 as Thabo.','The Diary shows the status Confirmed. Expected: Pending Review / Unconfirmed.'],'The new booking shows as Confirmed. Expected: Pending Review / Unconfirmed.'],
+  'clinic-practice|R1':[['Dashboard shows Upcoming appointments = 3.','Appointment #102 is now cancelled.','The Upcoming count still reads 3. Expected: 2.'],'Upcoming appointments stays at 3 after cancelling #102. Expected: 2.'],
+  'clinic-practice|R2':[['Diary is open as Sipho.','You save the new date, then open the change log: NO new line was added. Expected: a line with user, time and the change.'],'No new line appears in the change log after changing the date. Expected: a new line with user, time and change.'],
+  'clinic-practice|Q1':[['Walk-in add is open as Thabo.','A name is entered, patient type is left blank, and it is added. Expected: refused, patient type required.'],'A walk-in with a blank patient type is accepted. Expected: refused, type required.'],
+  'stockwatch-practice|E4':[['Fresh milk 1L (expiry 2026-10-29) is exactly 3 days away and has NO "Expiring soon" tag. Expected: tagged.'],'Fresh milk, 3 days from expiry, is not tagged Expiring soon. Expected: tagged.'],
+  'stockwatch-practice|E3':[['10 Arabica beans received with expiry 2026-12-01.','Stock shows a LATER date as next expiry. Expected: 2026-12-01.'],'Beans show a later date as next expiry instead of 2026-12-01 (the earliest).'],
+  'stockwatch-practice|R1':[['You receive 5 Muffins expiring today (2026-10-26) and it is accepted. Expected: refused, expiry must be after today.'],'Muffins expiring today are received. Expected: refused.'],
+  'stockwatch-practice|R2':[['You enter -20 Cups and it is accepted.','Cups drop from 500 to 480. Expected: refused and still 500.'],'A negative quantity (-20) is accepted and cups fall to 480. Expected: refused, cups stay 500.'],
+  'stockwatch-practice|L1':[['The Low stock count at the top reads 2.','After receiving 20 Fresh milk the count still reads 2. Expected: 1 (only Oat milk).'],'Low stock count stays at 2 after receiving milk. Expected: 1.'],
+  'stockwatch-practice|V5':[['You count Arabica beans = 38 (system 40). The variance % is NOT -5.0% because it divides by the counted qty. Expected: -5.0% (2 / 40).'],'Variance % is calculated on the counted quantity, so it is not -5.0%. Expected: -5.0%.'],
+  'stockwatch-practice|P6':[['Lerato submits a count.','The approve option IS visible and usable for Lerato. Expected: only Sipho (Manager) can approve.'],'A Storeman (Lerato) can approve stock-take adjustments. Expected: only the Manager.'],
+  'stockwatch-practice|W7':[['Waste of 12 Fresh milk with no reason is accepted. Expected: refused, reason required.'],'Waste of 12 with no reason is accepted. Expected: refused, reason required.'],
+  'stockwatch-practice|W8':[['The first waste (R28) is recorded.','After the second waste (R42) the total shows R42.00, not R70.00. Expected: R70.00 (it should add up).'],'Total waste value shows R42.00 (the last entry only). Expected: R70.00.']
+ };
+ function stepsHTML(t,open){const k=page+'|'+t.bug,st=STEPS[k];if(!st)return'';const list=t.steps||t.input||[];
+  const rows=list.map((x,i)=>`<li><b>Step ${i+1}: do</b> ${esc(x)}<br><b>You should see:</b> ${esc(st[0][i]||'(nothing special; carry on)')}</li>`).join('');
+  return `<details class="lk-det" data-lk-obs="1" ${open?'open':''}><summary>Correction, step by step</summary><ol style="margin:8px 0 4px 18px;padding:0">${rows}<li><b>Compare:</b> Expected: ${esc(t.exp)}<br>What really happened is different, so the result is a <b>Fail</b>.</li><li><b>Write the Actual result like this:</b> &ldquo;${esc(st[1])}&rdquo;</li></ol></details>`}
+ function obsHTML(t){const a=String(res(t.id).actual||'').trim();const o=t.bug&&OBS[page+'|'+t.bug];
+  if(!o){return a?'':'<div class="lk-fb info" data-lk-obs="1"><b>Actual result is empty.</b> Write what you saw, even if it matches the expected result.</div>'}
+  const say=esc(o[0]);
+  if(!a)return `<div class="lk-fb no" data-lk-obs="1"><b>Your Actual result is empty.</b> Write what you really saw. <br><b>What the app really did:</b> ${say}</div>${stepsHTML(t,true)}`;
+  const hit=o[1].test(a)&&!(o[2]&&o[2].test(a));const SH=stepsHTML(t,!hit);
+  return hit?`<div class="lk-fb ok" data-lk-obs="1"><b>Your actual result looks right.</b> It describes the real problem. <br><b>What the app really did:</b> ${say}</div>${SH}`
+   :`<div class="lk-fb no" data-lk-obs="1"><b>Your actual result does not describe what really happened.</b> You wrote: &ldquo;${esc(a.length>140?a.slice(0,140)+'...':a)}&rdquo; <br><b>What the app really did:</b> ${say}<br>Run the test again, compare it with the expected result, then rewrite the Actual result so a developer could see the difference.</div>${SH}`}
  /* ---------- marking ---------- */
  function mark(id,status){const t=tests().find(x=>x.id===id);if(!t)return;const tr=truth(t);P.tries[id]=(P.tries[id]||0)+1;const n=P.tries[id];let fb;
   if(status==='Blocked')fb={c:'info',t:'Blocked means something stops you from running the test at all (for example missing data or a missing feature). If you could run it, record Pass or Fail.'};
@@ -68,7 +132,7 @@
     if(!P.focus||!ids.includes(P.focus))P.focus=ids.find(i=>stat(i)==='Pending')||ids[0];
     cards.forEach((c,i)=>{const on=ids[i]===P.focus;c.style.display=on?'':'none';if(on&&!c.querySelector('.lk-fb,.lk-det')){const t=tests().find(x=>x.id===ids[i]);
       if(t){const det=document.createElement('details');det.className='lk-det';det.innerHTML=`<summary>Extra information about this test</summary><p><b>Requirement:</b> ${esc(t.req||'')} ${t.role?'· <b>You act as:</b> '+esc(t.role):''}</p><p>Compare what you <b>see</b> with the expected result, part by part. If one part is different, it is a Fail. Write the actual result in your own words (what you saw, not what you think).</p><p>More background: tap <b>Extra info</b> at the top.</p>`;c.appendChild(det)}
-      const fb=P.fb[ids[i]];if(P.instant&&fb&&stat(ids[i])!=='Pending'){const d=document.createElement('div');d.className='lk-fb '+fb.c;d.innerHTML=fb.t;c.appendChild(d);
+      const fb=P.fb[ids[i]];if(P.instant&&fb&&stat(ids[i])!=='Pending'){const d=document.createElement('div');d.className='lk-fb '+fb.c;d.innerHTML=fb.t;c.appendChild(d);{const tt0=tests().find(x=>x.id===ids[i]);if(tt0){const w0=document.createElement('div');w0.innerHTML=obsHTML(tt0);[...w0.children].forEach(n=>c.appendChild(n))}}
        if(CO){const tt=tests().find(x=>x.id===ids[i]);const ok=stat(ids[i])===truth(tt);const fin=ok?(tt.bug?'Found':'Pass'):(stat(ids[i])==='Pass'?'Missed':'Misread');const w=document.createElement('div');w.innerHTML=CO.coachHTML({skill:skillOf(tt),final:fin,tries:P.tries[ids[i]]||1,predOk:null});[...w.children].forEach(n=>c.appendChild(n))}}
       if(CO&&!c.querySelector('.co-plan')){const tt=tests().find(x=>x.id===ids[i]);const w=document.createElement('div');w.className='co-plan';w.innerHTML=CO.planHTML(skillOf(tt),stat(ids[i])==='Pending');const h3=c.querySelector('h3');if(h3&&h3.nextSibling)c.insertBefore(w,h3.nextSibling);else c.appendChild(w)}}});
     if(!v.querySelector('.lk-nav')){const nav=document.createElement('div');nav.className='lk-nav';const ix=ids.indexOf(P.focus);const done=ids.filter(i=>stat(i)!=='Pending').length;
@@ -85,6 +149,7 @@
   if(d.set){const[id,s]=d.set.split('|');setTimeout(()=>{mark(id,s);const v=viewEl();if(v){v.querySelectorAll('.lk-nav').forEach(n=>n.remove());v.querySelectorAll('.tc .lk-fb,.tc .lk-det,.tc .co-box,.tc .co-plan').forEach(n=>n.remove());decorate()}},0)}
  },true);
  document.addEventListener('change',e=>{if(e.target.id==='lk-instant'){P.instant=e.target.checked;save();const v=viewEl();if(v){v.querySelectorAll('.lk-nav').forEach(n=>n.remove());v.querySelectorAll('.tc .lk-fb,.tc .lk-det,.tc .co-box,.tc .co-plan').forEach(n=>n.remove());decorate()}}});
+ document.addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.actual){setTimeout(()=>{const v=viewEl();if(v&&stat(e.target.dataset.actual)!=='Pending'){v.querySelectorAll('.lk-nav').forEach(n=>n.remove());v.querySelectorAll('.tc .lk-fb,.tc .lk-det,.tc .co-box,.tc .co-plan').forEach(n=>n.remove());decorate()}},30)}});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
  window.LABKIT={score,mark,P,page};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(wire,50));else setTimeout(wire,50);

@@ -10,6 +10,7 @@
 .lab{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;width:100%;margin:0;padding:18px clamp(14px,2.5vw,36px) 60px;align-items:start;transition:grid-template-columns .2s}.lab.closed{grid-template-columns:minmax(0,1fr)}.lab.closed .side{display:none}
 .stage-c{min-width:0}.tgl{margin:0 0 10px}#sbt{width:48px;height:48px;padding:0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}#sbt i{display:block;width:20px;height:2px;border-radius:2px;background:var(--ink)}#sbt:hover{border-color:#b08d57}
 @media(min-width:701px) and (max-width:999px){.lab{grid-template-columns:200px minmax(0,1fr);gap:16px}}
+.stk{position:sticky;top:var(--mmh,0px);z-index:40;background:#fff;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 0;margin:0 0 12px;border-bottom:1px solid var(--line)}.stk .tgl{margin:0}.stk .opsw{margin:0}@media(max-width:700px){.stk:not(:has(.opsw)){display:none}}#mm-res{z-index:80}
 .side{position:sticky;top:calc(var(--mmh,0px) + 14px);border:0;border-radius:14px;padding:12px;background:#fff}
 .side h2{font:600 12px 'Geist Mono',ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:2px 6px 8px}
 .side a{display:flex;align-items:center;gap:8px;min-height:48px;padding:0 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:600;font-size:15.5px}
@@ -54,7 +55,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;p
 </head><body>
 <div class="lab">
 <nav class="side" id="sbnav" aria-label="UAT Lab sections"><h2>Practice Lab</h2><div id="sb"></div></nav>
-<div class="stage-c"><div class="tgl"><button type="button" id="sbt" aria-controls="sbnav" aria-expanded="true" aria-label="Hide sidebar"><i></i><i></i><i></i></button></div><main id="v" tabindex="-1"></main></div>
+<div class="stage-c"><div class="stk"><div class="tgl"><button type="button" id="sbt" aria-controls="sbnav" aria-expanded="true" aria-label="Hide sidebar"><i></i><i></i><i></i></button></div><div id="opsslot"></div></div><main id="v" tabindex="-1"></main></div>
 </div>
 <div id="tip" role="status" hidden></div>
 <script src="tickets.js"></script><script src="coach.js"></script><script src="today.js"></script><script src="uatdash.js"></script><script src="ds-mods.js"></script><script src="sqa-mods.js"></script><script src="farm-mods.js"></script>
@@ -101,9 +102,9 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;p
  const OPSTAGE={id:'ops',name:'Lab operations',desc:'Map your learning with the suggested path.',items:PATH.map(([n,hr,x],i)=>({n:n,key:Object.keys(N).find(k=>N[k]===x),have:x.have,need:x.need,href:hr}))};
  let opsMode='graphs';try{opsMode=localStorage.getItem('uatlab-ops')==='cards'?'cards':'graphs'}catch(e){}
  function ops(){const sw=`<div class="opsw" role="group" aria-label="Choose a layout"><button type="button" data-ops="cards" aria-pressed="${opsMode==='cards'}">Cards</button><button type="button" data-ops="graphs" aria-pressed="${opsMode==='graphs'}">Graphs</button></div>`;
-  const head=`<h1>Lab operations</h1><p class="lede">Map your learning with the suggested path.</p>${sw}`;
+  const head=`<h1>Lab operations</h1><p class="lede">Map your learning with the suggested path.</p>`;window.__opsw=sw;
   if(opsMode==='cards')return head+`<ol class="path">${PATH.map(([n,h,x],i)=>{const p=x.have/x.need;return `<li><a class="${p>=1?'done':p>0?'part':'none'}" href="${esc(h)}"><span class="n">${i+1}</span><b>${esc(n)}</b><small>${x.have} of ${x.need}</small></a></li>`}).join('')}</ol><div class="cards">${SEC.filter(s=>!['ds','sqa','farm'].includes(s.id)).map(s=>chart(Object.assign({},s,{simple:true}),false)).join('')}</div>`;
-  return sw+`<div id="dash"></div>`}
+  return `<div id="dash"></div>`}
  function sec(s){return `<div id="dash"></div>`}
  function openTickets(){let st={};try{st=JSON.parse(localStorage.getItem('uat-tickets-v1'))||{}}catch(e){}return (window.TICKETS||[]).filter(t=>!['Passed','Failed'].includes((st[t.key]||{}).status)).sort((a,b)=>String(a.due).localeCompare(String(b.due))||a.key.localeCompare(b.key))}
  const NAV=[['ops','Lab operations','']].concat(SEC.map((s,i)=>[s.id,s.name,String(i+1)]));
@@ -111,6 +112,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;p
   $('sb').innerHTML=NAV.map(([k,t,n])=>`<a href="#${k}"${k===id?' aria-current="page"':''}>${n?'<i>'+n+'</i>':''}${esc(t)}</a>`).join('');
   const s=SEC.find(x=>x.id===id);
   $('v').innerHTML=`<div class="pick"><label class="mute" for="pk">Section</label><select id="pk" aria-label="Choose a section">${NAV.map(([k,t])=>`<option value="${k}"${k===id?' selected':''}>${esc(t)}</option>`).join('')}</select></div>`+(s?sec(s):ops());
+  $('opsslot').innerHTML=s?'':(window.__opsw||'');
   $('pk').addEventListener('change',e=>{location.hash='#'+e.target.value});
   if(s)UATDASH.render($('dash'),s,{tickets:openTickets});else if(opsMode==='graphs')UATDASH.render($('dash'),OPSTAGE,{});
   document.title=(s?s.name:'Lab operations')+' | UAT Lab'}
