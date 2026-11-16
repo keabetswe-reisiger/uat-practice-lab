@@ -16,7 +16,7 @@ window.TICKETS=[
  expected:'The appointment shows status “Pending Review · Unconfirmed”.',
  criteria:['Booking is created','Status wording is exactly “Pending Review · Unconfirmed”','Manager notification is mentioned on screen'],
  hint:'Compare the status text with the expected wording letter by letter.'},
-{key:'UAT-103',title:'Security: doctors must only see their own patients and no manager KPIs',type:'Security',priority:'Critical',app:'clinic-practice.html',appName:'Clinic booking',env:'Staging · v2',due:'2026-11-05',est:'10 min',
+{key:'UAT-103',title:'Security: doctors must see only their own patients and must not see manager KPIs',type:'Security',priority:'Critical',app:'clinic-practice.html',appName:'Clinic booking',env:'Staging · v2',due:'2026-11-05',est:'10 min',
  summary:'Check what a Doctor role can see compared with a Manager.',
  why:'Role (permission) tests check that people only see what their job allows. Patient data is private, so a mistake here is serious.',coffee:'Only staff go behind the counter; customers never open the till.',
  steps:['Log in as Thabo (Doctor).','Open Dashboard and note whether manager KPI cards appear.','Open Patients and count the patients shown (clear any search first).','Log in as Sipho (Manager) and repeat for comparison.'],
