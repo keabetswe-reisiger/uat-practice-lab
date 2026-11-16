@@ -97,14 +97,15 @@
   'stockwatch-practice|W7':[['Waste of 12 Fresh milk with no reason is accepted. Expected: refused, reason required.'],'Waste of 12 with no reason is accepted. Expected: refused, reason required.'],
   'stockwatch-practice|W8':[['The first waste (R28) is recorded.','After the second waste (R42) the total shows R42.00, not R70.00. Expected: R70.00 (it should add up).'],'Total waste value shows R42.00 (the last entry only). Expected: R70.00.']
  };
- function stepsHTML(t,open){const k=page+'|'+t.bug,st=STEPS[k];if(!st)return'';const list=t.steps||t.input||[];
+ function stepsHTML(t,open){const k=page+'|'+t.bug,st=STEPS[k],list=t.steps||t.input||[];
+  if(!st){const bd=t.bug?bugDesc(t.bug):'';const rows=list.map((x,i)=>`<li><b>Step ${i+1}: do</b> ${esc(x)}</li>`).join('');return `<details class="lk-det" data-lk-obs="1" open><summary>Steps to compare with yours</summary><ol style="margin:8px 0 4px 18px;padding:0">${rows}<li><b>Compare:</b> Expected: ${esc(t.exp)}<br>${t.bug?`What really happens is different (${esc(bd)}), so the result is a <b>Fail</b>.</li><li><b>Write the Actual result like this:</b> &ldquo;${esc(bd)}. Expected: ${esc(t.exp)}&rdquo;</li>`:`The app does exactly this, so the result is a <b>Pass</b>.</li><li><b>Write the Actual result like this:</b> &ldquo;As expected: ${esc(t.exp)}&rdquo;</li>`}</ol></details>`}
   const rows=list.map((x,i)=>`<li><b>Step ${i+1}: do</b> ${esc(x)}<br><b>You should see:</b> ${esc(st[0][i]||'(nothing special; carry on)')}</li>`).join('');
-  return `<details class="lk-det" data-lk-obs="1" ${open?'open':''}><summary>Correction, step by step</summary><ol style="margin:8px 0 4px 18px;padding:0">${rows}<li><b>Compare:</b> Expected: ${esc(t.exp)}<br>What really happened is different, so the result is a <b>Fail</b>.</li><li><b>Write the Actual result like this:</b> &ldquo;${esc(st[1])}&rdquo;</li></ol></details>`}
+  return `<details class="lk-det" data-lk-obs="1" ${open?'open':''}><summary>Steps to compare with yours (correct version)</summary><ol style="margin:8px 0 4px 18px;padding:0">${rows}<li><b>Compare:</b> Expected: ${esc(t.exp)}<br>What really happened is different, so the result is a <b>Fail</b>.</li><li><b>Write the Actual result like this:</b> &ldquo;${esc(st[1])}&rdquo;</li></ol></details>`}
  function obsHTML(t){const a=String(res(t.id).actual||'').trim();const o=t.bug&&OBS[page+'|'+t.bug];
-  if(!o){return a?'':'<div class="lk-fb info" data-lk-obs="1"><b>Actual result is empty.</b> Write what you saw, even if it matches the expected result.</div>'}
+  if(!o){return (a?'':'<div class="lk-fb info" data-lk-obs="1"><b>Actual result is empty.</b> Write what you saw, even if it matches the expected result.</div>')+stepsHTML(t,true)}
   const say=esc(o[0]);
   if(!a)return `<div class="lk-fb no" data-lk-obs="1"><b>Your Actual result is empty.</b> Write what you really saw. <br><b>What the app really did:</b> ${say}</div>${stepsHTML(t,true)}`;
-  const hit=o[1].test(a)&&!(o[2]&&o[2].test(a));const SH=stepsHTML(t,!hit);
+  const hit=o[1].test(a)&&!(o[2]&&o[2].test(a));const SH=stepsHTML(t,true);
   return hit?`<div class="lk-fb ok" data-lk-obs="1"><b>Your actual result looks right.</b> It describes the real problem. <br><b>What the app really did:</b> ${say}</div>${SH}`
    :`<div class="lk-fb no" data-lk-obs="1"><b>Your actual result does not describe what really happened.</b> You wrote: &ldquo;${esc(a.length>140?a.slice(0,140)+'...':a)}&rdquo; <br><b>What the app really did:</b> ${say}<br>Run the test again, compare it with the expected result, then rewrite the Actual result so a developer could see the difference.</div>${SH}`}
  /* ---------- marking ---------- */
