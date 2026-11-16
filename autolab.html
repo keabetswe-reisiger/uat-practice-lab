@@ -74,6 +74,18 @@ async function run(src){const log=[];let ok=true,cmds;try{cmds=expand(src.split(
  LAST=null;for(const st of cmds){try{const r=await runStep(st);log.push({c:'ok',t:'PASS  '+st.line+(r?'  ->  '+r:'')})}catch(e){log.push({c:'bad',t:'FAIL  '+st.line});log.push({c:'bad',t:'      '+e.message});ok=false;break}}
  return{ok,log,cmds}}
 /* ===================== the challenges ===================== */
+function plainLine(x){x=x.trim();let m;
+ if(m=x.match(/^fill "([^"]*)" with "([^"]*)"$/i))return `Type ${m[2]} into the ${m[1]} box.`;
+ if(m=x.match(/^click "([^"]*)" in row "([^"]*)"$/i))return `Press ${m[1]} in the ${m[2]} row only.`;
+ if(m=x.match(/^click "([^"]*)"$/i))return `Press the ${m[1]} button.`;
+ if(m=x.match(/^wait until page contains "([^"]*)"$/i))return `Wait until the page shows ${m[1]} (do not check too early).`;
+ if(m=x.match(/^expect page to contain "([^"]*)"$/i))return `Check the page shows ${m[1]}. This is the assertion.`;
+ if(m=x.match(/^request (\w+) "([^"]*)"$/i))return `Send a ${m[1]} request to ${m[2]}.`;
+ if(m=x.match(/^expect status to be (\d+)$/i))return `Check the status code is ${m[1]}.`;
+ if(m=x.match(/^expect body "([^"]*)" to be (.+)$/i))return `Check the body field ${m[1]} is ${m[2]}.`;
+ if(m=x.match(/^for (\w+) in (.+)$/i))return `Repeat the steps below for each value: ${m[2]}.`;
+ return x}
+function stepsHTML(c){const L=(c.sample||'').split('\n').filter(x=>x.trim()&&!/^\s*#/.test(x));return `<details open class="det"><summary>Steps to compare with yours (model answer)</summary><ol style="margin:6px 0 4px 18px;padding:0">${L.map(x=>`<li>${esc(plainLine(x))}<br><code>${esc(x.trim())}</code></li>`).join('')}</ol></details>`}
 const CH=[
  {id:'c1',title:'Log in and check the welcome',concept:'Actions and assertions',app:'login',
   teach:'An automated test is a list of steps a computer can repeat: do something (an <b>action</b>), then check something (an <b>assertion</b>). Without an assertion a test proves nothing, because it only clicks.',
@@ -145,7 +157,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
   const r=await run(src);b.disabled=false;$('log').innerHTML=r.log.map(l=>`<div class="${l.c}">${esc(l.t)}</div>`).join('');
   let msg;if(!r.ok)msg=`<div class="res no"><b>Not passing yet.</b> Read the first FAIL line: it says what the test expected and what it found. Fix that step and run again.</div>`;
   else{const need=c.need(r.cmds);if(need===true){S.done[c.id]=1;msg=`<div class="res ok"><b>Challenge complete.</b> Your test runs and it checks the right things.</div>`}else msg=`<div class="res warn"><b>Your test ran, but it is not doing what the challenge asks.</b> ${esc(need)}</div>`}
-  save();$('res').innerHTML=msg;if(r.ok&&S.done[c.id]){const first=document.querySelector(`[data-c="${c.id}"] .n`);if(first)first.textContent='done'}}});
+  save();$('res').innerHTML=msg+stepsHTML(c);if(r.ok&&S.done[c.id]){const first=document.querySelector(`[data-c="${c.id}"] .n`);if(first)first.textContent='done'}}});
 document.addEventListener('input',e=>{if(e.target.id==='src'){S.scripts[S.cur]=e.target.value;save()}});
 render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
