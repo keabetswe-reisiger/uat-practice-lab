@@ -12,7 +12,7 @@
  const setCfg=c=>{try{orig.call(ls,CFG,JSON.stringify(c))}catch{}};
  let timer=null,busy=false,status='',changedRemote=false;
  Storage.prototype.setItem=function(k,v){orig.call(this,k,v);if(this===ls&&!SKIP.test(k)){meta[k]=Date.now();wmeta();if(cfg())schedule()}};
- const schedule=()=>{clearTimeout(timer);timer=setTimeout(()=>sync(false),4000)};
+ const schedule=()=>{if(!(cfg()||{}).pin)return;clearTimeout(timer);timer=setTimeout(()=>sync(false),4000)};
  async function api(path,opt){const c=cfg();const r=await fetch('https://api.github.com'+path,Object.assign({},opt,{headers:{Accept:'application/vnd.github+json','Content-Type':'application/json',Authorization:'Bearer '+c.token}}));
   if(r.status===401)throw new Error('That token was not accepted. Create a new one and reconnect.');
   if(r.status===403||r.status===404)throw new Error('GitHub refused ('+r.status+'). Make sure the token has the “gist” permission.');
@@ -47,7 +47,7 @@
  async function push(){const id=await gistId();const data={};
   for(let i=0;i<ls.length;i++){const k=ls.key(i);if(SKIP.test(k))continue;if(!(k in meta)){meta[k]=Date.now()}data[k]={v:rd(k),t:meta[k]}}
   wmeta();const content=await wrap(data);await api('/gists/'+id,{method:'PATCH',body:JSON.stringify({files:{[FILE]:{content}}})})}
- async function sync(manual){if(busy||!cfg())return;busy=true;setStatus('Syncing…');
+ async function sync(manual){if(busy||!cfg())return;if(!cfg().pin){setStatus('Set a PIN to turn sync back on.','err');return}busy=true;setStatus('Syncing…');
   try{const ch=await pull();if(cfg().admin!==false)await push();const when=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'});setStatus('Synced at '+when,'ok');
    try{orig.call(ls,'uatsync-last',when)}catch{}
    if(ch){const last=+(sessionStorage.getItem('uatsync-rl')||0);if(!manual&&Date.now()-last>15000){sessionStorage.setItem('uatsync-rl',Date.now());location.reload();return}changedRemote=true;render()}}
@@ -82,9 +82,9 @@ const LASTBK='uatbackup-last',PREV='uatbackup-prev';
  const add=()=>{document.body.appendChild(btn);document.body.appendChild(pan)};document.body?add():addEventListener('DOMContentLoaded',add);
  let stText='',stCls='',openP=false;
  function setStatus(t,c){stText=t;stCls=c||'';render()}
- function render(){const c=cfg();btn.className=c?stCls:'';btn.innerHTML=`<i></i>${c?'Synced':'Sync'}`;btn.title=c?stText:'Sync progress across devices';
+ function render(){const c=cfg();const nopin=c&&!c.pin;btn.className=c?stCls:'';btn.innerHTML=`<i></i>${c?'Synced':'Sync'}`;btn.title=c?stText:'Sync progress across devices';
   const last=rd('uatsync-last');
-  pan.innerHTML=(c?`<h4>Cloud sync is on</h4><div class="m">${stText||(last?'Last synced at '+last:'Ready')}</div>${changedRemote?'<div class="e" style="color:#2563eb">New progress came from another device. <button id="us-rl">Reload to see it</button></div>':''}
+  pan.innerHTML=(nopin?`<h4>Set your sync PIN</h4><div class="m">Sync now locks your cloud copy with a PIN. Choose one of 6 or more characters. Use the <b>same PIN on every device</b>. It cannot be recovered if you forget it.</div><input id="us-sp" type="password" placeholder="Your sync PIN (6+ characters)" autocomplete="off"><label class="m" style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" id="us-spa" checked style="width:auto;margin:0"> Admin device</label><button class="pri" id="us-setpin">Save PIN</button><button id="us-off">Disconnect this device</button>${stCls==='err'?`<div class="e">${stText}</div>`:''}`:c?`<h4>Cloud sync is on</h4><div class="m">${stText||(last?'Last synced at '+last:'Ready')}</div>${changedRemote?'<div class="e" style="color:#2563eb">New progress came from another device. <button id="us-rl">Reload to see it</button></div>':''}
    <div><button class="pri" id="us-now">Sync now</button><button id="us-off">Disconnect this device</button></div>
    ${c.admin===false?'<div class="m" style="margin-top:8px"><b>Read-only device.</b> It receives your progress but never saves changes to the cloud, and cannot reset other devices or change the PIN.</div>':`<div style="margin-top:8px"><div class="m">Lost a phone or lent it out? This erases the progress saved on every other device that is connected, and disconnects them. Your cloud copy and this device stay as they are.</div><button id="us-wipe">Reset all other devices</button></div>
    <div style="margin-top:8px"><div class="m">Your cloud copy is locked with your PIN. Change it here (other devices will then ask you to connect again with the new PIN).</div><input id="us-np" type="password" placeholder="New PIN (6+ characters)" autocomplete="off"><button id="us-chg">Change PIN</button></div>`}<div class="m" style="margin-top:8px">Your progress is stored in a private gist in your GitHub account. “Disconnect” only removes the token from this device.</div>${stCls==='err'?`<div class="e">${stText}</div>`:''}`
@@ -98,6 +98,7 @@ const LASTBK='uatbackup-last',PREV='uatbackup-prev';
   else if(id==='us-now')sync(true);else if(id==='us-off'){try{ls.removeItem(CFG)}catch{}stText='';stCls='';changedRemote=false;render()}
   else if(id==='us-rl')location.reload();
   else if(id==='us-wipe'){if((cfg()||{}).admin===false)return;if(!confirm('Erase the progress on every OTHER device and disconnect them? They are reset the next time they open the app with internet. This device keeps its progress.'))return;const c=cfg();if(!c)return;c.wipe=Date.now();c.wipeSeen=c.wipe;setCfg(c);sync(true).then(()=>{stText='Other devices will reset the next time they open the app online.';stCls='ok';render()})}
+  else if(id==='us-setpin'){const pn=(($('us-sp')||{}).value||'').trim();if(pn.length<6){stCls='err';stText='Choose a PIN of at least 6 characters.';render();return}const c=cfg();if(!c)return;c.pin=pn;c.admin=!!(($('us-spa')||{}).checked);setCfg(c);stCls='';stText='';sync(true)}
   else if(id==='us-chg'){if((cfg()||{}).admin===false)return;const np=(($('us-np')||{}).value||'').trim();if(np.length<6){stCls='err';stText='The new PIN needs at least 6 characters.';render();return}const c=cfg();if(!c)return;c.pin=np;c.salt=null;setCfg(c);sync(true)}
   else if(id==='bk-dl'){const b=downloadBackup();bkMsg='Saved a backup with '+b.count+' item'+(b.count===1?'':'s')+'. Keep the file somewhere safe (your phone, email to yourself, a drive).';render()}
   else if(id==='bk-up'){const f=$('bk-file');if(f)f.click()}
