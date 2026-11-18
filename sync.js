@@ -15,7 +15,7 @@
  const schedule=()=>{if(!(cfg()||{}).pin)return;clearTimeout(timer);timer=setTimeout(()=>sync(false),4000)};
  async function api(path,opt){const c=cfg();const r=await fetch('https://api.github.com'+path,Object.assign({},opt,{headers:{Accept:'application/vnd.github+json','Content-Type':'application/json',Authorization:'Bearer '+c.token}}));
   if(r.status===401)throw new Error('That token was not accepted. Create a new one and reconnect.');
-  if(r.status===403||r.status===404)throw new Error('GitHub refused ('+r.status+'). Make sure the token has the “gist” permission.');
+  if(r.status===403||r.status===404){const e=new Error('GitHub refused ('+r.status+'). Make sure the token is a classic token with only the “gist” permission (fine-grained tokens do not work).');e.status=r.status;throw e}
   if(!r.ok)throw new Error('GitHub error '+r.status);return r.json()}
  async function gistId(){const c=cfg();if(c.gist)return c.gist;
   const list=await api('/gists?per_page=100');const g=list.find(x=>x.files&&x.files[FILE]);
@@ -47,11 +47,11 @@
  async function push(){const id=await gistId();const data={};
   for(let i=0;i<ls.length;i++){const k=ls.key(i);if(SKIP.test(k))continue;if(!(k in meta)){meta[k]=Date.now()}data[k]={v:rd(k),t:meta[k]}}
   wmeta();const content=await wrap(data);await api('/gists/'+id,{method:'PATCH',body:JSON.stringify({files:{[FILE]:{content}}})})}
- async function sync(manual){if(busy||!cfg())return;if(!cfg().pin){setStatus('Set a PIN to turn sync back on.','err');return}busy=true;setStatus('Syncing…');
+ async function sync(manual,retried){if(busy||!cfg())return;if(!cfg().pin){setStatus('Set a PIN to turn sync back on.','err');return}busy=true;setStatus('Syncing…');
   try{const ch=await pull();if(cfg().admin!==false)await push();const when=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'});setStatus('Synced at '+when,'ok');
    try{orig.call(ls,'uatsync-last',when)}catch{}
    if(ch){const last=+(sessionStorage.getItem('uatsync-rl')||0);if(!manual&&Date.now()-last>15000){sessionStorage.setItem('uatsync-rl',Date.now());location.reload();return}changedRemote=true;render()}}
-  catch(e){setStatus(e.message||'Sync failed. Check your connection.','err')}finally{busy=false}}
+  catch(e){const c=cfg();if(e.status===404&&c&&c.gist&&!retried){c.gist=null;setCfg(c);busy=false;return sync(manual,true)}setStatus(e.message||'Sync failed. Check your connection.','err')}finally{busy=false}}
  /* ---------- backup and restore (a file you keep yourself) ---------- */
 const LASTBK='uatbackup-last',PREV='uatbackup-prev';
  function collect(){const keys={};for(let i=0;i<ls.length;i++){const k=ls.key(i);if(SKIP.test(k))continue;const v=rd(k);if(typeof v==='string')keys[k]=v}return keys}
