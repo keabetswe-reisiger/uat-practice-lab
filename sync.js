@@ -27,7 +27,7 @@
   setCfg(c);return c.gist}
  /* ---------- PIN: the cloud copy is encrypted with a key made from your PIN (AES-GCM, PBKDF2). Without the PIN a token alone cannot read it. ---------- */
  const b64e=u=>btoa(String.fromCharCode.apply(null,Array.from(u))),b64d=t=>Uint8Array.from(atob(t),ch=>ch.charCodeAt(0));
- const kc={};
+ let kc={};
  async function key(pin,saltB64){if(!(window.crypto&&crypto.subtle))throw new Error('This browser cannot encrypt here. Open the app over https.');const id=pin+'|'+saltB64;if(kc[id])return kc[id];
   const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
   return kc[id]=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64d(saltB64),iterations:250000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
@@ -56,6 +56,9 @@
    try{orig.call(ls,'uatsync-last',when)}catch{}
    if(ch){const last=+(sessionStorage.getItem('uatsync-rl')||0);if(!manual&&Date.now()-last>15000){sessionStorage.setItem('uatsync-rl',Date.now());location.reload();return}changedRemote=true;render()}}
   catch(e){const c=cfg();if(e.status===404&&c&&c.gist&&!retried){c.gist=null;setCfg(c);busy=false;return sync(manual,true)}setStatus(e.message||'Sync failed. Check your connection.','err')}finally{busy=false}}
+ async function changePin(np){const c=cfg();if(!c||busy)return;busy=true;setStatus('Changing PIN…');
+  try{await pull();c.pin=np;c.salt=null;setCfg(c);kc={};await push();const when=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'});setStatus('PIN changed at '+when,'ok')}
+  catch(e){setStatus(e.message||'Could not change the PIN.','err')}finally{busy=false}}
  /* ---------- backup and restore (a file you keep yourself) ---------- */
 const LASTBK='uatbackup-last',PREV='uatbackup-prev';
  function collect(){const keys={};for(let i=0;i<ls.length;i++){const k=ls.key(i);if(SKIP.test(k))continue;const v=rd(k);if(typeof v==='string')keys[k]=v}return keys}
@@ -103,7 +106,7 @@ const LASTBK='uatbackup-last',PREV='uatbackup-prev';
   else if(id==='us-rl')location.reload();
   else if(id==='us-wipe'){if((cfg()||{}).admin===false)return;if(!confirm('Erase the progress on every OTHER device and disconnect them? They are reset the next time they open the app with internet. This device keeps its progress.'))return;const c=cfg();if(!c)return;c.wipe=Date.now();c.wipeSeen=c.wipe;setCfg(c);sync(true).then(()=>{stText='Other devices will reset the next time they open the app online.';stCls='ok';render()})}
   else if(id==='us-setpin'){const pn=(($('us-sp')||{}).value||'').trim();if(pn.length<6){stCls='err';stText='Choose a PIN of at least 6 characters.';render();return}const c=cfg();if(!c)return;c.pin=pn;c.admin=!!(($('us-spa')||{}).checked);setCfg(c);stCls='';stText='';sync(true)}
-  else if(id==='us-chg'){if((cfg()||{}).admin===false)return;const np=(($('us-np')||{}).value||'').trim();if(np.length<6){stCls='err';stText='The new PIN needs at least 6 characters.';render();return}const c=cfg();if(!c)return;c.pin=np;c.salt=null;setCfg(c);sync(true)}
+  else if(id==='us-chg'){if((cfg()||{}).admin===false)return;const np=(($('us-np')||{}).value||'').trim();if(np.length<6){stCls='err';stText='The new PIN needs at least 6 characters.';render();return}changePin(np)}
   else if(id==='bk-dl'){const b=downloadBackup();bkMsg='Saved a backup with '+b.count+' item'+(b.count===1?'':'s')+'. Keep the file somewhere safe (your phone, email to yourself, a drive).';render()}
   else if(id==='bk-up'){const f=$('bk-file');if(f)f.click()}
   else if(id==='bk-undo'){if(confirm('Put back the progress you had before the last restore?')){const ok=undoRestore();bkMsg=ok?'Restored your earlier progress. Reloading…':'Nothing to undo.';render();if(ok)setTimeout(()=>location.reload(),700)}}
