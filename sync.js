@@ -10,6 +10,10 @@
  const wmeta=()=>{try{orig.call(ls,META,JSON.stringify(meta))}catch{}};
  const cfg=()=>{try{return JSON.parse(rd(CFG))}catch{return null}};
  const setCfg=c=>{try{orig.call(ls,CFG,JSON.stringify(c))}catch{}};
+ /* The Sync button only exists on devices you switch on: open any page once with ?sync=on (turn it off again with ?sync=off). Devices that are already connected also keep it. */
+ const SHOWK='uatsync-show';
+ try{const q=new URLSearchParams(location.search).get('sync');if(q==='on')orig.call(ls,SHOWK,'1');else if(q==='off')ls.removeItem(SHOWK)}catch{}
+ const shown=()=>{try{return rd(SHOWK)==='1'||!!cfg()}catch{return false}};
  let timer=null,busy=false,status='',changedRemote=false;
  Storage.prototype.setItem=function(k,v){orig.call(this,k,v);if(this===ls&&!SKIP.test(k)){meta[k]=Date.now();wmeta();if(cfg())schedule()}};
  const schedule=()=>{if(!(cfg()||{}).pin)return;clearTimeout(timer);timer=setTimeout(()=>sync(false),4000)};
@@ -91,7 +95,7 @@ const LASTBK='uatbackup-last',PREV='uatbackup-prev';
   :`<h4>Keep your progress everywhere</h4><div class="m">Connect once per device. Your tickets, Arcade rank and workbooks then follow you.</div>
    <ol style="padding-left:18px;margin:8px 0"><li><a class="us-a" style="margin:0" target="_blank" rel="noopener" href="https://github.com/settings/tokens/new?scopes=gist&description=UAT%20Lab%20sync">Create a token</a> (only “gist” is ticked; set expiry as you like)</li><li>Copy it and paste below</li><li>Choose a PIN (6+ characters). Use the <b>same PIN on every device</b>. It cannot be recovered if you forget it.</li></ol>
    <input id="us-t" type="password" placeholder="ghp_… token" autocomplete="off"><input id="us-pin" type="password" placeholder="Your sync PIN (6+ characters)" autocomplete="off"><label class="m" style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" id="us-adm" checked style="width:auto;margin:0"> Admin device (can save changes, reset others, change PIN). Untick for a read-only device.</label><button class="pri" id="us-go">Connect</button>${stCls==='err'?`<div class="e">${stText}</div>`:''}<div class="m" style="margin-top:6px">The token and PIN are kept only on this device. Your progress in the cloud is encrypted with the PIN, so a new device cannot read it without it.</div>`)+bk();
-  btn.style.display='';pan.style.display=openP?'block':'none'}
+  const sh=shown();btn.style.display=sh?'':'none';pan.style.display=sh&&openP?'block':'none'}
  document.addEventListener('click',e=>{const id=e.target.id;
   if(e.target===btn||btn.contains(e.target)){openP=!openP;render();return}
   if(id==='us-go'){const t=($('us-t')||{}).value.trim(),pn=(($('us-pin')||{}).value||'').trim();if(!t)return;if(pn.length<6){stCls='err';stText='Choose a PIN of at least 6 characters.';render();return}setCfg({token:t,pin:pn,admin:!!(($('us-adm')||{}).checked)});stCls='';stText='';sync(true).then(()=>{if(!cfg())return;const f=stCls==='err';if(f){try{ls.removeItem(CFG)}catch{}}render()})}
