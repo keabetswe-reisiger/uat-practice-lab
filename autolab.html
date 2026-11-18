@@ -160,5 +160,5 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
   save();$('res').innerHTML=msg+stepsHTML(c);if(r.ok&&S.done[c.id]){const first=document.querySelector(`[data-c="${c.id}"] .n`);if(first)first.textContent='done'}}});
 document.addEventListener('input',e=>{if(e.target.id==='src'){S.scripts[S.cur]=e.target.value;save()}});
 render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="tickets.js"></script><script src="ticketcheck.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

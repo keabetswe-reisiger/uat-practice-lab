@@ -56,7 +56,7 @@ details.learn{background:#c9a66e10;border:1px solid var(--line);border-radius:10
 <div class="cols" id="cols"></div>
 </main>
 <div class="overlay" id="ov"><div class="drawer" id="dr"></div></div>
-<script src="tickets.js"></script>
+<script src="tickets.js"></script><script src="ticketcheck.js"></script>
 <script>
 const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const COLS=[['Open','To do'],['In progress','In progress'],['Blocked','Blocked'],['Passed','Passed'],['Failed','Failed']];
@@ -94,6 +94,7 @@ function drawer(){
   ${W.decide?`<div class="sec teach"><h4>How to decide: Pass or Fail?</h4>${W.decide}</div>`:''}
   <div class="sec"><h4>Acceptance criteria (${done}/${t.criteria.length})</h4>${t.criteria.map((c,i)=>`<label class="cb"><input type="checkbox" data-crit="${i}" ${x.crit[i]?'checked':''}> ${esc(c)}</label>`).join('')}<details style="margin-top:8px"><summary>Stuck? Show a hint</summary><p>${esc(t.hint)}</p></details></div>
   <div class="sec"><h4>Your result</h4><label>Actual result (what exactly did you see?)</label><textarea rows="3" data-f="actual">${esc(x.actual)}</textarea>
+  <div id="tc-box">${window.TICKETCHECK.html(t,x,W)}</div>
   <div class="grid" style="margin-top:8px"><div><label>Severity if it fails</label><br><select data-f="sev">${['Critical','Major','Minor'].map(s=>`<option ${x.sev===s?'selected':''}>${s}</option>`).join('')}</select></div><div><label>Time spent</label><br><input data-f="time" value="${esc(x.time)}" placeholder="e.g. 12 min" style="width:100%"></div></div>
   <div class="btns"><button class="act ok" data-st="Passed">✓ Pass</button><button class="act no" data-st="Failed">✗ Fail</button><button class="act hold" data-st="Blocked">Blocked</button><button class="act" data-st="Open">Reset</button>${x.status==='Failed'?'<button class="act" data-copy="1">Copy defect report</button>':''}</div></div>
   <div class="sec"><h4>Notes</h4><textarea rows="2" id="nt" placeholder="Add an observation, question or evidence…"></textarea><div class="btns"><button class="act" data-note="1">Add note</button></div>${x.notes.map(n=>`<div class="note"><div class="log">${n.ts}</div>${esc(n.t)}</div>`).join('')}</div>
@@ -110,7 +111,7 @@ document.addEventListener('click',e=>{const d=e.target.dataset||{};const card=e.
   T.forEach(t=>{const x=st(t.key);r.push([t.key,t.title,t.type,t.priority,t.appName,x.status,x.status==='Failed'?x.sev:'',x.time,x.actual,t.criteria.filter((_,i)=>x.crit[i]).length+'/'+t.criteria.length,x.notes.map(n=>n.t).join(' | ')])});
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+r.map(y=>y.map(q).join(',')).join('\n')],{type:'text/csv'}));a.download='uat-ticket-report.csv';a.click()}});
 document.addEventListener('change',e=>{const d=e.target.dataset||{};if(d.crit!==undefined){st(open).crit[d.crit]=e.target.checked;save();drawer()}else if(d.f){st(open)[d.f]=e.target.value;save()}});
-document.addEventListener('input',e=>{const d=e.target.dataset||{};if(d.f){st(open)[d.f]=e.target.value;save()}else if(['q','ft','fp'].includes(e.target.id))board()});
+document.addEventListener('input',e=>{const d=e.target.dataset||{};if(d.f){st(open)[d.f]=e.target.value;save();if(d.f==='actual'){const b=$('tc-box'),t=T.find(z=>z.key===open);if(b&&t)b.innerHTML=window.TICKETCHECK.html(t,st(open),(window.TEACH||{})[open])}}else if(['q','ft','fp'].includes(e.target.id))board()});
 const openHash=()=>{const k=(location.hash||'').slice(1);if(T.some(x=>x.key===k)){open=k;drawer()}};window.addEventListener('hashchange',openHash);
 $('ft').onchange=$('fp').onchange=board;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){open=null;drawer()}});
 board();openHash();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});

@@ -36,7 +36,7 @@
   <h3>Expected result</h3><div>${esc(t.expected)}</div>
   <h3>Acceptance criteria (${done}/${t.criteria.length})</h3>${t.criteria.map((c,i)=>`<label class="cb"><input type="checkbox" data-tp-crit="${i}" ${x.crit[i]?'checked':''}> <span>${esc(c)}</span></label>`).join('')}
   ${w.decide?`<details><summary>How to decide: Pass or Fail?</summary><p style="margin:6px 0">${w.decide}</p></details>`:''}
-  <h3>Your result</h3><textarea rows="3" data-tp-f="actual" placeholder="What exactly did you see?">${esc(x.actual)}</textarea>
+  <h3>Your result</h3><textarea rows="3" data-tp-f="actual" placeholder="What exactly did you see?">${esc(x.actual)}</textarea><div id="tc-box">${window.TICKETCHECK?window.TICKETCHECK.html(t,x,w):''}</div>
   <div class="row" style="margin-top:6px"><select data-tp-f="sev" style="width:auto">${['Critical','Major','Minor'].map(s=>`<option ${x.sev===s?'selected':''}>${s}</option>`).join('')}</select><span style="color:#4a5568;font-size:13px">severity if it fails</span></div>
   <div class="row" style="margin-top:8px"><button class="ok" data-tp-st="Passed">Pass</button><button class="no" data-tp-st="Failed">Fail</button><button data-tp-st="Blocked">Blocked</button></div>
   <div style="margin-top:10px"><a href="tickets.html#${t.key}" style="color:#7a5a1e;font-weight:600">Open the full ticket</a></div>`}
@@ -52,7 +52,7 @@
    if(d.tp==='sel'){P.sel[page]=e.target.value;saveP();apply();return}
    if(d.tpCrit!==undefined){st(t.key).crit[d.tpCrit]=e.target.checked;saveT();apply();return}
    if(d.tpF){st(t.key)[d.tpF]=e.target.value;saveT()}});
-  box.addEventListener('input',e=>{const d=e.target.dataset;if(d.tpF){st(cur().key)[d.tpF]=e.target.value;saveT()}});
+  box.addEventListener('input',e=>{const d=e.target.dataset;if(d.tpF){const t=cur();st(t.key)[d.tpF]=e.target.value;saveT();if(d.tpF==='actual'){const b=box.querySelector('#tc-box');if(b&&window.TICKETCHECK)b.innerHTML=window.TICKETCHECK.html(t,st(t.key),(TE||{})[t.key])}}});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&P.open&&!document.getElementById('ov')&&!document.querySelector('.lk-ov')){/* keep panel: Escape is used by drawers */}});
   window.addEventListener('resize',apply);apply()}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();

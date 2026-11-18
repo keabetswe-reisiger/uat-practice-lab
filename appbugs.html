@@ -64,5 +64,5 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
  if(d.a==='copyall'){navigator.clipboard&&navigator.clipboard.writeText('# Bugs found in the Practice Lab\n\n'+S.items.map((r,i)=>md(r,i)).join('\n')).then(()=>{b.textContent='Copied'},()=>{b.textContent='Copy blocked by the browser'});return}
  if(d.a==='dl'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['# Bugs found in the Practice Lab\n\n'+S.items.map((r,i)=>md(r,i)).join('\n')],{type:'text/markdown'}));a.download='practice-lab-bug-reports.md';a.click();return}});
 render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="tickets.js"></script><script src="ticketcheck.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>

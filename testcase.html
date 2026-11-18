@@ -119,5 +119,5 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
  if(d.a==='dl'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt()],{type:'text/markdown'}));a.download='practice-lab-test-cases.md';a.click();return}});
 document.addEventListener('change',e=>{const t=e.target;if(t.id==='f-scen'){const sc=SC.find(x=>x.id===t.value);const b=$('f-brief');b.style.display=sc?'block':'none';b.textContent=sc?sc.brief:'';return}if(t.dataset&&t.dataset.k){S.items[+t.dataset.i][t.dataset.k]=t.value;save();if(t.dataset.k==='status')render()}});
 render();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-</script><script src="tickets.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</script><script src="tickets.js"></script><script src="ticketcheck.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body></html>
