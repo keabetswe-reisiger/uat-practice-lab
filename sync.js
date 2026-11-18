@@ -82,7 +82,7 @@ const LASTBK='uatbackup-last',PREV='uatbackup-prev';
  const add=()=>{document.body.appendChild(btn);document.body.appendChild(pan)};document.body?add():addEventListener('DOMContentLoaded',add);
  let stText='',stCls='',openP=false;
  function setStatus(t,c){stText=t;stCls=c||'';render()}
- function render(){const c=cfg();const nopin=c&&!c.pin;btn.className=c?stCls:'';btn.innerHTML=`<i></i>${c?'Synced':'Sync'}`;btn.title=c?stText:'Sync progress across devices';
+ function render(){const c=cfg();const nopin=c&&!c.pin;btn.className=c?stCls:'';btn.innerHTML=`<i></i>${c?(stCls==='err'?'Sync problem':stCls==='ok'?'Synced':nopin?'Set PIN':'Sync'):'Sync'}`;btn.title=c?stText:'Sync progress across devices';
   const last=rd('uatsync-last');
   pan.innerHTML=(nopin?`<h4>Set your sync PIN</h4><div class="m">Sync now locks your cloud copy with a PIN. Choose one of 6 or more characters. Use the <b>same PIN on every device</b>. It cannot be recovered if you forget it.</div><input id="us-sp" type="password" placeholder="Your sync PIN (6+ characters)" autocomplete="off"><label class="m" style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" id="us-spa" checked style="width:auto;margin:0"> Admin device</label><button class="pri" id="us-setpin">Save PIN</button><button id="us-off">Disconnect this device</button>${stCls==='err'?`<div class="e">${stText}</div>`:''}`:c?`<h4>Cloud sync is on</h4><div class="m">${stText||(last?'Last synced at '+last:'Ready')}</div>${changedRemote?'<div class="e" style="color:#2563eb">New progress came from another device. <button id="us-rl">Reload to see it</button></div>':''}
    <div><button class="pri" id="us-now">Sync now</button><button id="us-off">Disconnect this device</button></div>
