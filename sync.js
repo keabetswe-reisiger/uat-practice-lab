@@ -21,17 +21,34 @@
   const list=await api('/gists?per_page=100');const g=list.find(x=>x.files&&x.files[FILE]);
   if(g)c.gist=g.id;else{const n=await api('/gists',{method:'POST',body:JSON.stringify({description:'UAT Practice Lab progress (private)',public:false,files:{[FILE]:{content:'{}'}}})});c.gist=n.id}
   setCfg(c);return c.gist}
+ /* ---------- PIN: the cloud copy is encrypted with a key made from your PIN (AES-GCM, PBKDF2). Without the PIN a token alone cannot read it. ---------- */
+ const b64e=u=>btoa(String.fromCharCode.apply(null,Array.from(u))),b64d=t=>Uint8Array.from(atob(t),ch=>ch.charCodeAt(0));
+ const kc={};
+ async function key(pin,saltB64){if(!(window.crypto&&crypto.subtle))throw new Error('This browser cannot encrypt here. Open the app over https.');const id=pin+'|'+saltB64;if(kc[id])return kc[id];
+  const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
+  return kc[id]=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64d(saltB64),iterations:250000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+ function wipeThisDevice(){for(let i=ls.length-1;i>=0;i--){const k=ls.key(i);if(!SKIP.test(k))ls.removeItem(k)}try{ls.removeItem(CFG);ls.removeItem(META);ls.removeItem('uatsync-last')}catch{}meta={};sessionStorage.setItem('uatsync-wiped','1');location.reload()}
+ async function unwrap(txt){let o={};try{o=JSON.parse(txt||'{}')}catch{}
+  {const c=cfg();if(c){if(c.wipeSeen===undefined){c.wipeSeen=o.wipe||0;setCfg(c)}else if(o.wipe&&o.wipe>c.wipeSeen){wipeThisDevice();throw new Error('This device was reset from another device.')}}}
+  if(o&&o.enc===1){const c=cfg();c.salt=o.s;setCfg(c);
+   try{const k=await key(c.pin||'',o.s);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(o.i)},k,b64d(o.c));return JSON.parse(new TextDecoder().decode(pt))}
+   catch{throw new Error('Wrong PIN, or the PIN was changed on another device. Disconnect and connect again with the right PIN.')}}
+  return o}
+ async function wrap(data){const c=cfg();if(!c.salt){c.salt=b64e(crypto.getRandomValues(new Uint8Array(16)));setCfg(c)}
+  const iv=crypto.getRandomValues(new Uint8Array(12));const k=await key(c.pin||'',c.salt);
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},k,new TextEncoder().encode(JSON.stringify(data))));
+  return JSON.stringify({enc:1,v:1,wipe:c.wipe||c.wipeSeen||undefined,s:c.salt,i:b64e(iv),c:b64e(ct)})}
  async function pull(){const id=await gistId();const g=await api('/gists/'+id);const f=g.files&&g.files[FILE];if(!f)return false;
   let txt=f.content;if(f.truncated&&f.raw_url)txt=await(await fetch(f.raw_url)).text();
-  let remote={};try{remote=JSON.parse(txt||'{}')}catch{}let ch=false;
+  const remote=await unwrap(txt);let ch=false;
   for(const[k,o] of Object.entries(remote)){if(SKIP.test(k)||!o||typeof o.v!=='string')continue;
    if(!(k in meta)||o.t>meta[k]){if(rd(k)!==o.v){orig.call(ls,k,o.v);ch=true}meta[k]=o.t}}
   wmeta();return ch}
  async function push(){const id=await gistId();const data={};
   for(let i=0;i<ls.length;i++){const k=ls.key(i);if(SKIP.test(k))continue;if(!(k in meta)){meta[k]=Date.now()}data[k]={v:rd(k),t:meta[k]}}
-  wmeta();await api('/gists/'+id,{method:'PATCH',body:JSON.stringify({files:{[FILE]:{content:JSON.stringify(data)}}})})}
+  wmeta();const content=await wrap(data);await api('/gists/'+id,{method:'PATCH',body:JSON.stringify({files:{[FILE]:{content}}})})}
  async function sync(manual){if(busy||!cfg())return;busy=true;setStatus('Syncing…');
-  try{const ch=await pull();await push();const when=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'});setStatus('Synced at '+when,'ok');
+  try{const ch=await pull();if(cfg().admin!==false)await push();const when=new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'});setStatus('Synced at '+when,'ok');
    try{orig.call(ls,'uatsync-last',when)}catch{}
    if(ch){const last=+(sessionStorage.getItem('uatsync-rl')||0);if(!manual&&Date.now()-last>15000){sessionStorage.setItem('uatsync-rl',Date.now());location.reload();return}changedRemote=true;render()}}
   catch(e){setStatus(e.message||'Sync failed. Check your connection.','err')}finally{busy=false}}
@@ -68,16 +85,20 @@ const LASTBK='uatbackup-last',PREV='uatbackup-prev';
  function render(){const c=cfg();btn.className=c?stCls:'';btn.innerHTML=`<i></i>${c?'Synced':'Sync'}`;btn.title=c?stText:'Sync progress across devices';
   const last=rd('uatsync-last');
   pan.innerHTML=(c?`<h4>Cloud sync is on</h4><div class="m">${stText||(last?'Last synced at '+last:'Ready')}</div>${changedRemote?'<div class="e" style="color:#2563eb">New progress came from another device. <button id="us-rl">Reload to see it</button></div>':''}
-   <div><button class="pri" id="us-now">Sync now</button><button id="us-off">Disconnect this device</button></div><div class="m" style="margin-top:8px">Your progress is stored in a private gist in your GitHub account. “Disconnect” only removes the token from this device.</div>${stCls==='err'?`<div class="e">${stText}</div>`:''}`
+   <div><button class="pri" id="us-now">Sync now</button><button id="us-off">Disconnect this device</button></div>
+   ${c.admin===false?'<div class="m" style="margin-top:8px"><b>Read-only device.</b> It receives your progress but never saves changes to the cloud, and cannot reset other devices or change the PIN.</div>':`<div style="margin-top:8px"><div class="m">Lost a phone or lent it out? This erases the progress saved on every other device that is connected, and disconnects them. Your cloud copy and this device stay as they are.</div><button id="us-wipe">Reset all other devices</button></div>
+   <div style="margin-top:8px"><div class="m">Your cloud copy is locked with your PIN. Change it here (other devices will then ask you to connect again with the new PIN).</div><input id="us-np" type="password" placeholder="New PIN (6+ characters)" autocomplete="off"><button id="us-chg">Change PIN</button></div>`}<div class="m" style="margin-top:8px">Your progress is stored in a private gist in your GitHub account. “Disconnect” only removes the token from this device.</div>${stCls==='err'?`<div class="e">${stText}</div>`:''}`
   :`<h4>Keep your progress everywhere</h4><div class="m">Connect once per device. Your tickets, Arcade rank and workbooks then follow you.</div>
-   <ol style="padding-left:18px;margin:8px 0"><li><a class="us-a" style="margin:0" target="_blank" rel="noopener" href="https://github.com/settings/tokens/new?scopes=gist&description=UAT%20Lab%20sync">Create a token</a> (only “gist” is ticked; set expiry as you like)</li><li>Copy it and paste below</li></ol>
-   <input id="us-t" type="password" placeholder="ghp_… token" autocomplete="off"><button class="pri" id="us-go">Connect</button>${stCls==='err'?`<div class="e">${stText}</div>`:''}<div class="m" style="margin-top:6px">The token is kept only on this device.</div>`)+bk();
+   <ol style="padding-left:18px;margin:8px 0"><li><a class="us-a" style="margin:0" target="_blank" rel="noopener" href="https://github.com/settings/tokens/new?scopes=gist&description=UAT%20Lab%20sync">Create a token</a> (only “gist” is ticked; set expiry as you like)</li><li>Copy it and paste below</li><li>Choose a PIN (6+ characters). Use the <b>same PIN on every device</b>. It cannot be recovered if you forget it.</li></ol>
+   <input id="us-t" type="password" placeholder="ghp_… token" autocomplete="off"><input id="us-pin" type="password" placeholder="Your sync PIN (6+ characters)" autocomplete="off"><label class="m" style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" id="us-adm" checked style="width:auto;margin:0"> Admin device (can save changes, reset others, change PIN). Untick for a read-only device.</label><button class="pri" id="us-go">Connect</button>${stCls==='err'?`<div class="e">${stText}</div>`:''}<div class="m" style="margin-top:6px">The token and PIN are kept only on this device. Your progress in the cloud is encrypted with the PIN, so a new device cannot read it without it.</div>`)+bk();
   btn.style.display='';pan.style.display=openP?'block':'none'}
  document.addEventListener('click',e=>{const id=e.target.id;
   if(e.target===btn||btn.contains(e.target)){openP=!openP;render();return}
-  if(id==='us-go'){const t=($('us-t')||{}).value.trim();if(!t)return;setCfg({token:t});stCls='';stText='';sync(true).then(()=>{if(!cfg())return;const f=stCls==='err';if(f){try{ls.removeItem(CFG)}catch{}}render()})}
+  if(id==='us-go'){const t=($('us-t')||{}).value.trim(),pn=(($('us-pin')||{}).value||'').trim();if(!t)return;if(pn.length<6){stCls='err';stText='Choose a PIN of at least 6 characters.';render();return}setCfg({token:t,pin:pn,admin:!!(($('us-adm')||{}).checked)});stCls='';stText='';sync(true).then(()=>{if(!cfg())return;const f=stCls==='err';if(f){try{ls.removeItem(CFG)}catch{}}render()})}
   else if(id==='us-now')sync(true);else if(id==='us-off'){try{ls.removeItem(CFG)}catch{}stText='';stCls='';changedRemote=false;render()}
   else if(id==='us-rl')location.reload();
+  else if(id==='us-wipe'){if((cfg()||{}).admin===false)return;if(!confirm('Erase the progress on every OTHER device and disconnect them? They are reset the next time they open the app with internet. This device keeps its progress.'))return;const c=cfg();if(!c)return;c.wipe=Date.now();c.wipeSeen=c.wipe;setCfg(c);sync(true).then(()=>{stText='Other devices will reset the next time they open the app online.';stCls='ok';render()})}
+  else if(id==='us-chg'){if((cfg()||{}).admin===false)return;const np=(($('us-np')||{}).value||'').trim();if(np.length<6){stCls='err';stText='The new PIN needs at least 6 characters.';render();return}const c=cfg();if(!c)return;c.pin=np;c.salt=null;setCfg(c);sync(true)}
   else if(id==='bk-dl'){const b=downloadBackup();bkMsg='Saved a backup with '+b.count+' item'+(b.count===1?'':'s')+'. Keep the file somewhere safe (your phone, email to yourself, a drive).';render()}
   else if(id==='bk-up'){const f=$('bk-file');if(f)f.click()}
   else if(id==='bk-undo'){if(confirm('Put back the progress you had before the last restore?')){const ok=undoRestore();bkMsg=ok?'Restored your earlier progress. Reloading…':'Nothing to undo.';render();if(ok)setTimeout(()=>location.reload(),700)}}
