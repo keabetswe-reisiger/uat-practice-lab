@@ -53,7 +53,7 @@
   'coffee|B5':['The confirmation says R30.00 (delivery fee left out) while the cart total was R50.00.',/(less|lower|without|exclud|missing|differ|not include|doesn.?t include|doesn.?t match|not match|wrong|r\s?4\d|r\s?3\d|r\s?2\d)/i],
   'clinic-practice|D1':['As Thabo (Doctor) the full manager KPI suite IS shown (it should be hidden).',/(sees|can see|is shown|are shown|displayed|visible|appears|showing|shows|kpi.*(there|present))/i,/(not (shown|visible|displayed)|hidden|cannot see|can.?t see|doesn.?t (see|show))/i],
   'clinic-practice|D2':['Choosing Weekly shows the monthly figures, not 64 completed / 9 no-shows / 22 min / 5 doctors.',/(month|different|wrong|not 64|not the same|doesn.?t match|not match|other figures|higher)/i],
-  'clinic-practice|F1':['Searching "mokoena" in lowercase finds nobody. Only "Mokoena" with a capital M works.',/(no (result|patient|match)|nobody|nothing|not found|empty|zero|0 (result|patient)|case|capital|no one)/i,/(giving expected|as expected|is working|works|both (found|shown))/i],
+  'clinic-practice|F1':['Searching "mokoena" in lowercase finds nobody. Only "Mokoena" with a capital M works.',/(no (result|patient|match)|nobody|nothing|not found|empty|zero|0 (result|patient)|case|capital|no one)/i,/(as expected|everything works|it works\b|works (fine|correctly|well)|is working|both (found|shown)|giving expected)/i],
   'clinic-practice|F2':['Thabo also sees patients who are not assigned to him (the list is longer than the three expected).',/(more|other|extra|all (patients|the patients)|also|not assigned|longer|everyone|every patient|6|six)/i],
   'clinic-practice|S1':['The duplicate booking is accepted and saved (it should be refused).',/(accept|saved|allowed|booked|went through|no error|success|submitted|duplicate)/i,/(refus|blocked|rejected|not allowed)/i],
   'clinic-practice|S3':['The new booking shows as Confirmed (it should say Pending Review / Unconfirmed).',/(confirmed)/i,/(pending review|unconfirmed)/i],
@@ -64,10 +64,10 @@
   'stockwatch-practice|E3':['Next expiry shows the LATER batch (2027-03-01) instead of 2026-12-01 (the earliest).',/(later|latest|wrong|different|not 2026-12-01|other date|newer)/i],
   'stockwatch-practice|R1':['Muffins expiring today are received (they should be refused).',/(accept|received|allowed|went through|no error|success|saved)/i,/(refus|blocked|rejected|not allowed)/i],
   'stockwatch-practice|R2':['-20 is accepted and the cups go DOWN from 500 (it should be refused).',/(accept|reduc|went down|480|less|allowed|no error|success|decreas)/i,/(refus|blocked|rejected|not allowed|still 500)/i],
-  'stockwatch-practice|L1':['The Low stock count stays at 2 after receiving (it should become 1).',/(2|two|same|unchanged|not (change|update|drop|reduce|refresh)|still)/i],
+  'stockwatch-practice|L1':['The Low stock count stays at 2 after receiving (it should become 1).',/(\b2\b|\btwo\b|same|unchanged|not (change|update|drop|reduce|refresh)|still)/i],
   'stockwatch-practice|V5':['The variance % shows -5.3% (worked out on the counted qty) instead of -5.0%.',/(-?\s?5\.\d|not -?5|wrong|different|-?\s?2\.6|counted)/i],
   'stockwatch-practice|P6':['Lerato (Storeman) CAN see and use the approve option (only the Manager should).',/(can approve|approve (option|button)|sees|can see|visible|shown|allowed|there)/i,/(cannot|can.?t|not (shown|visible|there)|hidden)/i],
-  'stockwatch-practice|W7':['Waste of 12 with no reason is accepted (a reason should be required).',/(accept|allowed|went through|no error|success|saved|recorded|logged)/i,/(refus|blocked|rejected|not allowed|reason required)/i],
+  'stockwatch-practice|W7':['Waste of 12 with no reason is accepted (a reason should be required).',/(accept|allowed|went through|no error|success|saved|recorded|logged(?! in))/i,/(refus|blocked|rejected|not allowed|reason required)/i],
   'stockwatch-practice|W8':['The waste total shows only the last entry (R42.00) instead of R70.00.',/(42|last|only|overwrit|replace|not (add|accumulat)|wrong|r\s?28|less)/i]
  };
 
@@ -102,6 +102,19 @@
   const rows=list.map((x,i)=>`<li><b>Step ${i+1}: do</b> ${esc(x)}<br><b>You should see:</b> ${esc(st[0][i]||'(nothing special; carry on)')}</li>`).join('');
   return `<details class="lk-det" data-lk-obs="1" ${open?'open':''}><summary>Steps to compare with yours (correct version)</summary><ol style="margin:8px 0 4px 18px;padding:0">${rows}<li><b>Compare:</b> Expected: ${esc(t.exp)}<br>What really happened is different, so the result is a <b>Fail</b>.</li><li><b>Write the Actual result like this:</b> &ldquo;${esc(st[1])}&rdquo;</li></ol></details>`}
  const NOTE={'clinic-practice|TC-11':'The second Add shows "Already in the booking list." and the list keeps ONE Zodwa entry, so the duplicate IS blocked and this test passes. Careful: after the first Add the form goes back to the first patient (Zanele), so choose Zodwa Mokoena and Check-up again before the second Add. Pressing Submit twice for the same patient and day is a different test (TC-12): that one is NOT blocked, which is a real bug.'};
+ function judge(o,a,exp){
+  const stripExp=(a,exp)=>{exp=String(exp||'').trim();if(exp.length<12)return a;try{return a.replace(new RegExp(exp.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s+'),'gi'),' ')}catch(e){return a}};
+/* judge only what the tester says the app DID, never what they say it should do:
+   1) if they wrote an "actual" part, use the text after the last "actual";  2) cut brackets and tails that talk about what was expected / should happen
+   ("accepted (it should be refused)" -> "accepted");  3) "not rejected" / "wasn't refused" mean the app let it through, so they are not counted as refusing */
+  a=stripExp(String(a||''),exp);const am=[...a.matchAll(/actual(\s*results?)?/gi)];let aa=am.length?a.slice(am[am.length-1].index+am[am.length-1][0].length):a;
+  const EXPW=/\b(expect(?:ed|s)?|should(?:n't| not)?|must|supposed|ought|needs? to|required to|instead of|rather than)\b/i;
+  aa=aa.replace(/\(\s*(it |this |that |they )?(should|must|expected)\b[^]*$/i,' ').replace(/\([^)]*\)/g,m=>EXPW.test(m)?' ':m);
+  aa=aa.split(/(?<=[.!?])\s+|\n/).map(sn=>{return sn.replace(new RegExp(EXPW.source+'[^]*?(?=\\b(?:but|however|yet|although|and it|and the)\\b|$)','i'),' ')}).join(' ');
+  if(!aa.replace(/[^a-z0-9]/gi,''))return false; /* nothing left that says what the app DID */
+  const nz=x=>String(x||'').toLowerCase().replace(/[^a-z0-9]/g,'');if(nz(exp).length>=10&&nz(aa).includes(nz(exp))&&nz(aa).length<=nz(exp).length+15)return false; /* only repeated the expected result */
+  const an=aa.replace(/\b(not|never|wasn't|isn't|didn't|without)\s+(?:\w+\s+)?(?:\w+\/)*(refus\w*|reject\w*|block\w*|den(?:y|ied)\w*)/gi,' ');
+  return o[1].test(aa)&&!(o[2]&&o[2].test(an))}
  function obsHTML(t){const a=String(res(t.id).actual||'').trim();const o=t.bug&&OBS[page+'|'+t.bug];
   if(!o){const nt=NOTE[page+'|'+t.id];let extra='';
    if(a&&!t.bug){const exp=String(t.exp||'');const wantsNo=/(refus|blocked|not shown|cannot|not allowed|only )/i.test(exp);const saysDone=/(submitted|accepted|saved|allowed|went through|success|was added|booked)/i.test(a)&&!/(refus|blocked|rejected|error|already|not allowed)/i.test(a);
@@ -110,9 +123,7 @@
    return extra+(a?'':'<div class="lk-fb info" data-lk-obs="1"><b>Actual result is empty.</b> Write what you saw, even if it matches the expected result.</div>')+stepsHTML(t,true)}
   const say=esc(o[0]);
   if(!a)return `<div class="lk-fb no" data-lk-obs="1"><b>Your Actual result is empty.</b> Write what you really saw. <br><b>What the app really did:</b> ${say}</div>${stepsHTML(t,true)}`;
-  /* judge only what the tester says the app DID: if they wrote an "actual" part, use text after the last "actual"; otherwise drop clauses about what was expected/should/must happen (so "expected: must be rejected" is not read as the app rejecting it) */
-  const am=[...a.matchAll(/actual(\s*results?)?/gi)];let aa=am.length?a.slice(am[am.length-1].index+am[am.length-1][0].length):a.split(/(?<=[.;\n])|,\s*(?=the |it |and )/).filter(c=>!/\b(expect(ed)?|should|must|supposed)\b/i.test(c)).join(' ');if(!aa.trim())aa=a;
-  const hit=o[1].test(aa)&&!(o[2]&&o[2].test(aa));const SH=stepsHTML(t,true);
+  const hit=judge(o,a,t.exp);const SH=stepsHTML(t,true);
   return hit?`<div class="lk-fb ok" data-lk-obs="1"><b>Your actual result looks right.</b> It describes the real problem. <br><b>What the app really did:</b> ${say}</div>${SH}`
    :`<div class="lk-fb no" data-lk-obs="1"><b>Your actual result does not describe what really happened.</b> You wrote: &ldquo;${esc(a.length>140?a.slice(0,140)+'...':a)}&rdquo; <br><b>What the app really did:</b> ${say}<br>Run the test again, compare it with the expected result, then rewrite the Actual result so a developer could see the difference.</div>${SH}`}
  /* ---------- marking ---------- */
@@ -159,6 +170,6 @@
  document.addEventListener('change',e=>{if(e.target.id==='lk-instant'){P.instant=e.target.checked;save();const v=viewEl();if(v){v.querySelectorAll('.lk-nav').forEach(n=>n.remove());v.querySelectorAll('.tc .lk-fb,.tc .lk-det,.tc .co-box,.tc .co-plan').forEach(n=>n.remove());decorate()}}});
  document.addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.actual){setTimeout(()=>{const v=viewEl();if(v&&stat(e.target.dataset.actual)!=='Pending'){v.querySelectorAll('.lk-nav').forEach(n=>n.remove());v.querySelectorAll('.tc .lk-fb,.tc .lk-det,.tc .co-box,.tc .co-plan').forEach(n=>n.remove());decorate()}},30)}});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
- window.LABKIT={score,mark,P,page};
+ window.LABKIT={score,mark,P,page,judge,OBS,STEPS};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(wire,50));else setTimeout(wire,50);
 })();

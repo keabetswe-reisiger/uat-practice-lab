@@ -7,18 +7,26 @@
  const stem=w=>w.replace(/(ing|ed|es|s|ly)$/,'');
  const words=t=>(String(t||'').toLowerCase().match(/[a-z0-9]+/g)||[]).filter(w=>w.length>2&&!STOP.has(w)).map(stem);
  const PROB=/\b(blank|error|crash|crashed|fail|failed|wrong|missing|nothing|stuck|broken|empty|incorrect|duplicate|freez|froze|bug|unable|cannot|can't|cant|doesn't|doesnt|didn't|didnt|not (work|open|show|load|display|appear|save|update)|no (content|data|message))\b/i;
+ /* Judge only what the tester says they SAW: text after the last "actual", with any "expected ..." sentence or "(it should ...)" bracket removed,
+    so a report that lists the expected result AND the actual result is not mistaken for describing the expected result. */
+ const stripExp=(a,exp)=>{exp=String(exp||'').trim();if(exp.length<12)return a;try{return a.replace(new RegExp(exp.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s+'),'gi'),' ')}catch(e){return a}};
+ function seen(a0,exp){const a=stripExp(a0,exp);let r=a;const am=[...a.matchAll(/actual(\s*results?)?/gi)];if(am.length)r=a.slice(am[am.length-1].index+am[am.length-1][0].length);
+  r=r.replace(/\(\s*(it |this |that |they )?(should|must|expected)\b[^]*$/i,' ');
+  r=r.split(/(?<=[.!?])\s+|\n/).map(sn=>{return sn.replace(/\bexpect(ed|s)?\b[^]*?(?=\b(but|however|yet|although|instead)\b|$)/i,' ')}).join(' ');
+  return r.replace(/[^a-z0-9]/gi,'')?r:a0}
  function judge(t,x){
-  const a=String(x.actual||'').trim();
+  const a0=String(x.actual||'').trim();const a=a0?(seen(a0,t.expected).trim()||a0):a0;
   if(!a)return{c:'info',h:'Write what you saw first.',b:'Type exactly what you saw in the box above, even if it matches the expected result. Then this check compares it with the expected result.'};
   const ew=[...new Set(words(t.expected))],aw=new Set(words(a));
   const hit=ew.length?ew.filter(w=>aw.has(w)).length/ew.length:0;
+  const awf=new Set(words(a0)),hitFull=ew.length?ew.filter(w=>awf.has(w)).length/ew.length:0; /* hit = words in what they SAW; hitFull = words anywhere in their text */
   const NEG=/\b(no|without|zero)\s+\w+/gi,PG=new RegExp(PROB.source,'gi');
   const pw=txt=>(String(txt).replace(NEG,' ').match(PG)||[]).map(m=>m.toLowerCase());
   const expOk=new Set(pw(t.expected));
   const prob=pw(a).some(m=>!expOk.has(m));
   let r;
   if(prob&&hit<0.5)r={c:'ok',h:'Your result describes a problem.',b:'If that is really what you saw, <b>Fail</b> is the right call. Make sure you say <b>which step</b>, <b>what you saw</b> and <b>what you expected</b> so a developer can repeat it.'};
-  else if(!prob&&hit>=0.3)r={c:'ok',h:'Your result matches the expected result.',b:'If you followed every step and saw this each time, <b>Pass</b> is the right call. Also tick the acceptance criteria you checked.'};
+  else if(!prob&&hitFull>=0.3)r={c:'ok',h:'Your result matches the expected result.',b:'If you followed every step and saw this each time, <b>Pass</b> is the right call. Also tick the acceptance criteria you checked.'};
   else r={c:'no',h:'Your result is not clear enough yet.',b:'It neither clearly matches the expected result nor names a specific problem. Run the steps again and write what you saw after <b>each</b> step (for example: &ldquo;Step 3: Patients tab opened with a list of 4 names&rdquo;).'};
   const s=x.status;
   if(s==='Passed'&&prob&&hit<0.5)r.b+='<br><b>But you marked it Passed.</b> Your words describe a problem. Check again before you sign off.';

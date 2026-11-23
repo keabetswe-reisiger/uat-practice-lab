@@ -25,8 +25,14 @@
  const lvOf=l=>LV[l]?l:'medium';
  function pickBugs(mod,seed,level){const ids=Object.keys(mod.bugs);const r=R(seed);const n=Math.min(LV[lvOf(level)].n,ids.length);return r.shuf(ids).slice(0,n)}
  function replay(mod,B,scenario,fresh){const s=fresh||mod.fresh();const ui={val:()=>''};(scenario||[]).forEach(st=>{mod.act(s,B,st[0],st[1],ui)});return s}
- const num=v=>{const x=parseFloat(String(v).replace(/[R$€£,\s]/g,''));return isNaN(x)?null:x};
- function same(type,exp,obs){if(type==='number'){const a=num(obs);return a!==null&&Math.abs(a-Number(exp))<0.005}return String(obs).trim().toLowerCase()===String(exp).trim().toLowerCase()}
+ /* reads a number the way people write it: R70.00, r 1 250,50, 1,250.00, -20, −20, "70 minutes", "about 5%" */
+ const num=v=>{const s=String(v==null?'':v).replace(/[−–—]/g,'-').replace(/ /g,' ');const m=s.match(/(-?)\s*(\d[\d ,.]*)/);if(!m)return null;
+  let t=m[2].replace(/\s+/g,'').replace(/[.,]+$/,'');const c=(t.match(/,/g)||[]).length,d=(t.match(/\./g)||[]).length;
+  if(c&&d){const dec=t.lastIndexOf(',')>t.lastIndexOf('.')?',':'.';const th=dec===','?'.':',';t=t.split(th).join('');if(dec===',')t=t.replace(',','.')}
+  else if(c){t=(c===1&&/,\d{1,2}$/.test(t))?t.replace(',','.'):t.split(',').join('')}
+  else if(d>1)t=t.split('.').join('');
+  let x=parseFloat(t);if(isNaN(x))return null;const pre=s.slice(0,m.index+m[1].length);const neg=m[1]==='-'||/-\s*$/.test(s.slice(0,m.index));return neg&&x>0?-x:x};
+ function same(type,exp,obs){if(type==='number'){const a=num(obs);return a!==null&&Math.abs(a-Number(exp))<0.005}const n=x=>String(x==null?'':x).trim().toLowerCase().replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/\s+/g,' ').replace(/^["']+|["'.!]+$/g,'');return n(obs)===n(exp)}
  /* what the app really shows for this test */
  function actualFor(mod,B,t){const s=replay(mod,B,t.scenario);return mod.read(s,B)}
  /* does this test's expected (spec) value differ from the app's real behaviour? */
@@ -118,6 +124,6 @@
    if(k==='newattempt'){if(!confirm('Start a new attempt with a different mix of bugs? Your current progress will be replaced.'))return;fresh();frame();return}});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=$('ov');o&&o.remove()}});
   $('fin').onclick=()=>{A.view='result';save();render()};
-  window.LABRUN={T,A:()=>A,score,mod,submit:(id,vals,preds)=>submit(T().find(t=>t.id===id),vals,preds),Bset,save,render,skillOf}}
+  window.LABRUN={same,num,T,A:()=>A,score,mod,submit:(id,vals,preds)=>submit(T().find(t=>t.id===id),vals,preds),Bset,save,render,skillOf}}
  window.LABSTART=()=>{if(appId&&LA[appId])run(LA[appId]);else catalog()};
 })();
