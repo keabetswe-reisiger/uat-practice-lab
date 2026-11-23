@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Real-device check</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:10px 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}@media(max-width:900px){.two{grid-template-columns:1fr}}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--accent)}.bar i.ok{background:var(--green)}.bar i.bad{background:var(--red)}
+.big{font-size:34px;font-weight:800;line-height:1.1}.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
+label{display:block;font-weight:600;font-size:14px;margin:10px 0 3px}input,select,textarea{font:inherit;width:100%;border:1px solid #b8c0cc;border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}
+button{font:inherit;border:1px solid #b8c0cc;background:#fff;color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}button.pri{background:var(--brand);color:#fff;border-color:var(--brand)}button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}
+.note{background:#eef3fb;border-left:3px solid var(--blue);padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+.cof{background:#faf5ea;border-left:3px solid var(--accent);padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;font-size:14px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0}.opt.right{border-color:var(--green);background:#e8f5ee}.opt.wrong{border-color:var(--red);background:#fbeceb}
+.ck{display:flex;gap:10px;align-items:flex-start;padding:8px 2px;border-bottom:1px dashed var(--line);cursor:pointer}.ck input{width:auto;margin-top:5px}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Real-device check <span>what only your own phone can tell you</span></h1><span class="sp"></span><a href="tickets.html">Tickets</a><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main><div id="v"></div></main>
+<script>
+
+const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KEY='devcheck-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.done=S.done||{};S.notes=S.notes||{};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const G=[
+ ['Real phone check','Open the lab on a real phone (not the computer simulator). This covers ticket UAT-145.',[
+  ['p1','The lab opens and the first screen loads in under 5 seconds on mobile data.'],
+  ['p2','You can reach every section from the menu using one thumb, without zooming.'],
+  ['p3','Nothing scrolls sideways. Text is readable without pinching.'],
+  ['p4','Buttons are easy to tap: you never hit the wrong one next to it.'],
+  ['p5','Typing in a text box shows the keyboard and the box stays visible above it.'],
+  ['p6','Turn the phone sideways, then back. The page still works.'],
+  ['p7','Switch on flight mode, then open a page you have visited before. It still opens (offline).'],
+  ['p8','Do one full ticket or practice-app test start to finish on the phone, including saving your result.']]],
+ ['Sync with the PIN, on real devices','Needs your real GitHub token and PIN. Use only your own devices. The token must be a classic token with the gist permission only.',[
+  ['s1','On this device add ?sync=on to the address once, so the Sync button appears.'],
+  ['s2','Connect with your token and set a PIN of 6 or more characters. Write the PIN down somewhere safe: it cannot be recovered.'],
+  ['s3','Do something small (answer an exam question). Sync. No red "Sync problem" label.'],
+  ['s4','On a second device connect with the same token and PIN. Your progress from step 3 appears.'],
+  ['s5','Do something on the second device, sync, then sync the first device. The new item arrives, and nothing was lost.'],
+  ['s6','On the second device, try a wrong PIN once. It should be refused clearly, not silently show empty data.'],
+  ['s7','Make the second device read-only and confirm it cannot change settings.']]],
+ ['Other browsers and access','What the automatic tests cannot reach.',[
+  ['b1','Safari on an iPhone or iPad: open the lab, use the menu, answer a question.'],
+  ['b2','Samsung Internet or Firefox on Android: same quick check.'],
+  ['b3','Turn on TalkBack (Android) or VoiceOver (iPhone) and move through the home page. Buttons are announced with sensible names.'],
+  ['b4','Make the text size bigger in the phone settings. Nothing important gets cut off.']]]];
+const ALL=G.flatMap(g=>g[2]);
+async function version(){const el=$('ver');el.textContent='Checking...';
+ try{
+  const net=await fetch('files.json',{cache:'no-store'});if(!net.ok)throw new Error('This copy has no version list (normal when run from your own computer in development).');
+  const nj=await net.json();let sw='';try{sw=(await (await fetch('sw.js',{cache:'no-store'})).text()).match(/BUILD='([^']*)'/)[1]}catch{}
+  let cj=null;if(window.caches){try{const m=await caches.match(new URL('files.json',location.href).href);cj=m?await m.json():null}catch{}}
+  if(!cj){el.innerHTML=`<b>Latest version on the server:</b> <span class="tag">${esc(sw||'unknown')}</span><br>This device has not saved the app for offline use yet, so it loads from the internet. You are on the latest version.`;return}
+  const diff=Object.keys(nj).filter(k=>cj[k]!==nj[k]);
+  el.innerHTML=`<b>Latest on the server:</b> <span class="tag">${esc(sw||'unknown')}</span><br>`+(diff.length?`<span class="bad">This device is behind: ${diff.length} file${diff.length===1?'':'s'} out of date</span> (for example ${diff.slice(0,4).map(esc).join(', ')}). Press the button below to update.`:`<span class="ok">This device has the latest version.</span>`)
+ }catch(e){el.textContent=e.message||'Could not check. Are you online?'}}
+async function refresh(){const m=$('rmsg');m.textContent='Updating...';try{if(navigator.serviceWorker){const r=await navigator.serviceWorker.getRegistrations();for(const x of r)await x.unregister()}if(window.caches){for(const k of await caches.keys())await caches.delete(k)}m.textContent='Done. Reloading...';setTimeout(()=>location.reload(),600)}catch(e){m.textContent='Could not clear automatically. Close the app completely and open it again.'}}
+function render(){const n=Object.keys(S.done).length;
+ $('v').innerHTML=`<div class="card" style="border-left:4px solid var(--accent)"><h2>Real-device check</h2><div>The automatic tests run in a pretend browser on a computer. They cannot tell you how the lab feels on your real phone, or whether your sync works with your real accounts. This page walks you through the parts only you can do, and you tick each one as you go.</div><div class="cof">A new coffee machine passes the factory tests, but you still pull a real shot in your own shop before opening day.</div><div class="mute">${n} of ${ALL.length} checks done. If something fails, write what you saw in the note box, then report it on <a href="appbugs.html">Test this app</a>.</div><div class="bar"><i class="${n===ALL.length?'ok':''}" style="width:${n/ALL.length*100}%"></i></div></div>
+ <div class="card"><h3>Is this device showing the newest version?</h3><div class="mute">If you ever think a change "is not showing", check here first. The app saves itself for offline use, so an old copy can linger.</div><div id="ver" role="status" style="margin:8px 0"></div><div class="row"><button data-act="ver">Check again</button><button class="pri" data-act="refresh">Update this device now</button></div><div id="rmsg" class="mute"></div><div class="mute">Updating only clears the app's saved files. Your progress stays, because it is stored separately.</div></div>`+
+ G.map(g=>`<div class="card"><h3>${esc(g[0])}</h3><div class="mute">${esc(g[1])}</div>${g[2].map(([id,t])=>`<label class="ck"><input type="checkbox" data-id="${id}" ${S.done[id]?'checked':''}><span>${esc(t)}${S.done[id]?'':''}</span></label>`).join('')}<label for="n-${esc(g[2][0][0])}" class="mute" style="margin-top:8px">What did you notice? (optional)</label><textarea id="n-${esc(g[2][0][0])}" data-note="${esc(g[2][0][0])}" rows="2" placeholder="For example: menu button too small on the Exam page">${esc(S.notes[g[2][0][0]]||'')}</textarea></div>`).join('');
+ version()}
+document.addEventListener('change',e=>{const id=e.target.dataset.id;if(!id)return;if(e.target.checked)S.done[id]=Date.now();else delete S.done[id];save();const y=window.scrollY;render();window.scrollTo(0,y)});
+document.addEventListener('input',e=>{const id=e.target.dataset.note;if(id){S.notes[id]=e.target.value;save()}});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.act==='ver')version();if(b.dataset.act==='refresh')refresh()});
+render();
+
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="ticketcheck.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

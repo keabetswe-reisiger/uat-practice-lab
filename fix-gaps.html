@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fix my gaps</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:10px 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}@media(max-width:900px){.two{grid-template-columns:1fr}}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--accent)}.bar i.ok{background:var(--green)}.bar i.bad{background:var(--red)}
+.big{font-size:34px;font-weight:800;line-height:1.1}.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
+label{display:block;font-weight:600;font-size:14px;margin:10px 0 3px}input,select,textarea{font:inherit;width:100%;border:1px solid #b8c0cc;border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}
+button{font:inherit;border:1px solid #b8c0cc;background:#fff;color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}button.pri{background:var(--brand);color:#fff;border-color:var(--brand)}button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}
+.note{background:#eef3fb;border-left:3px solid var(--blue);padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+.cof{background:#faf5ea;border-left:3px solid var(--accent);padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;font-size:14px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0}.opt.right{border-color:var(--green);background:#e8f5ee}.opt.wrong{border-color:var(--red);background:#fbeceb}
+
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Fix my gaps <span>a short session built from what you got wrong</span></h1><span class="sp"></span><a href="exam.html">Exam prep</a><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main><div id="v"></div></main>
+<script src="qgen.js"></script><script src="exam-ch1.js"></script><script src="exam-ch23.js"></script><script src="exam-ch4.js"></script><script src="exam-ch5.js"></script><script src="exam-ch6.js"></script><script src="exam-more.js"></script><script src="exam-extra.js"></script><script src="tickets.js"></script><script src="coach.js"></script>
+<script>
+
+const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const D=window.EXAMDATA||{lessons:[],qs:[],terms:[]};const BOX=[0,0,1,3,7,21];
+const rd=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch{return{}}};
+const loadX=()=>{const X=rd('exam-v1');X.lo=X.lo||{};X.q=X.q||{};return X};
+const saveX=X=>{try{localStorage.setItem('exam-v1',JSON.stringify(X))}catch{}};
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const TN={ep_count:'Equivalence partitions: counting',ep_set:'Equivalence partitions: choosing tests',bva_set:'Boundary values: choosing tests',bva_count:'Boundary values: counting',dt_rules:'Decision tables: rules',dt_action:'Decision tables: outcomes',st_next:'State transitions: next state',st_cov:'State transitions: coverage',code_cov:'Code coverage',est_3pt:'Estimation: three-point',est_ratio:'Estimation: ratios',est_extrap:'Estimation: extrapolation',prio_risk:'Prioritising by risk',prio_cov:'Prioritising for coverage'};
+let ses=null; /* {qs:[], i:0, results:[], before:{}} */
+function gaps(){const X=loadX();const arr=Object.entries(X.lo).filter(([lo,s])=>s.n>=1&&/^FL-/.test(lo)).map(([lo,s])=>({lo,n:s.n,c:s.c,acc:s.c/s.n,ch:s.ch}));
+ let weak=arr.filter(g=>g.n>=2&&g.acc<.7);let mode='weak';
+ if(!weak.length){weak=arr.filter(g=>g.acc<1).sort((a,b)=>a.acc-b.acc).slice(0,4);mode='lowest'}
+ weak.sort((a,b)=>a.acc-b.acc||b.n-a.n);return{weak,mode,answered:arr.length}}
+const lesson=lo=>D.lessons.find(l=>l.id===lo);
+function techWeak(){const T=rd('tech-v1').recent||{};return Object.keys(TN).filter(t=>{const r=T[t]||[];return r.length>=5&&r.filter(x=>x).length/r.length<.8})}
+function nextTicket(){const T=window.TICKETS||[],S=rd('uat-tickets-v1');return T.find(t=>!(S[t.key]&&(S[t.key].status==='Passed'||S[t.key].status==='Failed')))}
+function home(){const g=gaps();
+ const intro=`<div class="card" style="border-left:4px solid var(--accent)"><h2>Fix my gaps</h2><div>This page looks at what you actually got wrong, then builds one short session from it: <b>read the idea, answer questions, recall the key words, then practise on a real app</b>. Your answers here count toward your exam progress, so the gaps shrink on the Readiness page too.</div><div class="cof">A barista who keeps over-extracting does not re-read the whole manual. They fix that one step, pull five shots, and taste each one. Same idea.</div></div>`;
+ if(!g.answered){return intro+`<div class="card"><h3>Nothing to fix yet</h3>You have not answered any syllabus questions. Answer at least 10 in <a href="exam.html">Exam prep</a> (or log a <a href="sample-exams.html">sample exam</a>) and come back: this page will then target your weakest topics.</div>`}
+ if(!g.weak.length)return intro+`<div class="card"><h3>No gaps found</h3>Every topic you have tried is answered correctly so far. Try more questions in <a href="exam.html">Exam prep</a> to find new gaps.</div>`;
+ const list=`<div class="card"><h3>${g.mode==='weak'?'Your weak topics':'Your lowest topics so far'}</h3><div class="mute">${g.mode==='weak'?'Topics with at least 2 answers and under 70% correct.':'You have no topic under 70% yet, so these are the ones where you slipped most.'}</div><table><tr><th>Topic</th><th>Right</th><th>Accuracy</th></tr>${g.weak.slice(0,8).map(x=>{const l=lesson(x.lo);return`<tr><td><b>${esc(x.lo)}</b> ${l?esc(l.title):''}</td><td>${x.c}/${x.n}</td><td class="${x.acc<.7?'bad':''}">${Math.round(x.acc*100)}%</td></tr>`}).join('')}</table><div class="row" style="margin-top:10px"><button class="pri" data-start="1">Build my session (about 15 minutes)</button></div></div>`;
+ return intro+list+extras()}
+function extras(){const cw=(window.COACH&&COACH.weak)?COACH.weak():[];const tw=techWeak();const nt=nextTicket();
+ return `<div class="card"><h3>Also worth practising (outside the exam)</h3><ul style="margin:4px 0 0 18px;padding:0">${tw.length?`<li>Calculation techniques under 80%: ${tw.map(t=>esc(TN[t])).join('; ')}. <a href="techniques.html">Technique trainer</a></li>`:''}${cw.length?`<li>Practice-app skills where you often slip: ${cw.map(c=>esc(c.name)).join('; ')}. <a href="lab.html">Practice apps</a></li>`:''}${nt?`<li>Next ticket not done: <b>${esc(nt.key)}</b> ${esc(nt.title)}. <a href="tickets.html">Tickets</a></li>`:''}${(!tw.length&&!cw.length&&!nt)?'<li>Nothing else flagged.</li>':''}</ul></div>`}
+function build(){const g=gaps();const los=g.weak.slice(0,4).map(x=>x.lo);const before={};los.forEach(lo=>{const s=loadX().lo[lo];before[lo]=s?{n:s.n,c:s.c}:{n:0,c:0}});
+ let pool=shuf(D.qs.filter(q=>los.includes(q.lo)));const X=loadX();pool.sort((a,b)=>((X.q[a.id]||{}).n||0)-((X.q[b.id]||{}).n||0));pool=pool.slice(0,6);
+ if(pool.length<6)pool=pool.concat(shuf(D.qs.filter(q=>los.some(lo=>lo.slice(0,4)===q.lo.slice(0,4))&&!pool.includes(q))).slice(0,6-pool.length));
+ const chs=[...new Set(g.weak.slice(0,3).map(x=>x.ch))];const terms=shuf(D.terms.filter(t=>chs.includes(t.ch))).slice(0,5);
+ ses={los,before,read:los.slice(0,2).map(lesson).filter(Boolean),qs:pool.map(q=>({q,order:shuf([0,1,2,3]),done:null})),i:0,terms,step:'read',shown:{}}}
+function session(){const s=ses;
+ const steps=[['read','1 Read'],['ask','2 Answer'],['recall','3 Recall'],['do','4 Practise']];
+ const bar=`<div class="row" style="margin-bottom:10px">${steps.map(([k,l])=>`<span class="tag" style="${s.step===k?'background:var(--brand);color:#fff':''}">${l}</span>`).join('')}<span style="flex:1"></span><button data-home="1">Leave session</button></div>`;
+ if(s.step==='read')return bar+`<div class="card"><h2>Read the idea</h2><div class="mute">Read these two short lessons slowly. Then you will be asked questions.</div></div>`+s.read.map(l=>`<div class="card"><h3>${esc(l.id)} ${esc(l.title)}</h3><p>${esc(l.plain)}</p><div class="cof">${esc(l.coffee)}</div><b>Key points</b><ul style="margin:4px 0 0 18px;padding:0">${l.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>${l.trap?`<p class="mute"><b>Exam trap:</b> ${esc(l.trap)}</p>`:''}</div>`).join('')+`<button class="pri" data-step="ask">${s.qs.length?'Now answer questions':'Continue'}</button>`;
+ if(s.step==='ask'){if(!s.qs.length)return bar+`<div class="card">No questions found for these topics yet.</div><button class="pri" data-step="recall">Continue</button>`;
+  const it=s.qs[s.i];const q=it.q;const d=it.done;
+  return bar+`<div class="card"><div class="mute">Question ${s.i+1} of ${s.qs.length} · ${esc(q.lo)}</div><h3 style="font-size:17px;color:inherit">${esc(q.q)}</h3>${it.order.map((oi,pos)=>`<button class="opt ${d?(oi===q.a?'right':(d.pick===oi?'wrong':'')):''}" data-pick="${oi}" ${d?'disabled':''}>${'ABCD'[pos]}. ${esc(q.o[oi])}</button>`).join('')}${d?`<div class="note"><b>${d.ok?'Correct.':'Not quite.'}</b> ${esc(q.why||'')}</div><button class="pri" data-nextq="1">${s.i<s.qs.length-1?'Next question':'Finish questions'}</button>`:''}</div>`}
+ if(s.step==='recall'){const ok=s.qs.filter(x=>x.done&&x.done.ok).length;
+  return bar+`<div class="card"><h2>Your answers</h2>${s.qs.length?`<div class="big">${ok}/${s.qs.length}</div>`:''}<table><tr><th>Topic</th><th>Before</th><th>Now</th></tr>${s.los.map(lo=>{const b=s.before[lo],n=loadX().lo[lo]||{n:0,c:0};return`<tr><td>${esc(lo)}</td><td>${b.n?Math.round(b.c/b.n*100)+'%':'-'}</td><td>${n.n?Math.round(n.c/n.n*100)+'%':'-'}</td></tr>`}).join('')}</table></div>`+(s.terms.length?`<div class="card"><h3>Say each word's meaning out loud, then reveal</h3>${s.terms.map((t,i)=>`<div style="padding:6px 0;border-bottom:1px solid var(--line)"><b>${esc(t.t)}</b> <button data-show="${i}">${s.shown[i]?'Hide':'Reveal'}</button>${s.shown[i]?`<div>${esc(t.d)}</div>${t.e?`<div class="cof">${esc(t.e)}</div>`:''}`:''}</div>`).join('')}</div>`:'')+`<button class="pri" data-step="do">Last step</button>`;}
+ const nt=nextTicket();return bar+`<div class="card"><h2>Practise it on something real</h2><div>Understanding a rule is not the same as using it. Pick one:</div><ul style="margin:6px 0 0 18px;padding:0"><li><a href="techniques.html">Technique trainer</a> for the calculation topics.</li><li><a href="lab.html">A practice app</a>: find bugs and try to explain them using the words you just revised.</li>${nt?`<li><a href="tickets.html">Ticket ${esc(nt.key)}</a>: ${esc(nt.title)}</li>`:''}<li>Or take a short <a href="exam.html">mixed exam</a> in a day or two. Spacing your practice makes it stick.</li></ul></div><button class="pri" data-home="1">Finish</button>`}
+function render(){$('v').innerHTML=ses?session():home()}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.start){build();render();window.scrollTo(0,0);return}
+ if(d.home){ses=null;render();window.scrollTo(0,0);return}
+ if(d.step){ses.step=d.step;render();window.scrollTo(0,0);return}
+ if(d.pick!==undefined){const it=ses.qs[ses.i];if(it.done)return;const pick=+d.pick,ok=pick===it.q.a;it.done={pick,ok};
+  const X=loadX();const q=it.q;const lo=q.lo||('ch'+q.ch);const s=X.lo[lo]=X.lo[lo]||{n:0,c:0,ch:q.ch};s.n++;if(ok)s.c++;s.ch=q.ch;
+  const e2=X.q[q.id]=X.q[q.id]||{b:1,d:0,n:0,c:0};e2.n++;if(ok){e2.c++;e2.b=Math.min(5,e2.b+1)}else e2.b=1;e2.d=Date.now()+BOX[e2.b]*864e5;saveX(X);render();return}
+ if(d.nextq){if(ses.i<ses.qs.length-1)ses.i++;else ses.step='recall';render();window.scrollTo(0,0);return}
+ if(d.show!==undefined){ses.shown[d.show]=!ses.shown[d.show];render()}});
+render();
+
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="ticketcheck.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>

@@ -110,7 +110,9 @@
    return extra+(a?'':'<div class="lk-fb info" data-lk-obs="1"><b>Actual result is empty.</b> Write what you saw, even if it matches the expected result.</div>')+stepsHTML(t,true)}
   const say=esc(o[0]);
   if(!a)return `<div class="lk-fb no" data-lk-obs="1"><b>Your Actual result is empty.</b> Write what you really saw. <br><b>What the app really did:</b> ${say}</div>${stepsHTML(t,true)}`;
-  const hit=o[1].test(a)&&!(o[2]&&o[2].test(a));const SH=stepsHTML(t,true);
+  /* judge only what the tester says the app DID: if they wrote an "actual" part, use text after the last "actual"; otherwise drop clauses about what was expected/should/must happen (so "expected: must be rejected" is not read as the app rejecting it) */
+  const am=[...a.matchAll(/actual(\s*results?)?/gi)];let aa=am.length?a.slice(am[am.length-1].index+am[am.length-1][0].length):a.split(/(?<=[.;\n])|,\s*(?=the |it |and )/).filter(c=>!/\b(expect(ed)?|should|must|supposed)\b/i.test(c)).join(' ');if(!aa.trim())aa=a;
+  const hit=o[1].test(aa)&&!(o[2]&&o[2].test(aa));const SH=stepsHTML(t,true);
   return hit?`<div class="lk-fb ok" data-lk-obs="1"><b>Your actual result looks right.</b> It describes the real problem. <br><b>What the app really did:</b> ${say}</div>${SH}`
    :`<div class="lk-fb no" data-lk-obs="1"><b>Your actual result does not describe what really happened.</b> You wrote: &ldquo;${esc(a.length>140?a.slice(0,140)+'...':a)}&rdquo; <br><b>What the app really did:</b> ${say}<br>Run the test again, compare it with the expected result, then rewrite the Actual result so a developer could see the difference.</div>${SH}`}
  /* ---------- marking ---------- */

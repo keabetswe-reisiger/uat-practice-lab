@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DevTools lab</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:1180px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:10px 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}@media(max-width:900px){.two{grid-template-columns:1fr}}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--accent)}.bar i.ok{background:var(--green)}.bar i.bad{background:var(--red)}
+.big{font-size:34px;font-weight:800;line-height:1.1}.tag{font:12px ui-monospace,monospace;background:var(--line);border-radius:99px;padding:1px 9px}
+label{display:block;font-weight:600;font-size:14px;margin:10px 0 3px}input,select,textarea{font:inherit;width:100%;border:1px solid #b8c0cc;border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}
+button{font:inherit;border:1px solid #b8c0cc;background:#fff;color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}button.pri{background:var(--brand);color:#fff;border-color:var(--brand)}button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}
+.note{background:#eef3fb;border-left:3px solid var(--blue);padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+.cof{background:#faf5ea;border-left:3px solid var(--accent);padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;font-size:14px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0}.opt.right{border-color:var(--green);background:#e8f5ee}.opt.wrong{border-color:var(--red);background:#fbeceb}
+.task{border-left:4px solid var(--line)}.task.done{border-left-color:var(--green)}.k{font:12px ui-monospace,monospace;background:#eef0f4;border-radius:5px;padding:1px 6px}
+#narrow{display:none;background:#faf5ea;border:1px dashed var(--accent);padding:8px;border-radius:8px;margin-top:8px}@media(max-width:480px){#narrow{display:block}}
+.dummy{background:#11203b;color:#fff;border-radius:12px;padding:14px}.dummy button{background:#b08d57;color:#11203b;border-color:#b08d57;font-weight:700}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Browser DevTools lab <span>look inside the page, not just at it</span></h1><span class="sp"></span><a href="workplace.html">Work skills</a><a href="readiness.html">Readiness</a><a href="index.html">Home</a></header>
+<main><div id="intro"></div><div class="dummy" id="app"><b>Brew Orders (practice screen)</b><div style="margin:6px 0">Today's orders: <span id="ords">not loaded</span></div><button id="load">Load orders</button> <button id="retry">Sync stock</button><div class="mute" style="color:#cfd6e4;margin-top:6px">Screen width now: <b id="wnow"></b> px</div><div id="narrow"></div><div id="hiddenhost"></div></div><div id="tasks"></div></main>
+<script>
+
+const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KEY='devtools-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch{S={}}S.done=S.done||{};S.tries=S.tries||{};S.hints=S.hints||{};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{}};
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));const L='abcdefghjkmnpqrstuvwxyz';const rl=n=>Array.from({length:n},()=>L[rnd(0,L.length-1)]).join('');
+function newSeed(){S.seed={err:'ERR-'+rnd(1000,9899),file:'orders-'+rl(3)+rnd(10,99),room:'R-'+rnd(100,999),tok:'TK-'+rl(2).toUpperCase()+rnd(100,999),narrow:'W-'+rnd(1000,9999),cookie:'V-'+rnd(1000,9999),decoy:'ERR-'+rnd(9900,9999)};save()}
+if(!S.seed)newSeed();
+/* ---- what the practice screen does (this is what the tester investigates with DevTools) ---- */
+function plant(){const z=S.seed;
+ console.info('[Brew Orders] screen ready. Old debug code (ignore): '+z.decoy);
+ console.warn('[Brew Orders] printer not found, using screen receipts.');
+ console.error('[Brew Orders] Stock sync failed. Code: '+z.err);
+ $('narrow').textContent='Compact layout code: '+z.narrow;
+ $('hiddenhost').innerHTML='<div id="secret-note" hidden data-room="'+z.room+'">Back-room note</div>';
+ try{localStorage.setItem('lab_token',z.tok)}catch{}
+ try{document.cookie='lab_visit='+z.cookie+'; max-age=86400; path='+location.pathname.replace(/[^\/]*$/,'')+'; SameSite=Lax'}catch{}
+ $('wnow').textContent=window.innerWidth}
+addEventListener('resize',()=>{$('wnow').textContent=window.innerWidth});
+$('load').onclick=()=>{$('ords').textContent='loading...';Promise.allSettled([fetch(S.seed.file+'.json',{cache:'no-store'}),fetch('manifest.webmanifest',{cache:'no-store'})]).then(r=>{const ok=r[0].status==='fulfilled'&&r[0].value.ok;$('ords').textContent=ok?'loaded':'Something went wrong. Please try again later.'})};
+$('retry').onclick=()=>{console.error('[Brew Orders] Stock sync failed. Code: '+S.seed.err)};
+/* ---- tasks ---- */
+const T=[
+ {id:'console',panel:'Console',q:'Open the Console. There is a red error message from "Brew Orders". What is its code?',h1:'The Console panel lists messages the page writes. Red means error. Grey and yellow lines are lower level.',h2:'Press "Sync stock" to print the error again. Ignore the "old debug code": it is not an error.',ans:()=>S.seed.err,why:'Users only see "something went wrong". The console often holds the real reason, and a bug report with the exact code lets a developer find the cause in minutes.',cof:'The till shows "Error". The back office log says "card reader offline". The log is what the technician needs.'},
+ {id:'file',panel:'Network',q:'Open the Network tab, press "Load orders", and find the request that failed (shown in red). What is the file name it asked for? Type it without .json.',h1:'The Network tab lists every request the page makes. Open it before you press the button, or press the button again after.',h2:'Look for the red row. The Name column shows the file. Ignore manifest.webmanifest, it worked.',ans:()=>S.seed.file,why:'A bug report that says "orders did not load" is vague. "Request to orders-xyz.json failed" tells the developer exactly where to look.',cof:'Instead of "the delivery is late", you tell the supplier which order number and which truck never arrived.'},
+ {id:'status',panel:'Network',q:'For that same failed request, what is the HTTP status number?',h1:'Click the red row. The Status column and the Headers tab show a number.',h2:'400-level numbers mean the request is wrong or the thing is missing. 500-level numbers mean the server broke.',ans:()=>'404',why:'The number tells you whose problem it likely is: 404 means the file or address is missing, 401/403 means no permission, 500 means a server fault.',cof:'404 is "that item is not on the shelf". 500 is "the fridge in the back broke".'},
+ {id:'element',panel:'Elements',q:'In the Elements tab, find the hidden element with id "secret-note". What is its data-room value?',h1:'Elements shows the page structure (the HTML). Right-click the Brew Orders box and choose Inspect, then look inside.',h2:'Press Ctrl+F inside the Elements panel and search for secret-note. The value is inside the tag, after data-room=.',ans:()=>S.seed.room,why:'Testers check that hidden things stay hidden. If private data (prices, notes, other users) sits in the page structure, it is a security bug even if the screen hides it.',cof:'The price list taped inside the cupboard door: customers cannot see it on the counter, but anyone who opens the door can.'},
+ {id:'storage',panel:'Application',q:'In the Application tab (Storage section, Local storage), find the key lab_token. What is its value?',h1:'Application shows what the site saves on this device: local storage, session storage and cookies. It is called Storage in Firefox.',h2:'Expand Local storage, click this site, then find the row named lab_token.',ans:()=>S.seed.tok,why:'Tokens and settings saved in the browser can leak or go stale. Testers check what is stored, whether it clears on logout, and whether secrets are stored at all.',cof:'The loyalty-card number the shop remembers for you: handy, but it must be wiped when someone else uses the till.'},
+ {id:'cookie',panel:'Application',q:'In the same area, open Cookies and find the cookie lab_visit. What is its value?',h1:'Cookies are small notes the site stores and sends back with each request. They have their own list under Cookies.',h2:'Expand Cookies, click this site, and read the Value column for lab_visit.',ans:()=>S.seed.cookie,why:'Cookies decide who counts as logged in. Testers check expiry, whether they clear on logout, and flags like HttpOnly and Secure.',cof:'The wristband at an event: it shows you paid. A wristband that never expires, or can be copied, is a problem.'},
+ {id:'device',panel:'Device mode',q:'Turn on device mode (the phone and tablet icon in DevTools) and set the width to 375. A "Compact layout code" box appears on the screen above. What is the code? (On a PC you can also just drag the browser window narrow.)',h1:'Responsive testing checks the page at phone sizes without a phone. The width readout above shows what the page thinks the width is.',h2:'In DevTools press Ctrl+Shift+M, set Dimensions to Responsive, width 375, and read the box on the screen.',ans:()=>S.seed.narrow,why:'Many users are on phones. Layouts that break at small widths are one of the most common real bugs, and device mode finds them before a real device does.',cof:'Checking the counter works for both a tall barista and a small child ordering, without hiring both.'}];
+const norm=s=>String(s||'').trim().toUpperCase().replace(/\s+/g,'').replace(/\.JSON$/,'');
+function render(){const n=Object.keys(S.done).length;
+ $('intro').innerHTML=`<div class="card" style="border-left:4px solid var(--accent)"><h2>Browser DevTools lab</h2><div>Every web company expects testers to open the browser's built-in developer tools. They are free and already installed. This lab gives you a small pretend screen (the dark box below) and seven questions you can only answer by looking <b>inside</b> the page with DevTools. The answers are different each time, so you cannot guess them.</div><div class="cof">Looking at a page without DevTools is like judging a café by the menu board. DevTools is walking behind the counter to read the stock book and the till log.</div><div><b>How to open DevTools:</b> press <span class="k">F12</span> or <span class="k">Ctrl+Shift+I</span> (Mac: <span class="k">Cmd+Option+I</span>), or right-click the page and choose Inspect. Chrome, Edge and Firefox all have it. <b>Use a computer:</b> phone browsers do not have these panels.</div><div class="mute" style="margin-top:6px">Progress: ${n} of ${T.length} done. The Readiness gate needs 5. You can only read, never break, anything here: this screen is a pretend app.</div><div class="bar"><i style="width:${n/T.length*100}%"></i></div><button data-new="1">Practise again with new values</button></div>`;
+ $('tasks').innerHTML=T.map((t,i)=>{const d=S.done[t.id],h=S.hints[t.id]||0;return `<div class="card task ${d?'done':''}"><div class="row"><span class="tag">Task ${i+1} · ${esc(t.panel)}</span>${d?'<span class="ok">done</span>':''}</div><h3 style="margin-top:6px">${esc(t.q)}</h3>${d?`<div class="mute">Solved${S.tries[t.id]>1?' after '+S.tries[t.id]+' tries':' first time'}.</div>`:`<div class="row"><input id="a-${t.id}" style="flex:1;min-width:180px" autocomplete="off" placeholder="Your answer" aria-label="Answer for task ${i+1}"><button class="pri" data-chk="${t.id}">Check</button><button data-hint="${t.id}">${h?'Next hint':'Hint'}</button></div><div id="m-${t.id}" role="status" class="mute" style="margin-top:4px">${h>=1?'<b>Hint:</b> '+esc(t.h1):''}${h>=2?'<br>'+esc(t.h2):''}</div>`}<details style="margin-top:6px" ${d?'open':''}><summary>Why testers care</summary><div style="margin-top:4px">${esc(t.why)}</div><div class="cof">${esc(t.cof)}</div></details></div>`}).join('')}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.new){if(confirm('Make new hidden values? Tasks you already solved stay solved.')){newSeed();S.hints={};save();location.reload()}return}
+ if(d.hint){S.hints[d.hint]=Math.min(2,(S.hints[d.hint]||0)+1);save();render();return}
+ if(d.chk){const t=T.find(x=>x.id===d.chk);const v=$('a-'+t.id).value;const m=$('m-'+t.id);
+  if(!norm(v)){m.innerHTML='<span class="bad">Type what you found first.</span>';return}
+  S.tries[t.id]=(S.tries[t.id]||0)+1;
+  if(norm(v)===norm(t.ans())){S.done[t.id]=Date.now();save();render();return}
+  save();let extra='';if(t.id==='console'&&norm(v)===norm(S.seed.decoy))extra=' That is the old debug code, not the red error.';m.innerHTML='<span class="bad">Not right yet.</span>'+extra+' Look again, or press Hint.'}});
+plant();render();
+
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="ticketcheck.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>
