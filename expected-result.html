@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Expected result coach</title>
+<meta name="theme-color" content="#0d0c0a"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f5f8;--card:#fff;--ink:#16202f;--mute:#667085;--line:#e4e7ec;--brand:#11203b;--accent:#b08d57;--blue:#2563eb;--green:#16794a;--red:#c0392b;--amber:#b7791f}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}header h1{font-size:18px;margin:0}header h1 span{color:var(--accent)}.sp{flex:1}
+header a{color:#fff;border:1px solid #ffffff44;border-radius:8px;padding:5px 11px;font-size:13px;text-decoration:none}
+main{max-width:980px;margin:auto;padding:16px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+h2{margin:0 0 4px;font-size:19px}h3{margin:10px 0 4px;font-size:16px;color:var(--brand)}.mute{color:var(--mute);font-size:14px}
+label{display:block;font-weight:600;font-size:14px;margin:10px 0 3px}textarea{font:inherit;width:100%;border:1px solid #b8c0cc;border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink);min-height:84px}
+button{font:inherit;border:1px solid #b8c0cc;background:#fff;color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}button.pri{background:var(--brand);color:#fff;border-color:var(--brand)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}
+.note{background:#eef3fb;border-left:3px solid var(--blue);padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+.cof{background:#faf5ea;border-left:3px solid var(--accent);padding:8px 12px;border-radius:8px;margin:8px 0;font-size:14px}
+.req{background:#f7f8fb;border:1px dashed #b8c0cc;border-radius:10px;padding:8px 12px;margin:6px 0;font-size:15px}
+.fb{border-radius:10px;padding:10px 12px;margin-top:10px;font-size:14px}.fb.good{background:#e8f5ee;border:1px solid #9fd3b6}.fb.mid{background:#fdf3e1;border:1px solid #e6c98a}.fb.low{background:#fbeceb;border:1px solid #e3a8a2}
+mark{background:#f3e3b8;padding:0 2px;border-radius:3px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;font-size:14px;vertical-align:top}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--accent)}
+ol,ul{margin:6px 0 6px 20px;padding:0}li{margin:3px 0}
+</style><!--BRAND--><link rel="stylesheet" href="brand.css"><!--/BRAND-->
+</head><body>
+<header><h1>Expected result coach <span>work out the right answer from the test case</span></h1><span class="sp"></span><a href="signoff-guide.html">Sign-off guide</a><a href="tickets.html">Tickets</a><a href="index.html">Home</a></header>
+<main>
+<div class="tabs" id="tabs"></div><div id="v"></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KEY='expres-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}}S.best=S.best||{};S.tab=S.tab||'learn';
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* Practice cases. 'must' = ideas a good expected result has; each idea matches if any of its words/numbers appear. */
+const CASES=[
+{id:'c1',title:'Wrong password',req:'A user with a wrong password must be refused with the message "Incorrect email or password" and must stay on the login page. After 3 wrong attempts the account locks for 15 minutes.',steps:['Open the login page.','Type a registered email and a WRONG password.','Press Log in (this is the first attempt).'],
+ must:[['It is refused (not logged in)',/(refus|reject|denied|not (be )?logged|cannot log|can't log|fail|not allowed|error)/i],['The exact message "Incorrect email or password"',/incorrect email or password/i],['Stays on the login page',/(stay|remain|still on|login page|not (be )?(taken|redirect))/i]],
+ model:'The login is refused. The message "Incorrect email or password" is shown. The user stays on the login page and is not logged in.',
+ why:'The lock after 3 attempts is in the requirement, but these steps only make ONE attempt, so it does not belong in this expected result. Only write what the steps trigger.'},
+{id:'c2',title:'Discount code',req:'The code WELCOME10 gives 10% off the cart subtotal. Delivery is not discounted. Delivery costs R20.',steps:['Add items so the subtotal is R150.00.','Choose delivery (R20.00).','Type WELCOME10 and press Apply.'],
+ must:[['Discount amount R15.00',/15([.,]00)?/],['New total R155.00',/155([.,]00)?/],['Delivery stays R20.00 (not discounted)',/(20([.,]00)?).*(deliver)|(deliver).*(20([.,]00)?)|not discount|unchanged|same/i]],
+ model:'A discount of R15.00 (10% of R150.00) is shown. Delivery stays R20.00. The total is R155.00.',
+ why:'Do the maths from the requirement: 10% of 150 is 15, and delivery is not discounted, so 150 - 15 + 20 = 155. A number beats "the discount is applied".'},
+{id:'c3',title:'Cancel an appointment',req:'When an appointment is cancelled it is removed from Upcoming appointments, its status becomes Cancelled, and the Dashboard Upcoming count must drop by one.',steps:['Open the Dashboard: Upcoming appointments shows 3.','Go to the Diary and cancel appointment #102.','Return to the Dashboard.'],
+ must:[['Count drops from 3 to 2',/(\b2\b|two)/i],['#102 is no longer in Upcoming',/(102).*(no longer|not|removed|gone|disappear)|(removed|gone|no longer).*(102)/i],['Status shows Cancelled',/cancel/i]],
+ model:'The Dashboard Upcoming count changes from 3 to 2. Appointment #102 is no longer in the Upcoming list and its status is Cancelled.',
+ why:'Count BOTH sides of a change: the start (3) and the end (2). A tester who writes only "it is removed" can miss that the count did not update.'},
+{id:'c4',title:'Phone number length',req:'The phone number must be exactly 10 digits. Anything else is refused with the message "Enter a 10-digit phone number". The order is not placed.',steps:['Add one item to the cart.','Type the phone number 082123456 (9 digits).','Press Place order.'],
+ must:[['The order is refused / not placed',/(refus|reject|not (be )?placed|blocked|error|not accepted)/i],['The message "Enter a 10-digit phone number"',/10.digit phone number|10 digit/i]],
+ model:'The order is refused and not placed. The message "Enter a 10-digit phone number" is shown.',
+ why:'Count the digits yourself: 082123456 has 9, so it breaks the rule. The expected result is the refusal, with the exact message from the requirement.'},
+{id:'c5',title:'Age boundary',req:'The age field accepts whole numbers from 18 to 65 inclusive. Values outside that range are refused.',steps:['Open the registration form.','Type 18 in the age field and fill in the other fields correctly.','Press Register.'],
+ must:[['18 is accepted (it is on the edge, inside the range)',/(accept|allow|success|register|saved|created|valid|no error)/i],['No error is shown for age',/(no (error|message)|without (an )?error|accepted|success)/i]],
+ model:'The registration is accepted because 18 is inside the range (18 to 65 inclusive). No age error is shown.',
+ why:'"Inclusive" is the key word. It means 18 and 65 are allowed. Edge values are where programmers make mistakes, so testers love them.'},
+{id:'c6',title:'Who can see what',req:'A Doctor sees only the patients assigned to them. Thabo is assigned: Zanele Mokoena, Gogo Martha Sithole and Zodwa Mokoena.',steps:['Log in as Thabo (Doctor).','Open the Patients tab.'],
+ must:[['Exactly 3 patients',/(\b3\b|three)/i],['Names listed',/zanele|martha|zodwa/i],['Others are not shown',/(only|not (see|show)|other doctors|no other|hidden|cannot see)/i]],
+ model:'Thabo sees exactly 3 patients: Zanele Mokoena, Gogo Martha Sithole and Zodwa Mokoena. Patients assigned to other doctors are not shown.',
+ why:'Permission tests need both halves: what you SHOULD see, and what you should NOT see. The second half is where the bugs hide.'},
+{id:'c7',title:'Receive stock',req:'Receiving stock adds the received quantity to the stock on hand and records the receipt in the history with the date.',steps:['Open Stock: Cups show 500.','Receive 100 Cups.','Open Stock and the History again.'],
+ must:[['Cups now 600',/600/],['A history record exists',/(history|record|log|entry|line)/i]],
+ model:'Cups change from 500 to 600. A new line appears in the History showing 100 Cups received with the date.',
+ why:'500 + 100 = 600. Always work out the number yourself before you look at the app, so the app cannot convince you.'},
+{id:'c8',title:'Search ignores capitals',req:'Patient search is not case sensitive: "mokoena", "MOKOENA" and "Mokoena" give the same results.',steps:['Open the Patients tab.','Type mokoena in lowercase in the search box.'],
+ must:[['Both Mokoena patients found',/(zanele|zodwa|both|\b2\b|two)/i],['Same as capital M',/(same|capital|case|regardless|any)/i]],
+ model:'Zanele Mokoena and Zodwa Mokoena are listed, exactly the same result as searching Mokoena with a capital M.',
+ why:'Use the requirement sentence "give the same results" as your guide: the expected result is a comparison with another input.'},
+{id:'c9',title:'Free delivery',req:'Delivery is free when the subtotal is R100.00 or more. Otherwise delivery costs R20.00.',steps:['Add items so the subtotal is exactly R100.00.','Choose delivery and open the cart summary.'],
+ must:[['Delivery is R0.00 / free',/(0([.,]00)?\b|free|no (delivery )?(fee|charge))/i],['Total is R100.00',/100([.,]00)?/]],
+ model:'Delivery is R0.00 (free) because the subtotal is R100.00 or more. The total is R100.00.',
+ why:'"R100.00 or more" includes exactly R100.00. Notice how a small phrase decides the whole expected result.'},
+{id:'c10',title:'Change log',req:'Every change to an appointment date must add a line to the change log showing who changed it, when, and what changed.',steps:['Log in as Sipho.','Open the Diary and change appointment #101 to a new date.','Save, then open the change log.'],
+ must:[['A new line is added',/(new|added|extra|one more|appears|recorded|logged|line|entry)/i],['Shows who (Sipho)',/(sipho|user|who)/i],['Shows when and what changed',/(time|date|when|old|new|changed)/i]],
+ model:'A new line is added to the change log showing the user (Sipho), the time of the change and what changed (old date to new date).',
+ why:'When a requirement lists three things (who, when, what), your expected result should list the same three.'},
+{id:'c11',title:'Negative quantity',req:'Waste quantity must be a whole number greater than 0. Otherwise refuse it and leave stock unchanged.',steps:['Stock shows Cups = 500.','Open Record waste and type -5 as the quantity.','Press Save.'],
+ must:[['It is refused',/(refus|reject|not (be )?(saved|accepted|recorded)|error|blocked)/i],['Stock still 500',/(500|unchanged|same|not change)/i]],
+ model:'The waste is refused with an error. Cups stay at 500 and nothing is recorded.',
+ why:'A refusal test has two checks: the app says no, AND nothing behind the scenes changed.'},
+{id:'c12',title:'Waste total',req:'The Total waste value adds up every waste entry (it is a running total, not just the last entry).',steps:['Record waste of R28.00.','Record a second waste of R42.00.','Look at Total waste value.'],
+ must:[['Total is R70.00',/70([.,]00)?/],['It adds both entries',/(add|sum|both|total|28.*42|42.*28)/i]],
+ model:'Total waste value shows R70.00 (R28.00 + R42.00), not just the last entry.',
+ why:'28 + 42 = 70. If the app shows 42 you have found a bug, but you can only see it because you worked out 70 first.'}
+];
+
+const TABS=[['learn','1 Learn the method'],['example','2 Worked example'],['practice','3 Practice'],['cheat','4 Words and cheat sheet']];
+function tabs(){$('tabs').innerHTML=TABS.map(t=>`<button data-t="${t[0]}" class="${S.tab===t[0]?'on':''}">${t[1]}</button>`).join('');$('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;save();draw()})}
+
+function learn(){return `<div class="card"><h2>Start here: what is an expected result?</h2>
+<p><b>Plain version:</b> the expected result is what the app <u>should</u> do, decided <u>before</u> you run the test, using the requirement. It is the answer key. Actual result (what really happened) is compared against it.</p>
+<div class="cof"><b>Coffee analogy:</b> before you taste a new batch you decide what a good cup is: "no burnt taste, smooth, strength 7 out of 10". You write that down first. If you taste first, whatever you taste starts to seem normal. Same with testing: write the expected result first, from the recipe (requirement), never from the screen.</div></div>
+<div class="card"><h2>The rule that fixes most mistakes</h2>
+<p>The expected result comes from the <b>requirement</b> (the written rule), not from the app. If you copy it from what the app does, you will never find a bug, because the app always agrees with itself.</p></div>
+<div class="card"><h2>The 5-step method (READ, MARK, WORK OUT, WRITE, CHECK)</h2><ol>
+<li><b>READ</b> the test title, the steps and the requirement it links to. Ask: what is this test really about?</li>
+<li><b>MARK</b> three things in the requirement: the <mark>rule</mark> (must, only, at least, exactly), the <mark>numbers or names</mark>, and the <mark>message or change</mark> that should appear.</li>
+<li><b>WORK OUT</b> the answer from the steps. Do the sums yourself (10% of 150 = 15). Decide what the start and end look like (count 3 to 2).</li>
+<li><b>WRITE</b> it as short, checkable statements: what is shown, what changed, and what did NOT change. One idea per sentence.</li>
+<li><b>CHECK</b> it: could another tester tell Pass from Fail using only your sentence? If you used words like "works", "correct", "properly", rewrite with a number, a word or a screen.</li></ol></div>
+<div class="card"><h2>Four kinds of expected result</h2>
+<table><tr><th>Kind</th><th>Look for in the test</th><th>Write</th></tr>
+<tr><td>Calculation</td><td>%, totals, fees, counts</td><td>The exact number, after doing the sum</td></tr>
+<tr><td>Refusal</td><td>invalid data, not allowed, wrong role</td><td>It is refused + the exact message + nothing changed</td></tr>
+<tr><td>Change of state</td><td>cancel, save, approve, receive</td><td>Before value, after value, and where it shows up</td></tr>
+<tr><td>Visibility</td><td>who sees what, filters, search</td><td>What IS shown (list it) and what is NOT shown</td></tr></table></div>
+<div class="card"><h2>Weak versus good</h2><table><tr><th>Weak</th><th>Why weak</th><th>Good</th></tr>
+<tr><td>It works.</td><td>Nobody can tell Pass from Fail.</td><td>The order is refused and "Enter a 10-digit phone number" is shown.</td></tr>
+<tr><td>Discount is applied correctly.</td><td>"Correctly" hides the number.</td><td>Discount R15.00, total R155.00.</td></tr>
+<tr><td>It shows an error.</td><td>Which error? Is anything saved?</td><td>Error "Reason required" is shown and nothing is saved.</td></tr>
+<tr><td>Same as before.</td><td>Not tied to a requirement.</td><td>Count stays 3 because nothing was cancelled (requirement R4).</td></tr></table></div>`}
+
+function example(){return `<div class="card"><h2>Worked example, one slow pass</h2>
+<p><b>Test case given to you:</b> "Apply code WELCOME10 to a R150.00 cart with R20.00 delivery."</p>
+<div class="req"><b>Requirement:</b> The code <mark>WELCOME10</mark> gives <mark>10%</mark> off the cart <mark>subtotal</mark>. Delivery is <mark>not discounted</mark>. Delivery costs <mark>R20</mark>.</div>
+<ol><li><b>READ:</b> the test is about a percentage discount and what it applies to.</li>
+<li><b>MARK:</b> rule = 10% of subtotal only. Numbers = 150, 20. Change = a discount line and a new total.</li>
+<li><b>WORK OUT:</b> 10% of 150 = 15. Total = 150 - 15 + 20 = 155. Delivery stays 20.</li>
+<li><b>WRITE:</b> "Discount R15.00 is shown. Delivery stays R20.00. Total is R155.00."</li>
+<li><b>CHECK:</b> a stranger can compare it with the screen using three numbers. Good.</li></ol>
+<div class="note">If the app showed total R135.00 (10% off everything, delivery included) you would mark Fail and write: "Total shows R135.00. Expected: R155.00." You can only say that because you worked the number out first.</div></div>
+<div class="card"><h2>What to do when the requirement is vague</h2><ul>
+<li>Never guess in silence. Write the expected result you can support, then add a question: "Requirement does not say if 18 is allowed. Assumed yes. Please confirm."</li>
+<li>Look for the same rule elsewhere (help text, another requirement, the business owner's message).</li>
+<li>Mark the test Blocked if you really cannot decide, and ask. A wrong guess is worse than a question.</li></ul></div>`}
+
+function practice(){const done=Object.keys(S.best).length;const avg=done?Math.round(Object.values(S.best).reduce((a,b)=>a+b,0)/done):0;
+ return `<div class="card"><h2>Practice: write the expected result</h2><p class="mute">Read the requirement and the steps. Do NOT look at an answer. Type what should happen, then press Check. You can retry as often as you like.</p>
+ <div class="bar"><i style="width:${Math.round(done/CASES.length*100)}%"></i></div><div class="mute">${done} of ${CASES.length} attempted. Average best score ${avg}%.</div></div>`+
+ CASES.map((c,i)=>`<div class="card" id="${c.id}"><h3>Case ${i+1}: ${esc(c.title)} ${S.best[c.id]!=null?'<span class="mute">(best '+S.best[c.id]+'%)</span>':''}</h3>
+ <div class="req"><b>Requirement:</b> ${esc(c.req)}</div><div><b>Test steps</b><ol>${c.steps.map(s=>'<li>'+esc(s)+'</li>').join('')}</ol></div>
+ <label for="a-${c.id}">Your expected result</label><textarea id="a-${c.id}" placeholder="After these steps, the app should..."></textarea>
+ <div class="row"><button class="pri" data-chk="${c.id}">Check my answer</button><button data-show="${c.id}">Show model answer</button></div><div id="f-${c.id}"></div></div>`).join('')}
+
+function grade(c,txt){const t=txt.trim();const got=c.must.map(m=>m[1].test(t));let n=got.filter(Boolean).length;let pct=Math.round(n/c.must.length*100);
+ const vague=/\b(works?|correct(ly)?|properly|fine|as expected|ok(ay)?)\b/i.test(t)&&t.split(/\s+/).length<14;
+ let html='';const cls=pct>=100?'good':pct>=50?'mid':'low';
+ html+=`<div class="fb ${cls}"><b>${pct>=100?'Strong answer.':pct>=50?'Getting there.':'Not enough yet.'}</b> You covered ${n} of ${c.must.length} things a tester needs.<ul>${c.must.map((m,i)=>`<li>${got[i]?'<span class="ok">Covered:</span>':'<span class="bad">Missing:</span>'} ${esc(m[0])}</li>`).join('')}</ul>`;
+ if(vague)html+=`<p class="bad">Your answer uses vague words ("works", "correct", "as expected"). Replace them with the number, the message or the screen change.</p>`;
+ if(t.split(/\s+/).filter(Boolean).length<5)html+=`<p>That is very short. A good expected result is usually 1 to 3 sentences.</p>`;
+ if(pct>=100)html+=`<p><b>Why this works:</b> ${esc(c.why)}</p>`;
+ else html+=`<p><b>Hint:</b> go back to the requirement and mark the rule, the numbers and the message. Then try again, or press Show model answer.</p>`;
+ html+='</div>';return{pct,html}}
+function bind(){document.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>{const id=b.dataset.chk,c=CASES.find(x=>x.id===id),txt=$('a-'+id).value;
+  if(!txt.trim()){$('f-'+id).innerHTML='<div class="fb low">Type your expected result first. Writing it before you look at the answer is the whole skill.</div>';return}
+  const r=grade(c,txt);if(S.best[id]==null||r.pct>S.best[id])S.best[id]=r.pct;save();$('f-'+id).innerHTML=r.html});
+ document.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{const c=CASES.find(x=>x.id===b.dataset.show);$('f-'+c.id).innerHTML=`<div class="fb good"><b>Model answer:</b> ${esc(c.model)}<p><b>Why:</b> ${esc(c.why)}</p></div>`})}
+
+function cheat(){return `<div class="card"><h2>Words that give the answer away</h2><table><tr><th>If the requirement says</th><th>It means your expected result must include</th></tr>
+<tr><td>must / shall / only</td><td>The exact rule. Also test that anything else is refused.</td></tr>
+<tr><td>at least / at most / up to</td><td>Where the edge is, and which side is allowed.</td></tr>
+<tr><td>inclusive / or more / from..to</td><td>The edge value itself is allowed.</td></tr>
+<tr><td>exactly / the same as</td><td>An exact number or a comparison with another result.</td></tr>
+<tr><td>otherwise / else</td><td>A second outcome. Each outcome is its own test.</td></tr>
+<tr><td>not / cannot / never</td><td>A refusal, plus proof that nothing changed.</td></tr>
+<tr><td>if / when / after</td><td>The condition you must create in your steps.</td></tr>
+<tr><td>who / role / assigned</td><td>What each role sees, and what it must not see.</td></tr></table></div>
+<div class="card"><h2>Ten-second self-check before you press Save</h2><ul>
+<li>Did I take it from the requirement, not from the screen?</li><li>Is there at least one number, name or exact message?</li>
+<li>Did I say what should NOT change, when it matters?</li><li>Would a stranger agree on Pass or Fail?</li><li>Does it match only what my steps actually do?</li></ul></div>
+<div class="card"><h2>Glossary</h2><table><tr><td><b>Expected result</b></td><td>What should happen, taken from the requirement, written before you run the test.</td></tr>
+<tr><td><b>Actual result</b></td><td>What really happened when you ran it.</td></tr><tr><td><b>Requirement</b></td><td>The written rule the app must follow.</td></tr>
+<tr><td><b>Oracle</b></td><td>Anything that tells you the right answer (requirement, calculation, older version, expert).</td></tr>
+<tr><td><b>Boundary</b></td><td>The edge of an allowed range, such as 18 in 18 to 65.</td></tr></table>
+<p class="mute">Next: <a href="signoff-guide.html">learn to write the sign-off</a> once your tests are done.</p></div>`}
+
+function draw(){tabs();$('v').innerHTML=({learn,example,practice,cheat})[S.tab]();if(S.tab==='practice')bind();window.scrollTo(0,0)}
+draw();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+</body></html>
