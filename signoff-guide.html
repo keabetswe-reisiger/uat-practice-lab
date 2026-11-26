@@ -29,7 +29,22 @@ ol,ul{margin:6px 0 6px 20px;padding:0}li{margin:3px 0}.opt{display:block;width:1
 const $=id=>document.getElementById(id);const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const KEY='signoff-v1';let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}}S.tab=S.tab||'learn';S.f=S.f||{};S.sc=S.sc||{};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
-const TABS=[['learn','1 What a sign-off is'],['build','2 Build mine'],['examples','3 Good and weak examples'],['decide','4 Practise the decision'],['rate','5 Rate my sign-off']];
+
+/* Failure types (defect categories): what kind of problem it is. Severity says how bad. */
+const CATS={
+ sec:['Security / Permissions','Who may see or do what is not enforced.','Doctor Thabo sees the Manager KPI suite (UAT-103).','Say what each role sees AND what it must not see. A forbidden action is refused.'],
+ data:['Data Integrity','Saved, calculated or shown information is wrong, lost, duplicated or out of sync between screens.','Dashboard counts wrong or not updating (UAT-104).','Give exact numbers, the before and after values, and say the same value shows on every screen.'],
+ func:['Functional','A button, workflow or business rule does not do its job.','Save Appointment does nothing, or saves the wrong date.','Say the visible result of the action and what is saved.'],
+ usab:['Usability / UX','It works, but is confusing or unforgiving for real users.','Search only finds "Mokoena" with a capital M (UAT-107).','Say what a normal user would expect, for example the same results in any letter case.'],
+ ui:['UI / Cosmetic','Layout or look is broken but the app still works.','Overlapping text, cut-off labels, misaligned columns on mobile.','Say what must be readable and visible at the screen size you test, with nothing overlapping or cut off.'],
+ val:['Validation / Input handling','Bad data is accepted, or good data is refused.','A past appointment date is accepted; letters in a phone field.','Say bad data is refused with the exact message and nothing is saved. Say good data and edge values are accepted.'],
+ int:['Integration / API','Two modules or services do not talk to each other properly.','A booking does not send the SMS reminder or update the doctor calendar.','Say what happens in the OTHER system too (SMS sent, calendar updated), not only on your screen.'],
+ perf:['Performance','Too slow, freezes or crashes under normal or heavy use.','Patient search takes 30 seconds; the app crashes with 20 staff logged in.','Use the time or load limit from the requirement, for example results within 3 seconds. Do not invent a number.'],
+ compat:['Compatibility','Works on one browser or device, breaks on another.','Walk-in Add looks fine on Chrome desktop but breaks on a tablet or Safari.','Say the same result must happen in every browser and device on your list.']};
+const CASECAT={c1:'sec',c2:'func',c3:'data',c4:'val',c5:'val',c6:'sec',c7:'data',c8:'usab',c9:'func',c10:'data',c11:'val',c12:'data'};
+const catLine=c=>{const k=CATS[CASECAT[c.id]];return k?`<p><b>Failure type if the app gets this wrong:</b> ${esc(k[0])}. ${esc(k[1])} Log it with that type so the team sees the business risk.</p>`:''};
+
+const TABS=[['learn','1 What a sign-off is'],['build','2 Build mine'],['examples','3 Good and weak examples'],['decide','4 Practise the decision'],['quiz','5 Name the failure type'],['rate','6 Rate my sign-off']];
 function tabs(){$('tabs').innerHTML=TABS.map(t=>`<button data-t="${t[0]}" class="${S.tab===t[0]?'on':''}">${t[1]}</button>`).join('');$('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;save();draw()})}
 
 function learn(){return `<div class="card"><h2>Start here: what is a sign-off?</h2>
@@ -40,12 +55,15 @@ function learn(){return `<div class="card"><h2>Start here: what is a sign-off?</
 <li><b>What was tested:</b> the app or feature, and what was left out of scope.</li>
 <li><b>Where and when:</b> version or build, environment (staging, not live), date, your name.</li>
 <li><b>Results in numbers:</b> how many tests, passed, failed, blocked.</li>
-<li><b>Open defects:</b> count by severity, and name the serious ones in plain words.</li>
+<li><b>Open defects:</b> count by severity, say which failure type each serious one is (for example Security / Permissions or Data Integrity), and describe it in plain words.</li>
 <li><b>Not tested or risks:</b> what you did not cover and why.</li>
 <li><b>Recommendation:</b> one of three: Approve, Approve with conditions, or Do not approve.</li>
 <li><b>Next step:</b> who must do what before release, or what happens after approval.</li></ol></div>
-<div class="card"><h2>How to choose the recommendation</h2><table><tr><th>If</th><th>Recommend</th></tr>
-<tr><td>Any open Critical defect (money wrong, data lost, security or privacy broken, main task impossible)</td><td><b>Do not approve</b></td></tr>
+<div class="card"><h2>Severity and failure type: use both</h2>
+<p><b>Severity</b> (Critical, High, Medium, Low) says <u>how bad</u> a defect is. The <b>failure type</b> says <u>what kind</u> of problem it is and which part of the system is broken. A good sign-off gives both for the serious defects.</p>
+<table><tr><th>Failure type</th><th>What it means</th><th>Example</th></tr>${Object.values(CATS).map(k=>`<tr><td><b>${esc(k[0])}</b></td><td>${esc(k[1])}</td><td>${esc(k[2])}</td></tr>`).join('')}</table>
+<div class="note"><b>Why it helps the reader:</b> naming the type shows the business risk. A UI failure can wait until next week. A <b>Security / Permissions</b> or <b>Data Integrity</b> failure almost always stops a release.</div></div><div class="card"><h2>How to choose the recommendation</h2><table><tr><th>If</th><th>Recommend</th></tr>
+<tr><td>Any open Critical defect (money wrong, data lost, security or privacy broken, main task impossible), or any open Security / Permissions or Data Integrity defect</td><td><b>Do not approve</b></td></tr>
 <tr><td>No Critical, but Major defects remain or important areas were not tested</td><td><b>Approve with conditions</b> (name the conditions)</td></tr>
 <tr><td>No Critical or Major, only Minor, and the planned tests are done</td><td><b>Approve</b> (list the minor issues)</td></tr></table>
 <p class="mute">A tester gives a recommendation, the owner makes the decision. Never hide a defect to get an approval.</p></div>
@@ -57,20 +75,21 @@ function build(){return `<div class="card"><h2>Build your sign-off</h2><p class=
 <label for="scope">What you tested (scope)</label><textarea id="scope" placeholder="e.g. Login, booking, diary, dashboard and patient search.">${esc(S.f.scope||'')}</textarea>
 <h3>Test results</h3><div class="g3">${field('tot','Tests run','number')}${field('pass','Passed','number')}${field('fail','Failed','number')}${field('blk','Blocked','number')}</div>
 <h3>Open defects</h3><div class="g3">${field('dcrit','Critical','number')}${field('dmaj','Major','number')}${field('dmin','Minor','number')}</div>
-<label for="dnames">Name the serious defects in plain words</label><textarea id="dnames" placeholder="e.g. Doctor sees patients of other doctors (Critical). Cancelled appointment does not lower the dashboard count (Major).">${esc(S.f.dnames||'')}</textarea>
+<h3>Open defects by failure type (optional)</h3><div class="g3">${Object.keys(CATS).map(k=>field('ty_'+k,CATS[k][0],'number')).join('')}</div><label for="dnames">Name the serious defects in plain words</label><textarea id="dnames" placeholder="e.g. Security / Permissions, Critical: Doctor sees patients of other doctors. Data Integrity, Major: cancelled appointment does not lower the dashboard count.">${esc(S.f.dnames||'')}</textarea>
 <label for="risk">Not tested, or risks</label><textarea id="risk" placeholder="e.g. Not tested on a real phone. Walk-in patients not covered.">${esc(S.f.risk||'')}</textarea>
 <label for="rec">Recommendation</label><select id="rec"><option value="">Suggest one for me</option><option>Approve</option><option>Approve with conditions</option><option>Do not approve</option></select>
 <label for="next">Next step</label><input id="next" placeholder="e.g. Developer fixes the 2 serious defects, then I retest those areas." value="${esc(S.f.next||'')}">
 <div class="row"><button class="pri" id="gen">Write my sign-off</button><button id="cp">Copy</button><button id="clr">Clear form</button></div><div id="out"></div></div>`}
 function num(id){const v=parseInt(($(id)||{}).value,10);return isNaN(v)?null:v}
-function suggest(){const c=num('dcrit')||0,m=num('dmaj')||0,r=($('risk').value||'').trim();return c>0?'Do not approve':(m>0||r)?'Approve with conditions':'Approve'}
-function generate(){['app','ver','who','date','scope','tot','pass','fail','blk','dcrit','dmaj','dmin','dnames','risk','next'].forEach(i=>S.f[i]=$(i).value);S.f.next=$('next').value;save();
+function typed(k){return num('ty_'+k)||0}
+function suggest(){const c=num('dcrit')||0,m=num('dmaj')||0,r=($('risk').value||'').trim();return (c>0||typed('sec')>0||typed('data')>0)?'Do not approve':(m>0||r)?'Approve with conditions':'Approve'}
+function generate(){['app','ver','who','date','scope','tot','pass','fail','blk','dcrit','dmaj','dmin','dnames','risk','next'].concat(Object.keys(CATS).map(k=>'ty_'+k)).forEach(i=>S.f[i]=$(i).value);S.f.next=$('next').value;save();
  const miss=[];const g=i=>($(i).value||'').trim();if(!g('app'))miss.push('app name');if(num('tot')==null)miss.push('tests run');if(num('pass')==null)miss.push('passed');if(num('fail')==null)miss.push('failed');
  if(miss.length){$('out').innerHTML='<div class="fb low">Fill in: '+miss.join(', ')+'. A sign-off needs numbers.</div>';return}
  const tot=num('tot'),p=num('pass'),f=num('fail'),b=num('blk')||0;let warn='';if(p+f+b!==tot)warn=`<div class="fb mid">Check your numbers: ${p} passed + ${f} failed + ${b} blocked = ${p+f+b}, but you wrote ${tot} tests run.</div>`;
  const c=num('dcrit')||0,m=num('dmaj')||0,n=num('dmin')||0;const rec=$('rec').value||suggest();const pct=tot?Math.round(p/tot*100):0;
- const sev=`${c} Critical, ${m} Major, ${n} Minor`;
- let why=rec==='Approve'?'No Critical or Major defects are open and the planned tests are complete.':rec==='Do not approve'?(c>0?c+' Critical defect'+(c>1?'s are':' is')+' still open.':'The risk is too high to release as it stands.'):'No Critical defect is open, but the items below must be handled first.';
+ const sev=`${c} Critical, ${m} Major, ${n} Minor`;const tl=Object.keys(CATS).filter(k=>typed(k)>0).map(k=>typed(k)+' '+CATS[k][0]).join(', ');const risky=typed('sec')>0||typed('data')>0;
+ let why=rec==='Approve'?'No Critical or Major defects are open and the planned tests are complete.':rec==='Do not approve'?(c>0?c+' Critical defect'+(c>1?'s are':' is')+' still open.':risky?'An open '+(typed('sec')>0?'Security / Permissions':'Data Integrity')+' defect is a release risk even when the rest passes.':'The risk is too high to release as it stands.'):'No Critical defect is open, but the items below must be handled first.';
  const txt=`SIGN-OFF: ${g('app')}
 Tested by ${g('who')||'(name)'} on ${g('date')||'(date)'}${g('ver')?' | Version: '+g('ver'):''}
 
@@ -78,14 +97,14 @@ Tested by ${g('who')||'(name)'} on ${g('date')||'(date)'}${g('ver')?' | Version:
 
 2. Results: ${tot} tests run. ${p} passed (${pct}%), ${f} failed, ${b} blocked.
 
-3. Open defects: ${sev}.${g('dnames')?'\n   '+g('dnames'):''}
+3. Open defects: ${sev}.${tl?'\n   By failure type: '+tl+'.':''}${g('dnames')?'\n   '+g('dnames'):''}
 
 4. Not tested / risks: ${g('risk')||'None known.'}
 
 5. Recommendation: ${rec.toUpperCase()}. ${why}
 
 6. Next step: ${g('next')||'(who does what, by when)'}`;
- $('out').innerHTML=warn+`<h3>Your sign-off</h3><pre id="txt">${esc(txt)}</pre><div class="note">Suggested rule used: any Critical = Do not approve; Major or risks = Approve with conditions; otherwise Approve. You can pick a different recommendation above if you can explain why.</div>`}
+ $('out').innerHTML=warn+`<h3>Your sign-off</h3><pre id="txt">${esc(txt)}</pre><div class="note">Suggested rule used: any Critical, Security / Permissions or Data Integrity defect = Do not approve; Major or risks = Approve with conditions; otherwise Approve. You can pick a different recommendation above if you can explain why.</div>`}
 function buildBind(){$('rec').value=S.f.rec||'';$('rec').onchange=()=>{S.f.rec=$('rec').value;save()};$('gen').onclick=generate;
  $('cp').onclick=()=>{const t=$('txt');if(!t){$('out').innerHTML='<div class="fb low">Press Write my sign-off first.</div>';return}try{navigator.clipboard.writeText(t.textContent);$('cp').textContent='Copied'}catch(e){}setTimeout(()=>$('cp').textContent='Copy',1500)};
  $('clr').onclick=()=>{if(confirm('Clear the form?')){S.f={};save();draw()}}}
@@ -96,8 +115,8 @@ Tested by Keabetswe on 2026-11-26 | Version: Staging build 14
 1. Scope: Login, booking, diary, dashboard and patient search. Not covered: the walk-in screen.
 2. Results: 20 tests run. 14 passed (70%), 5 failed, 1 blocked.
 3. Open defects: 1 Critical, 2 Major, 2 Minor.
-   Critical: a Doctor can see patients assigned to other doctors.
-   Major: cancelling an appointment does not lower the Dashboard Upcoming count; weekly filter shows monthly figures.
+   Critical, Security / Permissions: a Doctor can see patients assigned to other doctors.
+   Major, Data Integrity: cancelling an appointment does not lower the Dashboard Upcoming count; weekly filter shows monthly figures.
 4. Not tested / risks: Not tried on a real phone. Walk-in patients are untested.
 5. Recommendation: DO NOT APPROVE. One Critical privacy defect is still open.
 6. Next step: Developer fixes the Critical defect, then I retest the patients list and the dashboard.`;
@@ -111,11 +130,17 @@ function examples(){return `<div class="card"><h2>A good sign-off</h2><pre>${esc
 const SCEN=[
 {t:'Booking app',d:'All 18 planned tests are done. 16 passed, 2 failed. Open defects: 0 Critical, 0 Major, 2 Minor (a spelling mistake and a button slightly misaligned). Everything in scope was tested.',a:'Approve',w:'No Critical or Major defects and the plan is complete, so Approve, and list the 2 minor issues.'},
 {t:'Shop checkout',d:'20 tests run. 15 passed, 5 failed. One failure: the total charged is R30 lower than the cart total because delivery is left out. Open defects: 1 Critical (money wrong), 1 Major, 3 Minor.',a:'Do not approve',w:'A wrong amount charged is a Critical defect. Any open Critical means Do not approve until it is fixed and retested.'},
-{t:'Stock app',d:'25 tests run. 22 passed, 2 failed, 1 blocked. Open defects: 0 Critical, 2 Major (waste total shows only the last entry; low-stock count does not update). The stock-take approval screen could not be tested because the Manager login was missing.',a:'Approve with conditions',w:'No Critical, but Major defects are open and one area was not tested. Recommend approval on condition the Majors are fixed and the approval screen is tested.'}];
+{t:'Stock app',d:'25 tests run. 22 passed, 2 failed, 1 blocked. Open defects: 0 Critical, 2 Major (waste total shows only the last entry; low-stock count does not update). The stock-take approval screen could not be tested because the Manager login was missing.',a:'Approve with conditions',w:'No Critical, but Major defects are open and one area was not tested. Recommend approval on condition the Majors are fixed and the approval screen is tested.'},
+{t:'Clinic dashboard',d:'30 tests run. 29 passed, 1 failed. The failure: a Doctor logged in can see the Manager KPI suite. One defect is open, no others. It looks small because only one test failed.',a:'Do not approve',w:'This is a Security / Permissions failure. Even one open Security / Permissions or Data Integrity defect almost always stops a release, however good the pass rate looks.'}];
 function decide(){return SCEN.map((s,i)=>`<div class="card"><h3>Scenario ${i+1}: ${esc(s.t)} ${S.sc['s'+i]?'<span class="ok">done</span>':''}</h3><p>${esc(s.d)}</p><p><b>What do you recommend?</b></p>
 <div class="g3">${['Approve','Approve with conditions','Do not approve'].map(o=>`<button data-s="${i}" data-o="${o}">${o}</button>`).join('')}</div><div id="sf${i}"></div></div>`).join('')}
 function decideBind(){document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const i=+b.dataset.s,s=SCEN[i],ok=b.dataset.o===s.a;if(ok){S.sc['s'+i]=1;save()}
  $('sf'+i).innerHTML=`<div class="fb ${ok?'good':'low'}"><b>${ok?'Correct.':'Not quite.'}</b> ${esc(s.w)}${ok?'':' Correct answer: <b>'+s.a+'</b>.'}</div>`})}
+
+
+const QZ=[['A Doctor logs in and sees the Manager KPI suite.','sec'],['The dashboard still shows 3 upcoming after one appointment was cancelled.','data'],['Clicking Save Appointment does nothing.','func'],['Searching "mokoena" returns nothing, but "Mokoena" works.','usab'],['Text overlaps and a label is cut off on a phone screen.','ui'],['The phone field accepts letters.','val'],['A booking does not trigger the SMS reminder.','int'],['Patient search takes 30 seconds to show results.','perf'],['Walk-in Add looks fine on Chrome desktop but the layout breaks on Safari.','compat']];
+function quiz(){return `<div class="card"><h2>Name the failure type</h2><p class="mute">A good sign-off names the type of each serious defect. Pick the best type for each one.</p></div>`+QZ.map((q,i)=>`<div class="card"><p><b>${i+1}.</b> ${esc(q[0])}</p><div class="row">${Object.keys(CATS).map(k=>`<button data-q="${i}" data-k="${k}">${esc(CATS[k][0])}</button>`).join('')}</div><div id="qf${i}"></div></div>`).join('')}
+function quizBind(){document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{const i=+b.dataset.q,q=QZ[i],ok=b.dataset.k===q[1];$('qf'+i).innerHTML=`<div class="fb ${ok?'good':'low'}"><b>${ok?'Correct.':'Not quite.'}</b> ${ok?'':'Best answer: <b>'+esc(CATS[q[1]][0])+'</b>. '}${esc(CATS[q[1]][1])}</div>`})}
 
 const PARTS=[['Scope (what was tested)',/(scope|tested|covered|login|booking|checkout|screens?|features?|areas?)/i],['Version, date or tester',/(version|build|staging|environment|\b20\d\d-\d\d-\d\d\b|\b\d{1,2} (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*|tested by)/i],['Results in numbers',/(\d+\s*(tests?|passed|failed|blocked|of \d+|%)|passed\b.*\d|\d.*\bpassed\b)/i],['Open defects with severity',/(critical|major|minor|defect|bug)/i],['Risks or what was not tested',/(not tested|untested|risk|limitation|not covered|outstanding|could not|did not test)/i],['A clear recommendation',/(approve|recommend|do not approve|no-go|go live|not ready|reject|accept)/i],['A next step',/(next step|retest|re-test|once|until|after the|condition|fix)/i]];
 function rate(){return `<div class="card"><h2>Rate my sign-off</h2><p class="mute">Paste or type a sign-off you wrote. The page checks that all 7 parts are there. It cannot judge whether your decision is right, only whether the reader would get what they need.</p>
@@ -124,10 +149,11 @@ function rateBind(){$('rt').onclick=()=>{const t=$('mine').value;S.f.mine=t;save
  const got=PARTS.map(p=>p[1].test(t));const n=got.filter(Boolean).length;const cls=n>=7?'good':n>=5?'mid':'low';let extra='';
  const nums=t.match(/\d+/g)||[];if(nums.length<3)extra+='<li>There are almost no numbers. Add how many tests were run, passed and failed.</li>';
  if(/\b(fine|good to go|all good|works|everything works|perfect)\b/i.test(t)&&!/(critical|major|minor)/i.test(t))extra+='<li>Words like "fine" or "good to go" need evidence next to them: numbers and defect counts.</li>';
+ if(/(critical|major|minor|defect|bug)/i.test(t)&&!/(security|permission|data integrity|functional|usability|validation|integration|performance|compatib|cosmetic|ui )/i.test(t))extra+='<li>You mention defects but not their failure type. Say whether each serious one is Security / Permissions, Data Integrity, Functional and so on, so the reader sees the risk.</li>';
  const m=t.match(/(\d+)\D{0,20}passed\D{0,20}(\d+)\D{0,20}failed/i);
  $('rr').innerHTML=`<div class="fb ${cls}"><b>${n} of 7 parts found.</b><ul>${PARTS.map((p,i)=>`<li>${got[i]?'<span class="ok">Found:</span>':'<span class="bad">Missing:</span>'} ${esc(p[0])}</li>`).join('')}</ul>${extra?'<b>Also:</b><ul>'+extra+'</ul>':''}${n>=7?'<p>Every part is there. Now read it once as the owner: could you decide from this message alone?</p>':'<p>Add the missing parts, then check again. The Build mine tab writes all 7 for you.</p>'}</div>`}}
 
-function draw(){tabs();$('v').innerHTML=({learn,build,examples,decide,rate})[S.tab]();if(S.tab==='build')buildBind();if(S.tab==='decide')decideBind();if(S.tab==='rate')rateBind();window.scrollTo(0,0)}
+function draw(){tabs();$('v').innerHTML=({learn,build,examples,decide,quiz,rate})[S.tab]();if(S.tab==='quiz')quizBind();if(S.tab==='build')buildBind();if(S.tab==='decide')decideBind();if(S.tab==='rate')rateBind();window.scrollTo(0,0)}
 draw();
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->

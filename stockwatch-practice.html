@@ -242,7 +242,7 @@ function wview(){
    <label>Tester</label><input data-so="tester" value="${esc(W.so.tester)}"><label>Recommendation to approver (Shop Owner)</label><select data-so="decision"><option value="">Choose…</option>${['Approve for go-live','Approve with known issues','Do not approve'].map(s=>`<option ${W.so.decision===s?'selected':''}>${s}</option>`).join('')}</select>
    <label>Justification (cite test IDs and defects)</label><textarea rows="4" data-so="notes">${esc(W.so.notes)}</textarea>
    <div class="btns"><button class="primary" id="csv">Download CSV</button><button id="print">Print / PDF</button><button id="togKey">${W.key?'Hide':'Reveal'} answer key</button></div>
-   ${W.key?`<table style="margin-top:10px"><tr><th>Bug</th><th>Seeded defect</th><th>Real severity</th><th>Test</th><th>Found?</th></tr>${Object.entries(BUGS).map(([b,[d,s]])=>`<tr><td>${b}</td><td>${d}</td><td>${s}</td><td>${TCS.find(t=>t.bug===b).id}</td><td>${found.has(b)?'':''}</td></tr>`).join('')}</table>
+   ${W.key?`<table style="margin-top:10px"><tr><th>Bug</th><th>Seeded defect</th><th>Real severity</th><th>Failure type</th><th>Test</th><th>Found?</th></tr>${Object.entries(BUGS).map(([b,[d,s]])=>`<tr><td>${b}</td><td>${d}</td><td>${s}</td><td>${window.FAILTYPE?FAILTYPE.classicCell('stockwatch-practice',b):''}</td><td>${TCS.find(t=>t.bug===b).id}</td><td>${found.has(b)?'':''}</td></tr>`).join('')}</table>
    <p class="sub">False alarms: ${TCS.filter(t=>!t.bug&&stat(t.id)==='Fail').map(t=>t.id).join(', ')||'none'}.</p>`:''}`}
 }
 document.addEventListener('click',e=>{const t=e.target,d=t.dataset||{};
@@ -468,6 +468,6 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.
 
 </script>
 <!--/LEARN-->
-<script src="coach.js"></script><script src="labkit.js"></script><script src="tickets.js"></script><script src="ticketcheck.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
+<script src="failtype.js"></script><script src="coach.js"></script><script src="labkit.js"></script><script src="tickets.js"></script><script src="ticketcheck.js"></script><script src="ticketpanel.js"></script><script src="analogy.js"></script><script src="nav.js"></script><!--SYNC--><script src="sync.js"></script><!--/SYNC-->
 </body>
 </html>

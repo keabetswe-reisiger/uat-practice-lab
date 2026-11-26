@@ -85,6 +85,21 @@ const CASES=[
  why:'28 + 42 = 70. If the app shows 42 you have found a bug, but you can only see it because you worked out 70 first.'}
 ];
 
+
+/* Failure types (defect categories): what kind of problem it is. Severity says how bad. */
+const CATS={
+ sec:['Security / Permissions','Who may see or do what is not enforced.','Doctor Thabo sees the Manager KPI suite (UAT-103).','Say what each role sees AND what it must not see. A forbidden action is refused.'],
+ data:['Data Integrity','Saved, calculated or shown information is wrong, lost, duplicated or out of sync between screens.','Dashboard counts wrong or not updating (UAT-104).','Give exact numbers, the before and after values, and say the same value shows on every screen.'],
+ func:['Functional','A button, workflow or business rule does not do its job.','Save Appointment does nothing, or saves the wrong date.','Say the visible result of the action and what is saved.'],
+ usab:['Usability / UX','It works, but is confusing or unforgiving for real users.','Search only finds "Mokoena" with a capital M (UAT-107).','Say what a normal user would expect, for example the same results in any letter case.'],
+ ui:['UI / Cosmetic','Layout or look is broken but the app still works.','Overlapping text, cut-off labels, misaligned columns on mobile.','Say what must be readable and visible at the screen size you test, with nothing overlapping or cut off.'],
+ val:['Validation / Input handling','Bad data is accepted, or good data is refused.','A past appointment date is accepted; letters in a phone field.','Say bad data is refused with the exact message and nothing is saved. Say good data and edge values are accepted.'],
+ int:['Integration / API','Two modules or services do not talk to each other properly.','A booking does not send the SMS reminder or update the doctor calendar.','Say what happens in the OTHER system too (SMS sent, calendar updated), not only on your screen.'],
+ perf:['Performance','Too slow, freezes or crashes under normal or heavy use.','Patient search takes 30 seconds; the app crashes with 20 staff logged in.','Use the time or load limit from the requirement, for example results within 3 seconds. Do not invent a number.'],
+ compat:['Compatibility','Works on one browser or device, breaks on another.','Walk-in Add looks fine on Chrome desktop but breaks on a tablet or Safari.','Say the same result must happen in every browser and device on your list.']};
+const CASECAT={c1:'sec',c2:'func',c3:'data',c4:'val',c5:'val',c6:'sec',c7:'data',c8:'usab',c9:'func',c10:'data',c11:'val',c12:'data'};
+const catLine=c=>{const k=CATS[CASECAT[c.id]];return k?`<p><b>Failure type if the app gets this wrong:</b> ${esc(k[0])}. ${esc(k[1])} Log it with that type so the team sees the business risk.</p>`:''};
+
 const TABS=[['learn','1 Learn the method'],['example','2 Worked example'],['practice','3 Practice'],['cheat','4 Words and cheat sheet']];
 function tabs(){$('tabs').innerHTML=TABS.map(t=>`<button data-t="${t[0]}" class="${S.tab===t[0]?'on':''}">${t[1]}</button>`).join('');$('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;save();draw()})}
 
@@ -99,7 +114,10 @@ function learn(){return `<div class="card"><h2>Start here: what is an expected r
 <li><b>WORK OUT</b> the answer from the steps. Do the sums yourself (10% of 150 = 15). Decide what the start and end look like (count 3 to 2).</li>
 <li><b>WRITE</b> it as short, checkable statements: what is shown, what changed, and what did NOT change. One idea per sentence.</li>
 <li><b>CHECK</b> it: could another tester tell Pass from Fail using only your sentence? If you used words like "works", "correct", "properly", rewrite with a number, a word or a screen.</li></ol></div>
-<div class="card"><h2>Four kinds of expected result</h2>
+<div class="card"><h2>Your expected result depends on the failure type</h2>
+<p>A failure type (defect category) says <u>what kind</u> of problem a bug is. Severity (Critical, High, Medium, Low) says <u>how bad</u> it is. Before you write the expected result, ask: <b>what kind of problem would this test catch?</b> The answer tells you what the expected result must prove.</p>
+<div class="cof"><b>Coffee analogy:</b> a bad batch can fail on taste (functional), on a wrong label (data), on who is allowed to open the stock room (permissions) or on the sign being unreadable (cosmetic). You check each one differently, so you write a different "good" for each.</div>
+<p>See the full table on the <b>Words and cheat sheet</b> tab. Every practice case below is tagged with its failure type.</p></div><div class="card"><h2>Four kinds of expected result</h2>
 <table><tr><th>Kind</th><th>Look for in the test</th><th>Write</th></tr>
 <tr><td>Calculation</td><td>%, totals, fees, counts</td><td>The exact number, after doing the sum</td></tr>
 <tr><td>Refusal</td><td>invalid data, not allowed, wrong role</td><td>It is refused + the exact message + nothing changed</td></tr>
@@ -128,7 +146,7 @@ function example(){return `<div class="card"><h2>Worked example, one slow pass</
 function practice(){const done=Object.keys(S.best).length;const avg=done?Math.round(Object.values(S.best).reduce((a,b)=>a+b,0)/done):0;
  return `<div class="card"><h2>Practice: write the expected result</h2><p class="mute">Read the requirement and the steps. Do NOT look at an answer. Type what should happen, then press Check. You can retry as often as you like.</p>
  <div class="bar"><i style="width:${Math.round(done/CASES.length*100)}%"></i></div><div class="mute">${done} of ${CASES.length} attempted. Average best score ${avg}%.</div></div>`+
- CASES.map((c,i)=>`<div class="card" id="${c.id}"><h3>Case ${i+1}: ${esc(c.title)} ${S.best[c.id]!=null?'<span class="mute">(best '+S.best[c.id]+'%)</span>':''}</h3>
+ CASES.map((c,i)=>`<div class="card" id="${c.id}"><h3>Case ${i+1}: ${esc(c.title)} <span class="mute">[${esc(CATS[CASECAT[c.id]][0])}]</span> ${S.best[c.id]!=null?'<span class="mute">(best '+S.best[c.id]+'%)</span>':''}</h3>
  <div class="req"><b>Requirement:</b> ${esc(c.req)}</div><div><b>Test steps</b><ol>${c.steps.map(s=>'<li>'+esc(s)+'</li>').join('')}</ol></div>
  <label for="a-${c.id}">Your expected result</label><textarea id="a-${c.id}" placeholder="After these steps, the app should..."></textarea>
  <div class="row"><button class="pri" data-chk="${c.id}">Check my answer</button><button data-show="${c.id}">Show model answer</button></div><div id="f-${c.id}"></div></div>`).join('')}
@@ -139,15 +157,17 @@ function grade(c,txt){const t=txt.trim();const got=c.must.map(m=>m[1].test(t));l
  html+=`<div class="fb ${cls}"><b>${pct>=100?'Strong answer.':pct>=50?'Getting there.':'Not enough yet.'}</b> You covered ${n} of ${c.must.length} things a tester needs.<ul>${c.must.map((m,i)=>`<li>${got[i]?'<span class="ok">Covered:</span>':'<span class="bad">Missing:</span>'} ${esc(m[0])}</li>`).join('')}</ul>`;
  if(vague)html+=`<p class="bad">Your answer uses vague words ("works", "correct", "as expected"). Replace them with the number, the message or the screen change.</p>`;
  if(t.split(/\s+/).filter(Boolean).length<5)html+=`<p>That is very short. A good expected result is usually 1 to 3 sentences.</p>`;
- if(pct>=100)html+=`<p><b>Why this works:</b> ${esc(c.why)}</p>`;
+ if(pct>=100)html+=`<p><b>Why this works:</b> ${esc(c.why)}</p>`+catLine(c);
  else html+=`<p><b>Hint:</b> go back to the requirement and mark the rule, the numbers and the message. Then try again, or press Show model answer.</p>`;
  html+='</div>';return{pct,html}}
 function bind(){document.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>{const id=b.dataset.chk,c=CASES.find(x=>x.id===id),txt=$('a-'+id).value;
   if(!txt.trim()){$('f-'+id).innerHTML='<div class="fb low">Type your expected result first. Writing it before you look at the answer is the whole skill.</div>';return}
   const r=grade(c,txt);if(S.best[id]==null||r.pct>S.best[id])S.best[id]=r.pct;save();$('f-'+id).innerHTML=r.html});
- document.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{const c=CASES.find(x=>x.id===b.dataset.show);$('f-'+c.id).innerHTML=`<div class="fb good"><b>Model answer:</b> ${esc(c.model)}<p><b>Why:</b> ${esc(c.why)}</p></div>`})}
+ document.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{const c=CASES.find(x=>x.id===b.dataset.show);$('f-'+c.id).innerHTML=`<div class="fb good"><b>Model answer:</b> ${esc(c.model)}<p><b>Why:</b> ${esc(c.why)}</p>${catLine(c)}</div>`})}
 
-function cheat(){return `<div class="card"><h2>Words that give the answer away</h2><table><tr><th>If the requirement says</th><th>It means your expected result must include</th></tr>
+function cheat(){return `<div class="card"><h2>What your expected result must prove, by failure type</h2><p class="mute">Severity (Critical, High, Medium, Low) tells you how bad. The failure type tells you what kind of problem it is and which part is broken.</p>
+<table><tr><th>Failure type</th><th>What it means and an example</th><th>Your expected result must say</th></tr>${Object.values(CATS).map(k=>`<tr><td><b>${esc(k[0])}</b></td><td>${esc(k[1])}<br><span class="mute">Example: ${esc(k[2])}</span></td><td>${esc(k[3])}</td></tr>`).join('')}</table>
+<div class="note">Why name the type? It shows the business risk at once. A UI failure can usually wait until next week. A Security / Permissions or Data Integrity failure almost always stops a release.</div></div><div class="card"><h2>Words that give the answer away</h2><table><tr><th>If the requirement says</th><th>It means your expected result must include</th></tr>
 <tr><td>must / shall / only</td><td>The exact rule. Also test that anything else is refused.</td></tr>
 <tr><td>at least / at most / up to</td><td>Where the edge is, and which side is allowed.</td></tr>
 <tr><td>inclusive / or more / from..to</td><td>The edge value itself is allowed.</td></tr>
